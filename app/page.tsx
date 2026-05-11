@@ -1,7 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
+import { createClient } from "next-sanity";
 
-export default function Home() {
+// 1. Establish the connection to your Sanity Cloud
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: "production",
+  apiVersion: "2024-01-01",
+  useCdn: false, // 'false' ensures you see updates instantly
+});
+
+export default async function Home() {
+  // 2. Fetch the data! (GROQ Query language)
+  const query = `*[_type == "homepage"][0]{
+    heroHeading,
+    heroSubheading,
+    "imageUrl": heroImage.asset->url
+  }`;
+  
+  const data = await client.fetch(query);
+
   return (
     <div className="flex w-full flex-col">
       
@@ -10,16 +28,17 @@ export default function Home() {
         
         {/* Hero Left (Text) */}
         <section className="max-w-2xl">
+          {/* INJECTING DYNAMIC HEADING */}
           <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl lg:text-6xl">
-            Lets Make It Happen
+            {data?.heroHeading || "Lets Make It Happen"}
           </h1>
 
+          {/* INJECTING DYNAMIC SUBHEADING */}
           <p className="mt-7 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
-          We build digital experiences that transform ideas into reality.
+            {data?.heroSubheading || "We build digital experiences that transform ideas into reality."}
           </p>
 
           <div className="mt-10 flex items-center gap-8">
-            {/* GLOW REMOVED FROM THIS BUTTON */}
             <button
               type="button"
               className="rounded-full bg-gradient-to-r from-[#D7FF65] to-[#C6F04F] px-8 py-3 text-sm font-bold text-[#111720] transition-transform duration-200 hover:-translate-y-0.5"
@@ -41,8 +60,9 @@ export default function Home() {
         {/* Hero Right (Image) */}
         <section className="relative flex justify-center lg:justify-end">
           <div className="relative w-full max-w-[560px]">
+            {/* INJECTING DYNAMIC IMAGE */}
             <Image
-              src="/hero-image.png"
+              src={data?.imageUrl || "/hero-image.png"}
               alt="Hero visual for Make It Happen"
               width={900}
               height={1050}
