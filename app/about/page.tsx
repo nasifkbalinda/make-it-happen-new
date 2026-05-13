@@ -1,66 +1,147 @@
-export default function AboutPage() {
-    return (
-      <main className="mx-auto w-full max-w-7xl px-6 pt-24 pb-32 sm:px-10 lg:px-14">
-        
-        {/* 1. Hero Text Section */}
-        <div className="mb-24 max-w-3xl">
-          <h1 className="mb-6 text-5xl font-extrabold text-white sm:text-6xl">
-            We engineer digital <br className="hidden sm:block" />
-            excellence.
-          </h1>
-          <p className="text-lg leading-relaxed text-gray-400">
-            Make It Happen was founded on a simple principle: technology should empower, not complicate. We are a collective of developers, designers, and strategists obsessed with building scalable, beautiful software for forward-thinking companies.
-          </p>
-        </div>
-  
-        {/* 2. Core Values Grid */}
-        <div className="mb-24">
-          <h2 className="mb-10 text-2xl font-bold tracking-tight text-white">Our Core Values</h2>
-          
-          <div className="grid gap-6 md:grid-cols-3">
-            
-            {/* Card 1 */}
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:border-[#C6F04F]/50 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(198,240,79,0.1)]">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[#C6F04F]/10 text-[#C6F04F]">
-                <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="mb-3 text-xl font-bold text-white">Relentless Innovation</h3>
-              <p className="text-sm leading-relaxed text-gray-400">
-                We don't settle for "good enough." We constantly push the boundaries of what modern tech stacks can achieve to give our clients an unfair advantage.
+import { createClient } from "next-sanity";
+
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: "production",
+  apiVersion: "2024-01-01",
+  useCdn: false,
+});
+
+type AboutValue = {
+  valueTitle: string | null;
+  valueDescription: string | null;
+};
+
+type AboutContent = {
+  heading: string | null;
+  subheading: string | null;
+  mainDescription: string | null;
+  imageUrl: string | null;
+  valuesList: AboutValue[] | null;
+};
+
+function BulletIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <circle cx="10" cy="10" r="3" fill="currentColor" />
+    </svg>
+  );
+}
+
+export default async function AboutPage() {
+  const query = `*[_type == "about" && _id == "about"][0]{
+    heading,
+    subheading,
+    mainDescription,
+    "imageUrl": featuredImage.asset->url,
+    valuesList[]{ valueTitle, valueDescription }
+  }`;
+
+  const aboutDoc = await client.fetch<AboutContent | null>(query);
+
+  const heading = aboutDoc?.heading ?? "About us";
+  const subheading = aboutDoc?.subheading;
+  const mainDescription = aboutDoc?.mainDescription;
+  const imageUrl = aboutDoc?.imageUrl;
+  const values = aboutDoc?.valuesList?.filter((v) => v?.valueTitle) ?? [];
+
+  return (
+    <div className="flex w-full flex-col items-center pt-24 pb-32">
+      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14">
+        {/* Hero — split layout */}
+        <section className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+          <div className="max-w-xl lg:max-w-none">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+              About
+            </p>
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+              {heading}
+            </h1>
+            {subheading ? (
+              <p className="mt-4 text-lg font-medium text-white/85 sm:text-xl">
+                {subheading}
               </p>
-            </div>
-            
-            {/* Card 2 */}
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:border-pink-500/50 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(236,72,153,0.1)]">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-pink-500/10 text-pink-500">
-                <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-              <h3 className="mb-3 text-xl font-bold text-white">Radical Collaboration</h3>
-              <p className="text-sm leading-relaxed text-gray-400">
-                We work with you, not just for you. Complete transparency, agile feedback loops, and constant communication are our operational baselines.
+            ) : null}
+            {mainDescription ? (
+              <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-white/60 sm:text-lg">
+                {mainDescription}
               </p>
-            </div>
-  
-            {/* Card 3 */}
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:border-blue-500/50 hover:bg-white/10 hover:shadow-[0_10px_30px_rgba(59,130,246,0.1)]">
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
-                <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="mb-3 text-xl font-bold text-white">Bulletproof Quality</h3>
-              <p className="text-sm leading-relaxed text-gray-400">
-                From the first line of code to the final deployment, security, scalability, and performance are meticulously built into our DNA.
+            ) : (
+              <p className="mt-6 text-base leading-relaxed text-white/50 sm:text-lg">
+                Add your story in Sanity under{" "}
+                <span className="text-white/70">About Us</span> to show the main
+                description here.
               </p>
-            </div>
-  
+            )}
           </div>
-        </div>
-  
-      </main>
-    );
-  }
+
+          <div className="relative">
+            <div
+              className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0B0F19] shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
+              aria-hidden={!imageUrl}
+            >
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={heading}
+                  className="aspect-[4/3] h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex aspect-[4/3] items-center justify-center bg-[radial-gradient(ellipse_at_top_right,rgba(215,255,101,0.12),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.06),transparent_50%)] px-8 text-center text-sm text-white/45">
+                  Upload a featured image in Sanity to display your team photo
+                  here.
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Core values */}
+        <section className="mt-20 lg:mt-28">
+          <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Our core values
+          </h2>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/55">
+            Principles we bring to every engagement—clear, measurable, and built
+            to last.
+          </p>
+
+          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {values.map((item, index) => (
+              <article
+                key={`${item.valueTitle}-${index}`}
+                className="rounded-[1.75rem] border border-white/10 bg-[#0B0F19] p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] transition-colors hover:border-white/15"
+              >
+                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#D7FF65]/15 text-[#D7FF65]">
+                  <BulletIcon className="h-4 w-4" />
+                </div>
+                <h3 className="text-xl font-bold tracking-tight text-white">
+                  {item.valueTitle}
+                </h3>
+                {item.valueDescription ? (
+                  <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-[15px]">
+                    {item.valueDescription}
+                  </p>
+                ) : null}
+              </article>
+            ))}
+          </div>
+
+          {values.length === 0 ? (
+            <div className="mt-8 rounded-2xl border border-dashed border-white/15 py-16 text-center text-white/50">
+              No core values yet. Add entries under{" "}
+              <span className="text-white/70">Core values</span> in the About Us
+              document in Sanity.
+            </div>
+          ) : null}
+        </section>
+      </div>
+    </div>
+  );
+}

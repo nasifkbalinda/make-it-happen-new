@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 
-// 1. Import our new custom Header component
-import Header from "../components/Header"; 
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -19,15 +19,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.className} bg-[#0a0a0a] text-white antialiased`}>
-        
+      <body className={`${manrope.className} bg-white text-black antialiased`}>
         <div
           aria-hidden
-          className="pointer-events-none fixed left-[-10%] top-[34%] -z-10 h-[360px] w-[360px] rounded-full bg-[radial-gradient(circle,rgba(176,102,68,0.75)_0%,rgba(176,102,68,0.28)_42%,transparent_78%)] opacity-35 blur-[120px]"
+          className="pointer-events-none fixed right-[-5%] top-[-8%] -z-10 h-[min(520px,50vw)] w-[min(520px,50vw)] rounded-full bg-[radial-gradient(circle,rgba(79,70,229,0.14)_0%,rgba(79,70,229,0.04)_45%,transparent_70%)] blur-[100px]"
         />
         <div
           aria-hidden
-          className="pointer-events-none fixed right-[-8%] top-[38%] -z-10 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,rgba(89,172,148,0.62)_0%,rgba(89,172,148,0.24)_45%,transparent_80%)] opacity-30 blur-[130px]"
+          className="pointer-events-none fixed left-[-8%] top-[28%] -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.1)_0%,transparent_65%)] opacity-80 blur-[90px]"
         />
 
         {/* 2. Snap the Header in right here! */}
@@ -37,18 +36,7 @@ export default function RootLayout({
           {children}
         </div>
 
-        <footer className="relative z-50 mx-auto flex w-full max-w-7xl items-center justify-between px-6 pb-12 pt-20 sm:px-10 lg:px-14">
-          <p className="text-sm font-medium text-white/50">
-            Make It Happen © {new Date().getFullYear()}
-          </p>
-
-          <div className="absolute left-1/2 flex -translate-x-1/2 items-center">
-            <div className="z-20 h-10 w-10 overflow-hidden rounded-full border-2 border-[#0a0a0a] bg-blue-400"></div>
-            <div className="z-10 -ml-3 h-10 w-10 overflow-hidden rounded-full border-2 border-[#0a0a0a] bg-pink-400"></div>
-          </div>
-
-          <div className="hidden w-[150px] md:block"></div>
-        </footer>
+        <Footer />
 
       </body>
     </html>

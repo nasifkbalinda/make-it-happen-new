@@ -1,59 +1,145 @@
+import { createClient } from "next-sanity";
 import Link from "next/link";
 
-export default function BlogPage() {
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: "production",
+  apiVersion: "2024-01-01",
+  useCdn: false,
+});
+
+type BlogPost = {
+  _id: string;
+  title: string | null;
+  slug: { current?: string } | null;
+  author: string | null;
+  publishedAt: string | null;
+  excerpt: string | null;
+  "imageUrl": string | null;
+};
+
+export default async function BlogPage() {
+  const query = `*[_type == "post"] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    author,
+    publishedAt,
+    excerpt,
+    "imageUrl": mainImage.asset->url
+  }`;
+
+  const posts = await client.fetch<BlogPost[]>(query);
+
   return (
-    <main className="mx-auto w-full max-w-7xl px-6 pt-24 pb-32 sm:px-10 lg:px-14">
-      
-      {/* Header */}
-      <div className="mb-16 max-w-2xl">
-        <h1 className="mb-6 text-5xl font-extrabold text-white sm:text-6xl">
-          Insights.
-        </h1>
-        <p className="text-lg leading-relaxed text-gray-400">
-          Thoughts, theories, and technical deep-dives from our engineering and design teams.
-        </p>
-      </div>
-
-      {/* Article List */}
-      <div className="flex flex-col gap-6">
+    // Removed the light gradient, letting the globals.css dark background show
+    <div className="flex min-h-screen w-full flex-col items-center pb-32 pt-24">
+      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14">
         
-        {/* Article 1 */}
-        <article className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#0a0a0a] p-8 transition-colors hover:bg-white/5 sm:flex-row sm:items-center">
-          <div className="max-w-2xl">
-            <p className="mb-3 text-sm text-gray-500">May 11, 2026 • Engineering</p>
-            <h2 className="mb-3 text-2xl font-bold text-white">Why We Switched to Server Components</h2>
-            <p className="text-gray-400">A detailed breakdown of how adopting React Server Components reduced our initial load times by 40%.</p>
-          </div>
-          <button className="mt-6 w-full rounded-full border border-white/20 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white hover:text-black sm:mt-0 sm:w-auto">
-            Read Post
-          </button>
-        </article>
+        {/* Header Section */}
+        <div className="relative mb-16 max-w-3xl">
+          {/* Subtle neon glow behind the text */}
+          <div
+            className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-[#D7FF65]/5 blur-3xl"
+            aria-hidden
+          />
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#D7FF65]">Journal</p>
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+            Insights &amp; ideas.
+          </h1>
+          <p className="mt-6 text-lg leading-relaxed text-white/60">
+            Notes on product, engineering, and how we ship ambitious work in the real world—no
+            fluff, just signal.
+          </p>
+        </div>
 
-        {/* Article 2 */}
-        <article className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#0a0a0a] p-8 transition-colors hover:bg-white/5 sm:flex-row sm:items-center">
-          <div className="max-w-2xl">
-            <p className="mb-3 text-sm text-gray-500">April 28, 2026 • Design</p>
-            <h2 className="mb-3 text-2xl font-bold text-white">The Death of Flat Design</h2>
-            <p className="text-gray-400">Exploring the return of depth, glassmorphism, and texture in modern user interfaces.</p>
-          </div>
-          <button className="mt-6 w-full rounded-full border border-white/20 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white hover:text-black sm:mt-0 sm:w-auto">
-            Read Post
-          </button>
-        </article>
+        {/* Blog Grid */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {posts.map((post) => {
+            const card = (
+              // Dark mode card styling matching the Services page
+              <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0B0F19] shadow-[0_0_0_1px_rgba(255,255,255,0.04)] transition-all hover:bg-[#121821]">
+                <div className="relative aspect-video w-full overflow-hidden border-b border-white/10 bg-[#121821]">
+                  {post.imageUrl ? (
+                    <img
+                      src={post.imageUrl}
+                      alt={post.title ?? "Blog post cover"}
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-white/5 text-sm text-white/40">
+                      Add a main image in Sanity
+                    </div>
+                  )}
+                </div>
 
-        {/* Article 3 */}
-        <article className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#0a0a0a] p-8 transition-colors hover:bg-white/5 sm:flex-row sm:items-center">
-          <div className="max-w-2xl">
-            <p className="mb-3 text-sm text-gray-500">April 15, 2026 • Strategy</p>
-            <h2 className="mb-3 text-2xl font-bold text-white">Building for Scale from Day One</h2>
-            <p className="text-gray-400">Common architectural mistakes startups make, and how to avoid costly rewrites down the road.</p>
-          </div>
-          <button className="mt-6 w-full rounded-full border border-white/20 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white hover:text-black sm:mt-0 sm:w-auto">
-            Read Post
-          </button>
-        </article>
+                <div className="relative flex flex-1 flex-col p-6 sm:p-7">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold uppercase tracking-widest text-white/50">
+                    {post.publishedAt && (
+                      <time dateTime={post.publishedAt}>
+                        {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </time>
+                    )}
+                    {post.author && (
+                      <>
+                        <span className="text-white/30" aria-hidden>
+                          ·
+                        </span>
+                        <span>{post.author}</span>
+                      </>
+                    )}
+                  </div>
 
+                  <h2 className="mt-4 text-xl font-bold leading-snug tracking-tight text-white">
+                    {post.title ?? "Untitled"}
+                  </h2>
+
+                  {post.excerpt && (
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-white/70">
+                      {post.excerpt}
+                    </p>
+                  )}
+
+                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-[#D7FF65]">
+                    <span>Read more</span>
+                    <span
+                      className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                      aria-hidden
+                    >
+                      →
+                    </span>
+                  </div>
+                </div>
+              </article>
+            );
+
+            // Focus states updated to neon
+            const wrapClass =
+              "group block overflow-hidden rounded-[1.75rem] outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#D7FF65] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1016]";
+
+            return post.slug?.current ? (
+              <Link key={post._id} href={"/blog/" + post.slug.current} className={wrapClass}>
+                {card}
+              </Link>
+            ) : (
+              <div key={post._id} className={`${wrapClass} cursor-default`}>
+                {card}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Empty State updated to dark theme */}
+        {posts.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-white/15 py-20 text-center text-white/50">
+            No posts yet. Publish your first story in the Sanity studio.
+          </div>
+        )}
       </div>
-    </main>
+    </div>
   );
 }

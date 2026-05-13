@@ -1,59 +1,50 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
-  --bg-950: #0c1016;
-  --bg-900: #121821;
-  --bg-850: #1a242d;
-  --bg-800: #243138;
+  /* Premium Dark Mode Colors */
+  --background: #0c1016;
   --foreground: #f4f7fb;
 
-  --accent-lime: #c6f04f;
-  --accent-yellow: #f4db58;
-  --accent-neon: #d7ff65;
-  --accent-soft: #a9d96d;
-  --accent-mint: #84b770;
+  /* Neon Accents */
+  --accent-primary: #d7ff65;
+  --accent-secondary: #c6f04f;
 
-  --surface-glass: rgba(20, 26, 34, 0.78);
-  --surface-border: rgba(255, 255, 255, 0.08);
+  /* Surface colors for cards and borders */
+  --surface-muted: #121821;
+  --surface-border: rgba(255, 255, 255, 0.1);
 }
 
 @theme inline {
-  --color-background: var(--bg-950);
+  --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
+  /* Fonts */
   --font-sans: var(--font-manrope);
   --font-mono: var(--font-geist-mono);
 
-  --color-bg-900: var(--bg-900);
-  --color-bg-850: var(--bg-850);
-  --color-bg-800: var(--bg-800);
-  --color-accent-lime: var(--accent-lime);
-  --color-accent-yellow: var(--accent-yellow);
-  --color-accent-neon: var(--accent-neon);
-  --color-accent-soft: var(--accent-soft);
-  --color-accent-mint: var(--accent-mint);
-  --color-surface-glass: var(--surface-glass);
+  /* Mapping to Tailwind classes */
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-surface-muted: var(--surface-muted);
   --color-surface-border: var(--surface-border);
 }
 
 body {
-  background:
-    radial-gradient(42% 32% at 16% 12%, rgba(247, 220, 102, 0.18) 0%, transparent 68%),
-    radial-gradient(36% 24% at 82% 18%, rgba(133, 197, 116, 0.13) 0%, transparent 72%),
-    radial-gradient(58% 42% at 50% 100%, rgba(17, 24, 31, 0.72) 0%, transparent 74%),
-    linear-gradient(158deg, var(--bg-900) 0%, #0f131a 36%, var(--bg-950) 72%, #101722 100%);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-manrope), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
+/* Subtle Dark Mode Dot Pattern Overlay */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.25;
   background-image:
-    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.08) 0 0.9px, transparent 1px),
-    radial-gradient(circle at 72% 64%, rgba(255, 255, 255, 0.07) 0 0.8px, transparent 1px);
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.15) 0 0.9px, transparent 1px),
+    radial-gradient(circle at 72% 64%, rgba(215, 255, 101, 0.1) 0 0.8px, transparent 1px);
   background-size: 3px 3px, 4px 4px;
-  mix-blend-mode: soft-light;
 }

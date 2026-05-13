@@ -1,84 +1,85 @@
-import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "next-sanity";
 
-// 1. Establish the connection to your Sanity Cloud
+// 1. Establish connection to Sanity
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: false, // 'false' ensures you see updates instantly
+  useCdn: false,
 });
 
 export default async function Home() {
-  // 2. Fetch the data! (GROQ Query language)
-  const query = `*[_type == "homepage"][0]{
+  // 2. Fetch Homepage Hero Data
+  const homepageQuery = `*[_type == "homepage"][0]{
     heroHeading,
     heroSubheading,
     "imageUrl": heroImage.asset->url
   }`;
-  
-  const data = await client.fetch(query);
+  const homepageData = await client.fetch(homepageQuery);
+
+  // 3. Fetch up to 4 Projects for the featured section
+  const projectsQuery = `*[_type == "project"][0...4]{
+    _id,
+    title,
+    category,
+    "imageUrl": mainImage.asset->url
+  }`;
+  const projectsData = await client.fetch(projectsQuery);
 
   return (
     <div className="flex w-full flex-col">
-      
-      {/* 1. Hero Section */}
-      <main className="relative z-10 mx-auto grid w-full max-w-7xl gap-12 px-6 pb-16 pt-16 sm:px-10 md:pt-20 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-14 lg:pt-24">
+      {/* 1. Minimalist Hero — Pure dark with ambient glow */}
+      <main className="relative flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-32">
         
-        {/* Hero Left (Text) */}
-        <section className="max-w-2xl">
-          {/* INJECTING DYNAMIC HEADING */}
-          <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl lg:text-6xl">
-            {data?.heroHeading || "Lets Make It Happen"}
-          </h1>
+        {/* Ambient Neon Glow Background */}
+        <div 
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[800px] rounded-full bg-[#D7FF65]/[0.07] blur-[120px] pointer-events-none" 
+          aria-hidden 
+        />
 
-          {/* INJECTING DYNAMIC SUBHEADING */}
-          <p className="mt-7 max-w-xl text-base leading-7 text-white/70 sm:text-lg">
-            {data?.heroSubheading || "We build digital experiences that transform ideas into reality."}
-          </p>
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
+          <section className="max-w-4xl">
+            <p className="inline-flex items-center gap-2 text-sm font-semibold text-[#D7FF65]">
+              <span className="inline-flex h-5 w-5 items-center justify-center text-[#D7FF65]" aria-hidden>
+                <svg viewBox="0 0 20 20" className="h-4 w-4 fill-current">
+                  <path d="M10 1.5l2.35 4.76 5.26.77-3.8 3.7.9 5.24L10 13.9l-4.71 2.47.9-5.24-3.8-3.7 5.26-.77L10 1.5z" />
+                </svg>
+              </span>
+              Workflow orchestration
+            </p>
 
-          <div className="mt-10 flex items-center gap-8">
-            <button
-              type="button"
-              className="rounded-full bg-gradient-to-r from-[#D7FF65] to-[#C6F04F] px-8 py-3 text-sm font-bold text-[#111720] transition-transform duration-200 hover:-translate-y-0.5"
-            >
-              Get Started
-            </button>
+            <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4.5rem] xl:text-[5rem] text-balance">
+              {homepageData?.heroHeading || "Ship enterprise software faster."}
+            </h1>
 
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-3 text-sm font-medium text-white/90 transition-colors hover:text-white"
-            >
-              <span>Learn More</span>
-              <span aria-hidden className="block h-px w-16 bg-white/70" />
-              <span aria-hidden className="text-lg leading-none">→</span>
-            </Link>
-          </div>
-        </section>
+            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
+              {homepageData?.heroSubheading ||
+                "Integrate the tools you rely on. We build digital experiences that transform ideas into reality."}
+            </p>
 
-        {/* Hero Right (Image) */}
-        <section className="relative flex justify-center lg:justify-end">
-          <div className="relative w-full max-w-[560px]">
-            {/* INJECTING DYNAMIC IMAGE */}
-            <Image
-              src={data?.imageUrl || "/hero-image.png"}
-              alt="Hero visual for Make It Happen"
-              width={900}
-              height={1050}
-              priority
-              className="h-auto w-full object-cover"
-            />
+            <div className="mt-10 flex flex-wrap items-center gap-4">
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-8 py-3.5 text-sm font-bold text-[#111720] transition-transform duration-200 hover:-translate-y-0.5 shadow-[0_0_20px_rgba(215,255,101,0.3)] hover:shadow-[0_0_30px_rgba(215,255,101,0.5)]"
+              >
+                Get Started
+                <span aria-hidden className="text-base leading-none">
+                  →
+                </span>
+              </button>
 
-            <div className="absolute right-6 top-6 h-24 w-24 animate-[spin_16s_linear_infinite] rounded-full border border-white/35 bg-black/20 backdrop-blur-sm">
-              <svg viewBox="0 0 120 120" className="h-full w-full fill-white/85 text-[10px] font-semibold tracking-[0.18em]" aria-hidden>
-                <defs><path id="badge-circle" d="M60,60 m-43,0 a43,43 0 1,1 86,0 a43,43 0 1,1 -86,0" /></defs>
-                <text><textPath href="#badge-circle">MAKE IT HAPPEN • MAKE IT HAPPEN •</textPath></text>
-              </svg>
-              <span className="absolute inset-0 m-auto h-2.5 w-2.5 rounded-full bg-[#D7FF65]" />
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/10"
+              >
+                Learn more
+              </Link>
             </div>
-          </div>
-        </section>
+
+            <p className="mt-8 text-sm text-white/40">Typical response: 1 business day.</p>
+          </section>
+        </div>
       </main>
 
       {/* 2. Glassmorphism Stats Bar */}
@@ -104,42 +105,75 @@ export default async function Home() {
               PROJECT SUCCESS <span className="font-bold text-white">98%</span>
             </p>
             <div className="mt-4 flex items-center">
-              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-black/50 bg-pink-500" />
-              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-black/50 bg-yellow-400" />
-              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-black/50 bg-sky-400" />
-              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-black/50 bg-lime-400" />
-              <div className="h-10 w-10 rounded-full border-2 border-black/50 bg-violet-500" />
+              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-slate-300" />
+              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-slate-400" />
+              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-[#c6f04f]" />
+              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-[#a9d96d]" />
+              <div className="h-10 w-10 rounded-full border-2 border-[#121821] bg-[#D7FF65]" />
             </div>
           </div>
         </div>
       </section>
 
       {/* 3. Featured Case Studies */}
-      <section className="relative z-10 mx-auto grid w-full max-w-7xl gap-16 px-6 pb-32 sm:px-10 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-14">
-        <div className="grid grid-cols-2 gap-4 sm:gap-6">
-          <div className="aspect-square rounded-[2rem] border border-white/5 bg-[#2A3419]/80 shadow-inner"></div>
-          <div className="aspect-square translate-y-8 rounded-[2rem] border border-white/5 bg-[#1B2C2D]/80 shadow-inner"></div>
-          <div className="aspect-square rounded-[2rem] border border-white/5 bg-[#3B221B]/80 shadow-inner"></div>
-          <div className="aspect-square translate-y-8 rounded-[2rem] border border-white/5 bg-[#2E1A1E]/80 shadow-inner"></div>
-        </div>
+      <section className="relative z-10 w-full py-20 sm:py-24">
+        <div className="mx-auto grid w-full max-w-6xl gap-10 px-6 sm:px-10 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-14">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6">
+            {projectsData.map((project: any, index: number) => (
+              <div
+                key={project._id}
+                className={`group relative aspect-square overflow-hidden rounded-[2rem] border border-white/5 bg-[#121821] shadow-inner transition-shadow hover:shadow-lg ${index % 2 !== 0 ? "translate-y-8" : ""}`}
+              >
+                {project.imageUrl ? (
+                  <img
+                    src={project.imageUrl}
+                    alt={project.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-white/5 text-sm text-white/40">
+                    No image
+                  </div>
+                )}
 
-        <div className="max-w-lg lg:pl-6">
-          <p className="text-sm font-semibold tracking-widest text-[#C6F04F] uppercase">Featured Case Studies</p>
-          <h2 className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl">Proven Results<br />Across Diverse<br />Verticals.</h2>
-          <p className="mt-6 text-base leading-relaxed text-white/60">
-            Explore our impactful solutions across diverse client verticals, from fintech to e-commerce, delivering real value and innovation.
-          </p>
-          <Link
-            href="/projects"
-            className="mt-10 inline-flex items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#C6F04F]"
-          >
-            <span>See all</span>
-            <span aria-hidden className="block h-px w-12 bg-white/70" />
-            <span aria-hidden className="text-lg leading-none">→</span>
-          </Link>
+                <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#0c1016]/95 via-[#0c1016]/50 to-transparent p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7FF65]">
+                    {project.category || "Project"}
+                  </p>
+                  <p className="mt-1 text-lg font-bold text-white">{project.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="max-w-lg lg:pl-6">
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#D7FF65]">
+              Featured Case Studies
+            </p>
+            <h2 className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl">
+              Proven Results
+              <br />
+              Across Diverse
+              <br />
+              Verticals.
+            </h2>
+            <p className="mt-6 text-base leading-relaxed text-white/60">
+              Explore our impactful solutions across diverse client verticals, from fintech to
+              e-commerce, delivering real value and innovation.
+            </p>
+            <Link
+              href="/projects"
+              className="mt-10 inline-flex items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
+            >
+              <span>See all</span>
+              <span aria-hidden className="block h-px w-12 bg-white/30" />
+              <span aria-hidden className="text-lg leading-none">
+                →
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
-
     </div>
   );
 }

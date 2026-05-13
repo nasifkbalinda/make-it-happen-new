@@ -1,63 +1,85 @@
-import Link from "next/link";
+import { createClient } from "next-sanity";
 
-export default function ProjectsPage() {
+// 1. Establish connection to Sanity
+const client = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+  dataset: "production",
+  apiVersion: "2024-01-01",
+  useCdn: false, 
+});
+
+export default async function ProjectsPage() {
+  // 2. GROQ Query to fetch ALL projects
+  const query = `*[_type == "project"]{
+    _id,
+    title,
+    category,
+    description,
+    "imageUrl": mainImage.asset->url
+  }`;
+  
+  const projects = await client.fetch(query);
+
   return (
-    <main className="mx-auto w-full max-w-7xl px-6 pt-24 pb-32 sm:px-10 lg:px-14">
-      
-      {/* Header */}
-      <div className="mb-16 max-w-2xl">
-        <h1 className="mb-6 text-5xl font-extrabold text-white sm:text-6xl">
-          Selected Works.
-        </h1>
-        <p className="text-lg leading-relaxed text-gray-400">
-          A showcase of our recent digital transformations, stripped down to the raw results and architecture.
-        </p>
-      </div>
-
-      {/* Flat Grid Layout */}
-      <div className="grid gap-8 md:grid-cols-2">
+    <div className="flex w-full flex-col items-center pt-24 pb-32">
+      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14">
         
-        {/* Project Card 1 */}
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#111111] transition-colors hover:border-white/30">
-          <div className="aspect-video w-full bg-[#1A1A1A]"></div> {/* Image Placeholder */}
-          <div className="p-8">
-            <p className="mb-2 text-sm font-semibold tracking-widest text-[#C6F04F] uppercase">Fintech</p>
-            <h3 className="mb-3 text-2xl font-bold text-white">Global Payment Gateway</h3>
-            <p className="text-gray-400">Complete architectural overhaul handling $2M+ daily volume with zero downtime.</p>
-          </div>
+        {/* Page Header */}
+        <div className="max-w-2xl mb-12">
+          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+            Selected Works.
+          </h1>
+          <p className="mt-4 text-base text-white/60">
+            A showcase of our recent digital transformations, stripped down to the raw results and architecture.
+          </p>
         </div>
 
-        {/* Project Card 2 */}
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#111111] transition-colors hover:border-white/30">
-          <div className="aspect-video w-full bg-[#1A1A1A]"></div> {/* Image Placeholder */}
-          <div className="p-8">
-            <p className="mb-2 text-sm font-semibold tracking-widest text-[#C6F04F] uppercase">Healthcare</p>
-            <h3 className="mb-3 text-2xl font-bold text-white">Patient Portal App</h3>
-            <p className="text-gray-400">HIPAA-compliant mobile application that increased patient engagement by 300%.</p>
-          </div>
+        {/* Dynamic Project Grid - UPDATED TO 3 COLUMNS */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project: any) => (
+            <div 
+              key={project._id} 
+              className="group relative flex flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#111720] transition-all hover:border-[#D7FF65]/50"
+            >
+              {/* Image Section - UPDATED TO 16:9 AND STANDARD IMG TAG */}
+              <div className="relative aspect-video w-full overflow-hidden bg-white/5">
+                {project.imageUrl ? (
+                  <img
+                    src={project.imageUrl}
+                    alt={project.title}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-xs text-white/20">
+                    No image uploaded
+                  </div>
+                )}
+              </div>
+
+              {/* Text Section - REDUCED PADDING */}
+              <div className="flex flex-col p-6">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7FF65]">
+                  {project.category || "Uncategorized"}
+                </p>
+                <h3 className="mt-3 text-xl font-bold text-white">
+                  {project.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/65 line-clamp-3">
+                  {project.description}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Project Card 3 */}
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#111111] transition-colors hover:border-white/30">
-          <div className="aspect-video w-full bg-[#1A1A1A]"></div> {/* Image Placeholder */}
-          <div className="p-8">
-            <p className="mb-2 text-sm font-semibold tracking-widest text-[#C6F04F] uppercase">E-Commerce</p>
-            <h3 className="mb-3 text-2xl font-bold text-white">Headless Storefront</h3>
-            <p className="text-gray-400">Migration to a modern Next.js stack, dropping page load times to under 0.8 seconds.</p>
+        {/* Empty State */}
+        {projects.length === 0 && (
+          <div className="text-center py-20 text-white/50">
+            No projects found. Head to the admin dashboard to add some!
           </div>
-        </div>
-
-        {/* Project Card 4 */}
-        <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#111111] transition-colors hover:border-white/30">
-          <div className="aspect-video w-full bg-[#1A1A1A]"></div> {/* Image Placeholder */}
-          <div className="p-8">
-            <p className="mb-2 text-sm font-semibold tracking-widest text-[#C6F04F] uppercase">SaaS</p>
-            <h3 className="mb-3 text-2xl font-bold text-white">Analytics Dashboard</h3>
-            <p className="text-gray-400">Real-time data visualization platform processing millions of events per minute.</p>
-          </div>
-        </div>
+        )}
 
       </div>
-    </main>
+    </div>
   );
 }
