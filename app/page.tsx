@@ -33,16 +33,10 @@ export default async function Home() {
       <main className="relative flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-32">
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <section className="max-w-4xl">
-            <p className="inline-flex items-center gap-2 text-sm font-semibold text-[#D7FF65]">
-              <span className="inline-flex h-5 w-5 items-center justify-center text-[#D7FF65]" aria-hidden>
-                <svg viewBox="0 0 20 20" className="h-4 w-4 fill-current">
-                  <path d="M10 1.5l2.35 4.76 5.26.77-3.8 3.7.9 5.24L10 13.9l-4.71 2.47.9-5.24-3.8-3.7 5.26-.77L10 1.5z" />
-                </svg>
-              </span>
-              Workflow orchestration
-            </p>
+            
+            {/* Removed the Workflow Orchestration Kicker */}
 
-            <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4.5rem] xl:text-[5rem] text-balance">
+            <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4.5rem] xl:text-[5rem] text-balance">
               {homepageData?.heroHeading || "Ship enterprise software faster."}
             </h1>
 
@@ -52,7 +46,6 @@ export default async function Home() {
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              {/* Button glow removed, simple hover state added */}
               <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-8 py-3.5 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e8ff99]"
