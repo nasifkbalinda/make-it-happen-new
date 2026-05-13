@@ -29,15 +29,8 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 1. Minimalist Hero — Pure dark with ambient glow */}
+      {/* 1. Minimalist Hero — Pure dark, no ambient glow */}
       <main className="relative flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-32">
-        
-        {/* Ambient Neon Glow Background */}
-        <div 
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[800px] rounded-full bg-[#D7FF65]/[0.07] blur-[120px] pointer-events-none" 
-          aria-hidden 
-        />
-
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <section className="max-w-4xl">
             <p className="inline-flex items-center gap-2 text-sm font-semibold text-[#D7FF65]">
@@ -59,9 +52,10 @@ export default async function Home() {
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
+              {/* Button glow removed, simple hover state added */}
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-8 py-3.5 text-sm font-bold text-[#111720] transition-transform duration-200 hover:-translate-y-0.5 shadow-[0_0_20px_rgba(215,255,101,0.3)] hover:shadow-[0_0_30px_rgba(215,255,101,0.5)]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-8 py-3.5 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e8ff99]"
               >
                 Get Started
                 <span aria-hidden className="text-base leading-none">
