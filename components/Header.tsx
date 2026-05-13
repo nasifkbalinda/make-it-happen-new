@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation"; // 1. Import usePathname
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname(); // 2. Get the current URL path
+
+  // 3. If we are on the admin page, don't render the header at all
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
