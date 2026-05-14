@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "next-sanity";
+import Cta from "@/components/Cta";
 
 // 1. Establish connection to Sanity
 const client = createClient({
@@ -10,11 +11,19 @@ const client = createClient({
 });
 
 export default async function Home() {
-  // 2. Fetch Homepage Hero Data
+  // 2. Fetch Homepage Hero & Stats Data
   const homepageQuery = `*[_type == "homepage"][0]{
     heroHeading,
     heroSubheading,
-    "imageUrl": heroImage.asset->url
+    "imageUrl": heroImage.asset->url,
+    stat1Label,
+    stat1Value,
+    stat2Label,
+    stat2Value,
+    stat3Label,
+    stat3Value,
+    stat4Label,
+    stat4Value
   }`;
   const homepageData = await client.fetch(homepageQuery);
 
@@ -29,10 +38,8 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 1. Balanced Hero — Solid dark background added to hide dots and blend the image perfectly */}
+      {/* 1. Balanced Hero */}
       <main className="relative z-20 flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-32 bg-[#0c1016]">
-        
-        {/* Absolute Background Image Layer powered by Sanity */}
         {homepageData?.imageUrl ? (
           <div className="absolute inset-y-0 right-0 w-full lg:w-[65%] z-0">
             <img
@@ -42,15 +49,10 @@ export default async function Home() {
               fetchPriority="high"
               decoding="async"
             />
-            {/* Responsive readability fade: 
-              - Mobile: Darker gradient extending further right to protect wrapping text
-              - Desktop (lg:): Switches back to the original smooth fade 
-            */}
             <div
               aria-hidden
               className="absolute inset-0 bg-gradient-to-r from-[#0c1016] from-30% via-[#0c1016]/80 via-70% to-[#0c1016]/40 lg:from-0% lg:via-[#0c1016]/60 lg:via-40% lg:to-transparent"
             />
-            {/* Bottom blend fade to seamlessly merge into the next section */}
             <div
               aria-hidden
               className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0c1016] to-transparent"
@@ -60,12 +62,9 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <section className="max-w-4xl">
-            
-            {/* Slightly reduced heading size for better breathing room */}
             <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.25rem] text-balance">
               {homepageData?.heroHeading || "Ship enterprise software faster."}
             </h1>
-
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
               {homepageData?.heroSubheading ||
                 "Integrate the tools you rely on. We build digital experiences that transform ideas into reality."}
@@ -81,7 +80,6 @@ export default async function Home() {
                   →
                 </span>
               </button>
-
               <Link
                 href="/about"
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/10"
@@ -89,33 +87,50 @@ export default async function Home() {
                 Learn more
               </Link>
             </div>
-
             <p className="mt-8 text-sm text-white/40">Typical response: just a moment.</p>
           </section>
         </div>
       </main>
 
-      {/* 2. Glassmorphism Stats Bar */}
+      {/* 2. Glassmorphism Dynamic Stats Bar */}
       <section className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-24 sm:px-10 lg:px-14">
         <div className="flex w-full flex-col gap-10 rounded-3xl border border-white/10 bg-white/5 px-8 py-7 backdrop-blur-lg md:flex-row md:items-center md:justify-between md:px-10 md:py-8">
+          
           <div className="grid flex-1 grid-cols-1 gap-8 sm:grid-cols-3">
+            {/* Stat 1 */}
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/45">Projects</p>
-              <p className="mt-2 text-5xl font-extrabold tracking-tight text-white">27k+</p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/45">
+                {homepageData?.stat1Label || "Projects Delivered"}
+              </p>
+              <p className="mt-2 text-5xl font-extrabold tracking-tight text-white">
+                {homepageData?.stat1Value || "150+"}
+              </p>
             </div>
+            {/* Stat 2 */}
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/45">Deployments</p>
-              <p className="mt-2 text-5xl font-extrabold tracking-tight text-white">25k+</p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/45">
+                {homepageData?.stat2Label || "Global Partners"}
+              </p>
+              <p className="mt-2 text-5xl font-extrabold tracking-tight text-white">
+                {homepageData?.stat2Value || "40+"}
+              </p>
             </div>
+            {/* Stat 3 */}
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/45">User Adoption</p>
-              <p className="mt-2 text-5xl font-extrabold tracking-tight text-white">12k+</p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/45">
+                {homepageData?.stat3Label || "Team Experts"}
+              </p>
+              <p className="mt-2 text-5xl font-extrabold tracking-tight text-white">
+                {homepageData?.stat3Value || "25+"}
+              </p>
             </div>
           </div>
 
+          {/* Stat 4 (With visual elements) */}
           <div className="md:pl-8">
             <p className="text-xs uppercase tracking-[0.15em] text-white/55">
-              PROJECT SUCCESS <span className="font-bold text-white">98%</span>
+              {homepageData?.stat4Label || "CLIENT RETENTION"}{" "}
+              <span className="font-bold text-white">{homepageData?.stat4Value || "98%"}</span>
             </p>
             <div className="mt-4 flex items-center">
               <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-slate-300" />
@@ -125,6 +140,7 @@ export default async function Home() {
               <div className="h-10 w-10 rounded-full border-2 border-[#121821] bg-[#D7FF65]" />
             </div>
           </div>
+          
         </div>
       </section>
 
@@ -187,6 +203,10 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {/* 4. Global CTA Section */}
+      <Cta />
+
     </div>
   );
 }
