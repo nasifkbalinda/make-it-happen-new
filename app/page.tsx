@@ -29,14 +29,40 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 1. Minimalist Hero — Pure dark, no ambient glow */}
-      <main className="relative flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-32">
+      {/* 1. Balanced Hero — Solid dark background added to hide dots and blend the image perfectly */}
+      <main className="relative z-20 flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-32 bg-[#0c1016]">
+        
+        {/* Absolute Background Image Layer powered by Sanity */}
+        {homepageData?.imageUrl ? (
+          <div className="absolute inset-y-0 right-0 w-full lg:w-[65%] z-0">
+            <img
+              src={homepageData.imageUrl}
+              alt="Hero visual for Make It Happen"
+              className="h-full w-full object-cover object-left"
+              fetchPriority="high"
+              decoding="async"
+            />
+            {/* Responsive readability fade: 
+              - Mobile: Darker gradient extending further right to protect wrapping text
+              - Desktop (lg:): Switches back to the original smooth fade 
+            */}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-gradient-to-r from-[#0c1016] from-30% via-[#0c1016]/80 via-70% to-[#0c1016]/40 lg:from-0% lg:via-[#0c1016]/60 lg:via-40% lg:to-transparent"
+            />
+            {/* Bottom blend fade to seamlessly merge into the next section */}
+            <div
+              aria-hidden
+              className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0c1016] to-transparent"
+            />
+          </div>
+        ) : null}
+
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <section className="max-w-4xl">
             
-            {/* Removed the Workflow Orchestration Kicker */}
-
-            <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-[4.5rem] xl:text-[5rem] text-balance">
+            {/* Slightly reduced heading size for better breathing room */}
+            <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-[4.25rem] text-balance">
               {homepageData?.heroHeading || "Ship enterprise software faster."}
             </h1>
 
@@ -64,7 +90,7 @@ export default async function Home() {
               </Link>
             </div>
 
-            <p className="mt-8 text-sm text-white/40">Typical response: 1 business day.</p>
+            <p className="mt-8 text-sm text-white/40">Typical response: just a moment.</p>
           </section>
         </div>
       </main>
