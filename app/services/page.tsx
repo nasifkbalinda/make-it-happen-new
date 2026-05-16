@@ -1,4 +1,5 @@
 import { createClient } from "next-sanity";
+import Cta from "@/components/Cta"; // Imported the global CTA component
 
 // 1. Establish connection to Sanity
 const client = createClient({
@@ -51,15 +52,15 @@ export default async function ServicesPage() {
 
   return (
     // The transparent wrapper lets globals.css dark background show through
-    <div className="flex w-full flex-col items-center pt-24 pb-32">
-      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14">
+    <div className="flex w-full flex-col items-center">
+      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14 pt-32 pb-32">
         
-        {/* Header Section */}
+        {/* Header Section - Adjusted typography for premium balance */}
         <div className="mb-14 max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
             Services
           </p>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
             Capabilities built for scale.
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-white/60">
@@ -151,6 +152,9 @@ export default async function ServicesPage() {
         ) : null}
         
       </div>
+
+      {/* Global CTA Section */}
+      <Cta />
     </div>
   );
 }

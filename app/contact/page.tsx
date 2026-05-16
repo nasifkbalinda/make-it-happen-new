@@ -50,14 +50,19 @@ export default async function ContactPage() {
     data?.address ?? "Remote-first · Worldwide";
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-6 pb-24 pt-24 sm:px-10 lg:px-14">
+    <div className="mx-auto w-full max-w-7xl px-6 pb-32 pt-32 sm:px-10 lg:px-14">
       <div className="grid gap-16 md:grid-cols-2 md:items-start">
         <section className="flex flex-col gap-10">
+          
+          {/* Synced Page Header */}
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+              Contact Us
+            </p>
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
               {heading}
             </h1>
-            <p className="mt-4 max-w-md text-base leading-relaxed text-white/65">
+            <p className="mt-5 max-w-md text-lg leading-relaxed text-white/60">
               {subheading}
             </p>
           </div>

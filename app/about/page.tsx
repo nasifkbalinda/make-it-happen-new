@@ -1,4 +1,5 @@
 import { createClient } from "next-sanity";
+import Cta from "@/components/Cta"; // Imported the global CTA component
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -52,19 +53,22 @@ export default async function AboutPage() {
   const values = aboutDoc?.valuesList?.filter((v) => v?.valueTitle) ?? [];
 
   return (
-    <div className="flex w-full flex-col items-center pt-24 pb-32">
-      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14">
+    <div className="flex w-full flex-col items-center">
+      {/* Adjusted padding to pt-32 pb-32 to match other pages */}
+      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14 pt-32 pb-32">
+        
         {/* Hero — split layout */}
         <section className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="max-w-xl lg:max-w-none">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
               About
             </p>
-            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+            {/* Synced headline typography */}
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
               {heading}
             </h1>
             {subheading ? (
-              <p className="mt-4 text-lg font-medium text-white/85 sm:text-xl">
+              <p className="mt-5 text-lg leading-relaxed text-white/75">
                 {subheading}
               </p>
             ) : null}
@@ -142,6 +146,9 @@ export default async function AboutPage() {
           ) : null}
         </section>
       </div>
+
+      {/* Global CTA Section */}
+      <Cta />
     </div>
   );
 }

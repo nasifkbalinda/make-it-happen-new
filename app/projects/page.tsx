@@ -28,12 +28,15 @@ export default async function ProjectsPage() {
     <div className="flex w-full flex-col items-center">
       <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14 pt-32 pb-32">
         
-        {/* Page Header */}
-        <div className="max-w-2xl mb-12">
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+        {/* Page Header - Perfectly synced with Services page typography */}
+        <div className="mb-14 max-w-3xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+            Portfolio
+          </p>
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
             Selected Works.
           </h1>
-          <p className="mt-4 text-base text-white/60">
+          <p className="mt-5 text-lg leading-relaxed text-white/60">
             A showcase of our recent digital transformations, stripped down to the raw results and architecture.
           </p>
         </div>
