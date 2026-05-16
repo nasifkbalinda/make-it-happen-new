@@ -17,6 +17,22 @@ export const project = defineType({
       description: 'e.g., Fintech, Healthcare, E-Commerce',
     }),
     defineField({
+      name: 'projectUrl',
+      title: 'Live Project URL (Optional)',
+      type: 'url',
+      description: 'Add the link to the live website (e.g., https://example.com). If filled, clicking the project will open this link in a new tab.',
+    }),
+    defineField({
+      name: 'slug',
+      title: 'Internal Slug (Optional)',
+      type: 'slug',
+      description: 'Click "Generate" to create a URL for an internal case study page (e.g., /projects/my-cool-project).',
+      options: {
+        source: 'title',
+        maxLength: 96,
+      },
+    }),
+    defineField({
       name: 'description',
       title: 'Short Description',
       type: 'text',
