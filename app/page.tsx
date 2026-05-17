@@ -1,6 +1,44 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "next-sanity";
 import Cta from "@/components/Cta";
+
+// --- SEO METADATA ---
+export const metadata: Metadata = {
+  title: "Make It Happen | Software, Web Design & AI Automation Uganda",
+  description: "Elite tech agency in Kampala. We engineer custom software, premium web design, AI integrations, business automation, and data-driven digital marketing.",
+  keywords: [
+    "Software development Uganda",
+    "Web design Kampala",
+    "AI integration agency",
+    "Business automation",
+    "Digital marketing Uganda",
+    "Custom software solutions Kampala",
+    "Make It Happen Uganda"
+  ],
+  openGraph: {
+    title: "Make It Happen | Software, Web Design & AI Automation",
+    description: "Transforming businesses in Uganda with custom software, premium web design, AI, automation, and digital marketing.",
+    url: "https://makeithappen.ug",
+    siteName: "Make It Happen",
+    images: [
+      {
+        url: "https://makeithappen.ug/og-image.png", // Ensure you add an og-image.png (1200x630) to your public folder!
+        width: 1200,
+        height: 630,
+        alt: "Make It Happen Tech Agency Kampala",
+      },
+    ],
+    locale: "en_UG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Make It Happen | Tech & Software Agency Uganda",
+    description: "Custom software, high-performance web design, AI automation, and digital marketing.",
+    images: ["https://makeithappen.ug/og-image.png"],
+  },
+};
 
 // 1. Establish connection to Sanity
 const client = createClient({
@@ -36,7 +74,6 @@ export default async function Home() {
   return (
     <div className="flex w-full flex-col">
       {/* 1. Balanced Hero */}
-      {/* ADJUSTED: Kept mobile pt-32, but forced desktop to push down with lg:pt-60 and pull up the bottom with lg:pb-12 */}
       <main className="relative z-20 flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-24 lg:pt-60 lg:pb-12 bg-[#0c1016]">
         {homepageData?.imageUrl ? (
           <div className="absolute inset-y-0 right-0 w-full lg:w-[65%] z-0">
@@ -60,7 +97,6 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <section className="max-w-4xl">
-            {/* ADJUSTED: Mobile stays text-4xl sm:text-5xl. Desktop specifically drops down slightly to lg:text-[2.85rem] */}
             <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[2.85rem] text-balance">
               {homepageData?.heroHeading || "Ship enterprise software faster."}
             </h1>
@@ -224,7 +260,6 @@ export default async function Home() {
             </Link>
           </div>
           
-
           <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-3">
             {blogsData.map((post: any) => (
               <Link
