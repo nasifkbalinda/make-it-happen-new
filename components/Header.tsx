@@ -33,7 +33,8 @@ export default function Header({ logoUrl, siteTitle }: HeaderProps) {
               <img 
                 src={logoUrl} 
                 alt={`${displayTitle} logo`} 
-                className="h-8 w-auto object-contain" // Adjust h-8 (height) as needed for your specific logo
+                // MASSIVE BUMP: h-16 on mobile, h-20 on larger screens
+                className="h-20 w-auto object-contain sm:h-25" 
               />
             ) : (
               <span className="text-2xl font-extrabold text-white tracking-tight">
@@ -87,13 +88,14 @@ export default function Header({ logoUrl, siteTitle }: HeaderProps) {
           <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#121821] px-6 py-6 sm:max-w-sm border-l border-white/10">
             <div className="flex items-center justify-between">
               
-              {/* Dynamic Logo Section (Mobile) */}
+              {/* Dynamic Logo Section (Mobile Slide-out) */}
               <Link href="/" className="-m-1.5 p-1.5 flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
                  {logoUrl ? (
                   <img 
                     src={logoUrl} 
                     alt={`${displayTitle} logo`} 
-                    className="h-8 w-auto object-contain" 
+                    // Bumped mobile menu logo size up as well
+                    className="h-14 w-auto object-contain sm:h-16" 
                   />
                 ) : (
                   <span className="text-xl font-extrabold text-white">
