@@ -36,7 +36,8 @@ export default async function Home() {
   return (
     <div className="flex w-full flex-col">
       {/* 1. Balanced Hero */}
-      <main className="relative z-20 flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-32 bg-[#0c1016]">
+      {/* ADJUSTED: Kept mobile pt-32, but forced desktop to push down with lg:pt-60 and pull up the bottom with lg:pb-12 */}
+      <main className="relative z-20 flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-24 lg:pt-60 lg:pb-12 bg-[#0c1016]">
         {homepageData?.imageUrl ? (
           <div className="absolute inset-y-0 right-0 w-full lg:w-[65%] z-0">
             <img
@@ -59,7 +60,8 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <section className="max-w-4xl">
-            <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-5xl xl:text-[3.25rem] text-balance">
+            {/* ADJUSTED: Mobile stays text-4xl sm:text-5xl. Desktop specifically drops down slightly to lg:text-[2.85rem] */}
+            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[2.85rem] text-balance">
               {homepageData?.heroHeading || "Ship enterprise software faster."}
             </h1>
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
@@ -185,7 +187,6 @@ export default async function Home() {
             <p className="text-sm font-semibold uppercase tracking-widest text-[#D7FF65]">
               {homepageData?.featuredProjectsKicker || "Featured Case Studies"}
             </p>
-            {/* Added whitespace-pre-line so line breaks work perfectly */}
             <h2 className="mt-4 whitespace-pre-line text-4xl font-bold leading-tight text-white sm:text-5xl">
               {homepageData?.featuredProjectsTitle || "Proven Results\nAcross Diverse\nVerticals."}
             </h2>
@@ -193,7 +194,6 @@ export default async function Home() {
               {homepageData?.featuredProjectsDescription || "Explore our impactful solutions across diverse client verticals, from fintech to e-commerce, delivering real value and innovation."}
             </p>
             
-            {/* Fixed Arrow Wrapping with flex-nowrap and shrink-0 */}
             <Link
               href="/projects"
               className="group mt-10 inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
@@ -214,7 +214,6 @@ export default async function Home() {
               <p className="text-sm font-semibold uppercase tracking-widest text-[#D7FF65]">Journal</p>
               <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">Latest Insights.</h2>
             </div>
-            {/* Fixed Arrow Wrapping here too! */}
             <Link
               href="/blog"
               className="group inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"

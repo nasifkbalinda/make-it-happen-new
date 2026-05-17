@@ -33,8 +33,8 @@ export default function Header({ logoUrl, siteTitle }: HeaderProps) {
               <img 
                 src={logoUrl} 
                 alt={`${displayTitle} logo`} 
-                // MASSIVE BUMP: h-16 on mobile, h-20 on larger screens
-                className="h-20 w-auto object-contain sm:h-25" 
+                // MASSIVE BUMP: h-23 on mobile, h-27 on larger screens
+                className="h-23 w-auto object-contain sm:h-27" 
               />
             ) : (
               <span className="text-2xl font-extrabold text-white tracking-tight">
