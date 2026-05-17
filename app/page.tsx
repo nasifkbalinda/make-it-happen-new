@@ -223,6 +223,7 @@ export default async function Home() {
               <span aria-hidden className="shrink-0 text-lg leading-none transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
+          
 
           <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-3">
             {blogsData.map((post: any) => (

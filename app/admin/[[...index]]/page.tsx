@@ -7,6 +7,11 @@
  * https://github.com/sanity-io/next-sanity
  */
 
+"use client";
+
+export const dynamic = "force-dynamic";
+
+// ... your existing imports and NextStudio code below
 import { NextStudio } from 'next-sanity/studio'
 import config from '../../../sanity.config'
 
