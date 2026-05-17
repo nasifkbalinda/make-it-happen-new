@@ -24,7 +24,8 @@ export default function Header({ logoUrl, siteTitle }: HeaderProps) {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-14" aria-label="Global">
+      {/* ADJUSTED: Changed 'p-6' to 'px-6 py-4 lg:px-14 lg:pt-2 lg:pb-6' to pull the header up tight to the top on desktop */}
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-14 lg:pt-2 lg:pb-6" aria-label="Global">
         
         {/* Dynamic Logo Section */}
         <div className="flex lg:flex-1">
@@ -33,8 +34,7 @@ export default function Header({ logoUrl, siteTitle }: HeaderProps) {
               <img 
                 src={logoUrl} 
                 alt={`${displayTitle} logo`} 
-                // MASSIVE BUMP: h-23 on mobile, h-27 on larger screens
-                className="h-23 w-auto object-contain sm:h-27" 
+                className="h-25 w-auto object-contain sm:h-25" 
               />
             ) : (
               <span className="text-2xl font-extrabold text-white tracking-tight">
@@ -94,7 +94,6 @@ export default function Header({ logoUrl, siteTitle }: HeaderProps) {
                   <img 
                     src={logoUrl} 
                     alt={`${displayTitle} logo`} 
-                    // Bumped mobile menu logo size up as well
                     className="h-14 w-auto object-contain sm:h-16" 
                   />
                 ) : (
