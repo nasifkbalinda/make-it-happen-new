@@ -4,7 +4,6 @@ import imageUrlBuilder, { type SanityImageSource } from "@sanity/image-url";
 import { createClient } from "next-sanity";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-export const runtime = "edge";
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
