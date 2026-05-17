@@ -11,36 +11,25 @@ const client = createClient({
 });
 
 export default async function Home() {
-  // 2. Fetch Homepage Hero & Stats Data
+  // 2. Fetch Homepage Data
   const homepageQuery = `*[_type == "homepage"][0]{
-    heroHeading,
-    heroSubheading,
-    "imageUrl": heroImage.asset->url,
-    stat1Label, stat1Value,
-    stat2Label, stat2Value,
-    stat3Label, stat3Value,
-    stat4Label, stat4Value
+    heroHeading, heroSubheading, "imageUrl": heroImage.asset->url,
+    primaryCtaText, primaryCtaLink, secondaryCtaText, secondaryCtaLink,
+    featuredProjectsKicker, featuredProjectsTitle, featuredProjectsDescription,
+    stat1Label, stat1Value, stat2Label, stat2Value,
+    stat3Label, stat3Value, stat4Label, stat4Value
   }`;
   const homepageData = await client.fetch(homepageQuery);
 
-  // 3. Fetch up to 4 Projects (Added slug and projectUrl for the links)
+  // 3. Fetch up to 4 Projects 
   const projectsQuery = `*[_type == "project"] | order(_createdAt desc)[0...4]{
-    _id,
-    title,
-    category,
-    "slug": slug.current,
-    projectUrl,
-    "imageUrl": mainImage.asset->url
+    _id, title, category, "slug": slug.current, projectUrl, "imageUrl": mainImage.asset->url
   }`;
   const projectsData = await client.fetch(projectsQuery);
 
   // 4. Fetch Top 3 Latest Blogs
   const blogsQuery = `*[_type == "post"] | order(publishedAt desc)[0...3]{
-    _id,
-    title,
-    "slug": slug.current,
-    publishedAt,
-    "imageUrl": mainImage.asset->url
+    _id, title, "slug": slug.current, publishedAt, "imageUrl": mainImage.asset->url
   }`;
   const blogsData = await client.fetch(blogsQuery);
 
@@ -70,7 +59,6 @@ export default async function Home() {
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <section className="max-w-4xl">
-            {/* Reduced heading size for a more premium, balanced look */}
             <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-5xl xl:text-[3.25rem] text-balance">
               {homepageData?.heroHeading || "Ship enterprise software faster."}
             </h1>
@@ -80,21 +68,18 @@ export default async function Home() {
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              {/* Tightened padding (px-7 py-3) to match the new typography scale */}
-              <button
-                type="button"
+              <Link
+                href={homepageData?.primaryCtaLink || "/contact"}
                 className="inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-7 py-3 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e8ff99]"
               >
-                Get Started
-                <span aria-hidden className="text-base leading-none">
-                  →
-                </span>
-              </button>
+                {homepageData?.primaryCtaText || "Get Started"}
+                <span aria-hidden className="text-base leading-none">→</span>
+              </Link>
               <Link
-                href="/about"
+                href={homepageData?.secondaryCtaLink || "/about"}
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-7 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/10"
               >
-                Learn more
+                {homepageData?.secondaryCtaText || "Learn more"}
               </Link>
             </div>
             <p className="mt-8 text-sm text-white/40">Typical response: just a moment.</p>
@@ -131,7 +116,6 @@ export default async function Home() {
               </p>
             </div>
           </div>
-
           <div className="md:pl-8">
             <p className="text-xs uppercase tracking-[0.15em] text-white/55">
               {homepageData?.stat4Label || "CLIENT RETENTION"}{" "}
@@ -164,12 +148,8 @@ export default async function Home() {
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-white/5 text-sm text-white/40">
-                    No image
-                  </div>
+                  <div className="flex h-full w-full items-center justify-center bg-white/5 text-sm text-white/40">No image</div>
                 )}
-
-                {/* Visit Project Button Overlay */}
                 <div className="absolute right-4 top-4 z-20 -translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                   {project.projectUrl ? (
                     <a
@@ -193,11 +173,8 @@ export default async function Home() {
                     </Link>
                   ) : null}
                 </div>
-
                 <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#0c1016]/95 via-[#0c1016]/50 to-transparent p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7FF65]">
-                    {project.category || "Project"}
-                  </p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7FF65]">{project.category || "Project"}</p>
                   <p className="mt-1 text-lg font-bold text-white">{project.title}</p>
                 </div>
               </div>
@@ -206,29 +183,24 @@ export default async function Home() {
 
           <div className="max-w-lg lg:pl-6">
             <p className="text-sm font-semibold uppercase tracking-widest text-[#D7FF65]">
-              Featured Case Studies
+              {homepageData?.featuredProjectsKicker || "Featured Case Studies"}
             </p>
-            <h2 className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl">
-              Proven Results
-              <br />
-              Across Diverse
-              <br />
-              Verticals.
+            {/* Added whitespace-pre-line so line breaks work perfectly */}
+            <h2 className="mt-4 whitespace-pre-line text-4xl font-bold leading-tight text-white sm:text-5xl">
+              {homepageData?.featuredProjectsTitle || "Proven Results\nAcross Diverse\nVerticals."}
             </h2>
             <p className="mt-6 text-base leading-relaxed text-white/60">
-              Explore our impactful solutions across diverse client verticals, from fintech to
-              e-commerce, delivering real value and innovation.
+              {homepageData?.featuredProjectsDescription || "Explore our impactful solutions across diverse client verticals, from fintech to e-commerce, delivering real value and innovation."}
             </p>
             
+            {/* Fixed Arrow Wrapping with flex-nowrap and shrink-0 */}
             <Link
               href="/projects"
-              className="group mt-10 inline-flex items-center gap-4 whitespace-nowrap text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
+              className="group mt-10 inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
             >
-              <span>See all</span>
-              <span aria-hidden className="block h-px w-12 bg-white/30 transition-all group-hover:w-16 group-hover:bg-[#D7FF65]" />
-              <span aria-hidden className="text-lg leading-none transition-transform group-hover:translate-x-1">
-                →
-              </span>
+              <span className="whitespace-nowrap">See all</span>
+              <span aria-hidden className="block h-px w-12 shrink-0 bg-white/30 transition-all group-hover:w-16 group-hover:bg-[#D7FF65]" />
+              <span aria-hidden className="shrink-0 text-lg leading-none transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
         </div>
@@ -242,15 +214,14 @@ export default async function Home() {
               <p className="text-sm font-semibold uppercase tracking-widest text-[#D7FF65]">Journal</p>
               <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">Latest Insights.</h2>
             </div>
+            {/* Fixed Arrow Wrapping here too! */}
             <Link
               href="/blog"
-              className="group inline-flex items-center gap-4 whitespace-nowrap text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
+              className="group inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
             >
-              <span>View all posts</span>
-              <span aria-hidden className="block h-px w-12 bg-white/30 transition-all group-hover:w-16 group-hover:bg-[#D7FF65]" />
-              <span aria-hidden className="text-lg leading-none transition-transform group-hover:translate-x-1">
-                →
-              </span>
+              <span className="whitespace-nowrap">View all posts</span>
+              <span aria-hidden className="block h-px w-12 shrink-0 bg-white/30 transition-all group-hover:w-16 group-hover:bg-[#D7FF65]" />
+              <span aria-hidden className="shrink-0 text-lg leading-none transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
 
@@ -269,18 +240,14 @@ export default async function Home() {
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-sm text-white/40">
-                      No image
-                    </div>
+                    <div className="flex h-full w-full items-center justify-center text-sm text-white/40">No image</div>
                   )}
                 </div>
                 <div className="flex flex-1 flex-col p-6 sm:p-7">
                   <div className="text-[11px] font-semibold uppercase tracking-widest text-white/50">
                     {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recent"}
                   </div>
-                  <h3 className="mt-3 text-xl font-bold leading-snug tracking-tight text-white">
-                    {post.title}
-                  </h3>
+                  <h3 className="mt-3 text-xl font-bold leading-snug tracking-tight text-white">{post.title}</h3>
                   <div className="mt-6 flex items-center gap-2 text-xs font-bold text-[#D7FF65]">
                     <span>Read more</span>
                     <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>

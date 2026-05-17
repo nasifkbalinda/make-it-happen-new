@@ -1,5 +1,6 @@
 import { createClient } from "next-sanity";
 import Link from "next/link";
+import Cta from "@/components/Cta"; // Imported the global CTA component
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -19,37 +20,42 @@ type BlogPost = {
 };
 
 export default async function BlogPage() {
-  const query = `*[_type == "post"] | order(publishedAt desc) {
-    _id,
-    title,
-    slug,
-    author,
-    publishedAt,
-    excerpt,
-    "imageUrl": mainImage.asset->url
-  }`;
-
-  const posts = await client.fetch<BlogPost[]>(query);
+  // Fetch Page Settings AND Blog Posts concurrently for maximum speed
+  const [pageData, posts] = await Promise.all([
+    client.fetch(`*[_type == "blogPage"][0]`),
+    client.fetch<BlogPost[]>(`*[_type == "post"] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      author,
+      publishedAt,
+      excerpt,
+      "imageUrl": mainImage.asset->url
+    }`)
+  ]);
 
   return (
-    // Removed the light gradient, letting the globals.css dark background show
-    <div className="flex min-h-screen w-full flex-col items-center pb-32 pt-24">
-      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14">
+    // The transparent wrapper lets globals.css dark background show through
+    <div className="flex min-h-screen w-full flex-col items-center">
+      {/* Matched the pt-32 pb-32 padding from the Services/Projects pages */}
+      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14 pt-32 pb-32">
         
-        {/* Header Section */}
+        {/* Dynamic Header Section */}
         <div className="relative mb-16 max-w-3xl">
           {/* Subtle neon glow behind the text */}
           <div
             className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-[#D7FF65]/5 blur-3xl"
             aria-hidden
           />
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#D7FF65]">Journal</p>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-            Insights &amp; ideas.
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#D7FF65]">
+            {pageData?.kicker || "Journal"}
+          </p>
+          {/* Matched typography scale: text-4xl sm:text-5xl lg:text-5xl */}
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
+            {pageData?.heading || "Insights & ideas."}
           </h1>
           <p className="mt-6 text-lg leading-relaxed text-white/60">
-            Notes on product, engineering, and how we ship ambitious work in the real world—no
-            fluff, just signal.
+            {pageData?.description || "Notes on product, engineering, and how we ship ambitious work in the real world—no fluff, just signal."}
           </p>
         </div>
 
@@ -140,6 +146,10 @@ export default async function BlogPage() {
           </div>
         )}
       </div>
+
+      {/* Global CTA Section Added at the bottom */}
+      <Cta />
+      
     </div>
   );
 }

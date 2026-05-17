@@ -2,23 +2,44 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname } from "next/navigation"; // 1. Import usePathname
+import { usePathname } from "next/navigation";
 
-export default function Header() {
+// Define the props we expect to receive from the server wrapper
+type HeaderProps = {
+  logoUrl?: string | null;
+  siteTitle?: string | null;
+};
+
+export default function Header({ logoUrl, siteTitle }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const pathname = usePathname(); // 2. Get the current URL path
+  const pathname = usePathname();
 
-  // 3. If we are on the admin page, don't render the header at all
   if (pathname?.startsWith("/admin")) {
     return null;
   }
 
+  // Fallback text if Sanity is empty
+  const defaultTitle = "Make It Happen";
+  const displayTitle = siteTitle || defaultTitle;
+
   return (
     <header className="absolute inset-x-0 top-0 z-50">
       <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-14" aria-label="Global">
+        
+        {/* Dynamic Logo Section */}
         <div className="flex lg:flex-1">
-          <Link href="/" className="-m-1.5 p-1.5 text-2xl font-extrabold text-white tracking-tight">
-            Make It Happen
+          <Link href="/" className="-m-1.5 p-1.5 flex items-center">
+            {logoUrl ? (
+              <img 
+                src={logoUrl} 
+                alt={`${displayTitle} logo`} 
+                className="h-8 w-auto object-contain" // Adjust h-8 (height) as needed for your specific logo
+              />
+            ) : (
+              <span className="text-2xl font-extrabold text-white tracking-tight">
+                {displayTitle}
+              </span>
+            )}
           </Link>
         </div>
         
@@ -65,9 +86,22 @@ export default function Header() {
           {/* Slide-out Menu */}
           <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#121821] px-6 py-6 sm:max-w-sm border-l border-white/10">
             <div className="flex items-center justify-between">
-              <Link href="/" className="-m-1.5 p-1.5 text-xl font-extrabold text-white" onClick={() => setIsMobileMenuOpen(false)}>
-                Make It Happen
+              
+              {/* Dynamic Logo Section (Mobile) */}
+              <Link href="/" className="-m-1.5 p-1.5 flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+                 {logoUrl ? (
+                  <img 
+                    src={logoUrl} 
+                    alt={`${displayTitle} logo`} 
+                    className="h-8 w-auto object-contain" 
+                  />
+                ) : (
+                  <span className="text-xl font-extrabold text-white">
+                    {displayTitle}
+                  </span>
+                )}
               </Link>
+
               <button
                 type="button"
                 className="-m-2.5 rounded-md p-2.5 text-white/70 hover:text-white"

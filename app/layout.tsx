@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
 
-import Header from "../components/Header";
+// 1. Updated import to bring in the Server Wrapper instead of the Client Header
+import HeaderWrapper from "../components/HeaderWrapper";
 import Footer from "../components/Footer";
 
 const manrope = Manrope({ subsets: ["latin"] });
@@ -29,8 +30,8 @@ export default function RootLayout({
           className="pointer-events-none fixed left-[-8%] top-[28%] -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.1)_0%,transparent_65%)] opacity-80 blur-[90px]"
         />
 
-        {/* 2. Snap the Header in right here! */}
-        <Header />
+        {/* 2. Render the new Server Wrapper here! */}
+        <HeaderWrapper />
 
         <div className="relative z-10 min-h-screen">
           {children}
