@@ -5,6 +5,10 @@ import Cta from "@/components/Cta";
 
 // --- SEO METADATA ---
 export const metadata: Metadata = {
+  metadataBase: new URL('https://makeithappen.ug'),
+  alternates: {
+    canonical: '/',
+  },
   title: "Make It Happen | Software, Web Design & AI Automation Uganda",
   description: "Elite tech agency in Kampala. We engineer custom software, premium web design, AI integrations, business automation, and data-driven digital marketing.",
   keywords: [
@@ -39,6 +43,9 @@ export const metadata: Metadata = {
     images: ["https://makeithappen.ug/og-image.png"],
   },
 };
+
+// Enables Next.js ISR: Checks Sanity for new content every 60 seconds automatically
+export const revalidate = 60;
 
 // 1. Establish connection to Sanity
 const client = createClient({

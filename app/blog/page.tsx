@@ -2,6 +2,8 @@ import { createClient } from "next-sanity";
 import Link from "next/link";
 import Cta from "@/components/Cta"; // Imported the global CTA component
 
+export const revalidate = 60;
+
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: "production",
