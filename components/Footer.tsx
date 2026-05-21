@@ -72,22 +72,22 @@ export default async function Footer() {
   const socialLinks = data?.socialLinks?.filter((l) => l?.url && l?.platform) ?? [];
 
   return (
-    // Removed the light background, using a subtle white/10 top border
     <footer className="relative z-20 w-full border-t border-white/10">
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:px-10 lg:px-14">
         <div className="grid gap-10 md:grid-cols-4 md:gap-8">
           <div className="flex flex-col gap-4">
-            <Link
-              href="/"
-              className="text-xl font-bold tracking-tight text-white transition-colors hover:text-[#D7FF65]"
-            >
-              Make It Happen
+            <Link href="/" className="inline-block">
+              <img 
+                src="/icon.png" 
+                alt="Make It Happen Logo" 
+                className="h-12 w-auto"
+              />
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-white/60">{companyText}</p>
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-white">Quick Links</p>
+            <p className="text-sm font-semibold text-[#D7FF65]">Quick Links</p>
             <ul className="mt-4 flex flex-col gap-3">
               {quickLinks.map((item) => (
                 <li key={item.href + item.label}>
@@ -103,7 +103,7 @@ export default async function Footer() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-white">Services</p>
+            <p className="text-sm font-semibold text-[#D7FF65]">Services</p>
             <ul className="mt-4 flex flex-col gap-3">
               {serviceLinks.map((item) => (
                 <li key={item.label}>
@@ -119,7 +119,7 @@ export default async function Footer() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-white">Contact</p>
+            <p className="text-sm font-semibold text-[#D7FF65]">Contact</p>
             <ul className="mt-4 flex flex-col gap-3 text-sm text-white/70">
               <li>
                 <a href={`mailto:${email}`} className="transition-colors hover:text-[#D7FF65]">
@@ -146,7 +146,6 @@ export default async function Footer() {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      // Glassmorphic dark social icons
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-[#D7FF65] hover:text-[#D7FF65]"
                       aria-label={link.platform}
                     >
@@ -160,7 +159,7 @@ export default async function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-white/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>Copyright 2026 Make It Happen. All rights reserved.</p>
+          <p>Copyright {new Date().getFullYear()} Make It Happen. All rights reserved.</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             <Link href="/privacy" className="transition-colors hover:text-[#D7FF65]">
               Privacy Policy
