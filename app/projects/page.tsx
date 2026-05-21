@@ -2,6 +2,8 @@ import { createClient } from "next-sanity";
 import ProjectGallery from "@/components/ProjectGallery";
 import Cta from "@/components/Cta";
 
+export const dynamic = "force-dynamic";
+
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: "production",
