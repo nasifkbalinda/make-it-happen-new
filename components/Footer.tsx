@@ -18,20 +18,31 @@ const client = createClient({
   useCdn: false,
 });
 
-const footerQuery = `*[_type == "footer" && _id == "footer"][0]{
-  companyText,
-  email,
-  phone,
-  location,
-  socialLinks[]{ platform, url }
+// UPGRADED QUERY: Fetches both the footer data AND the global site logo in one go!
+const footerQuery = `{
+  "footer": *[_type == "footer" && _id == "footer"][0]{
+    companyText,
+    email,
+    phone,
+    location,
+    socialLinks[]{ platform, url }
+  },
+  "settings": *[_type == "siteSettings" || _id == "siteSettings"][0]{
+    "logoUrl": coalesce(siteLogo.asset->url, logo.asset->url)
+  }
 }`;
 
-type FooterDoc = {
-  companyText: string | null;
-  email: string | null;
-  phone: string | null;
-  location: string | null;
-  socialLinks: { platform: string; url: string }[] | null;
+type FooterData = {
+  footer: {
+    companyText: string | null;
+    email: string | null;
+    phone: string | null;
+    location: string | null;
+    socialLinks: { platform: string; url: string }[] | null;
+  } | null;
+  settings: {
+    logoUrl: string | null;
+  } | null;
 };
 
 const quickLinks = [
@@ -61,15 +72,19 @@ function iconForPlatform(platform: string): IconType {
 }
 
 export default async function Footer() {
-  const data = await client.fetch<FooterDoc | null>(footerQuery);
+  const data = await client.fetch<FooterData | null>(footerQuery);
 
+  // Extract data safely from the new query structure
   const companyText =
-    data?.companyText ??
+    data?.footer?.companyText ??
     "We design and ship digital products that help ambitious teams move faster.";
-  const email = data?.email ?? "hello@makeithappen.example";
-  const phone = data?.phone ?? "+1 (555) 000-0000";
-  const location = data?.location ?? "Remote-first";
-  const socialLinks = data?.socialLinks?.filter((l) => l?.url && l?.platform) ?? [];
+  const email = data?.footer?.email ?? "hello@makeithappen.example";
+  const phone = data?.footer?.phone ?? "+1 (555) 000-0000";
+  const location = data?.footer?.location ?? "Remote-first";
+  const socialLinks = data?.footer?.socialLinks?.filter((l) => l?.url && l?.platform) ?? [];
+  
+  // Get the dynamic logo from Sanity, fallback to local icon if not found
+  const logoUrl = data?.settings?.logoUrl ?? "/icon.png";
 
   return (
     <footer className="relative z-20 w-full border-t border-white/10">
@@ -77,10 +92,11 @@ export default async function Footer() {
         <div className="grid gap-10 md:grid-cols-4 md:gap-8">
           <div className="flex flex-col gap-4">
             <Link href="/" className="inline-block">
+              {/* DYNAMIC LOGO INJECTED HERE */}
               <img 
-                src="/icon.png" 
+                src={logoUrl} 
                 alt="Make It Happen Logo" 
-                className="h-12 w-auto"
+                className="h-12 w-auto object-contain"
               />
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-white/60">{companyText}</p>
