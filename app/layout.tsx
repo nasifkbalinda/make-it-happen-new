@@ -1,3 +1,4 @@
+import Script from 'next/script'
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import "./globals.css";
@@ -38,7 +39,13 @@ export default function RootLayout({
         </div>
 
         <Footer />
-
+        
+        {/* Talk 2 Me Live Chat Widget */}
+        <Script id="talk-2-me-init" strategy="beforeInteractive">
+          {`window.LIVECHAT_WORKSPACE_ID = "6f06fdf7-be9b-4b7d-9ad5-fd0a5bb53665";`}
+        </Script>
+        <Script src="https://talk-to-me.live/embed.js" strategy="lazyOnload" />
+        
       </body>
     </html>
   );
