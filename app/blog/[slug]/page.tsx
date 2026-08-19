@@ -4,6 +4,7 @@ import imageUrlBuilder, { type SanityImageSource } from "@sanity/image-url";
 import { createClient } from "next-sanity";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next"; // 1. Added this import for Next.js SEO
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -31,6 +32,40 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
+// 2. THE NEW INVISIBLE LAYER: This generates the custom WhatsApp/Twitter preview
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  // We ask Sanity specifically for the title and image of THIS exact post
+  const query = `*[_type == "post" && slug.current == $slug][0]{
+    title,
+    "imageUrl": mainImage.asset->url
+  }`;
+
+  const post = await client.fetch<{ title: string; imageUrl: string } | null>(query, { slug });
+
+  if (!post) {
+    return { title: "Post Not Found" };
+  }
+
+  return {
+    title: `${post.title} | Make It Happen Journal`,
+    description: `Read the latest insights on ${post.title} from the Make It Happen tech team in Kampala.`,
+    openGraph: {
+      title: post.title,
+      description: `Read the latest insights on ${post.title} from the Make It Happen tech team in Kampala.`,
+      images: post.imageUrl ? [{ url: post.imageUrl }] : [], // Injects the actual blog cover image!
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      images: post.imageUrl ? [post.imageUrl] : [],
+    },
+  };
+}
+
+// 3. YOUR FLAWLESS VISUAL LAYER: Unchanged!
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
 
@@ -59,11 +94,9 @@ export default async function BlogPostPage({ params }: PageProps) {
       : null;
 
   return (
-    // Transparent wrapper so global dark mode shows through
     <div className="flex w-full flex-col items-center">
       <article className="min-h-screen w-full max-w-3xl px-6 pb-32 pt-24 sm:px-10 lg:px-8">
         
-        {/* Neon Back Link */}
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm font-semibold text-[#D7FF65] transition hover:text-[#e8ff99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D7FF65]"
@@ -87,7 +120,6 @@ export default async function BlogPostPage({ params }: PageProps) {
           </h1>
         </header>
 
-        {/* Premium Dark Image Container */}
         <div className="relative mt-10 aspect-video w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#121821]">
           {post.imageUrl ? (
             <img
@@ -102,7 +134,6 @@ export default async function BlogPostPage({ params }: PageProps) {
           )}
         </div>
 
-        {/* Prose (Rich Text) configured for dark mode (prose-invert) and neon links */}
         <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-white/80 prose-a:text-[#D7FF65] prose-strong:text-white mt-10">
           <PortableText
             value={post.body ?? []}
