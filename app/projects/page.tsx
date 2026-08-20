@@ -15,7 +15,9 @@ export default async function ProjectsPage() {
   // Fetch Page Settings AND Projects concurrently
   const [pageData, projects] = await Promise.all([
     client.fetch(`*[_type == "projectsPage"][0]`),
-    client.fetch(`*[_type == "project"] | order(_createdAt desc){
+    
+    // NEW RULE: Go to the projectsPage, get the projectList, and follow the arrows (->) to get the data!
+    client.fetch(`*[_type == "projectsPage"][0].projectList[]->{
       _id, title, category, description, "slug": slug.current, projectUrl, "imageUrl": mainImage.asset->url
     }`)
   ]);
