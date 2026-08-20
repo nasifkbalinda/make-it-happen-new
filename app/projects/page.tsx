@@ -12,15 +12,19 @@ const client = createClient({
 });
 
 export default async function ProjectsPage() {
-  // Fetch Page Settings AND Projects concurrently
+  // 1. Fetch Page Settings AND Projects concurrently
   const [pageData, projects] = await Promise.all([
-    client.fetch(`*[_type == "projectsPage"][0]`),
+    // DJ Rule 1: Find the specific document that actually has the heading text
+    client.fetch(`*[_type == "projectsPage" && defined(heading)][0]`),
     
-    // NEW RULE: Go to the projectsPage, get the projectList, and follow the arrows (->) to get the data!
-    client.fetch(`*[_type == "projectsPage"][0].projectList[]->{
+    // DJ Rule 2: Find the specific document that actually has the playlist, and follow the links!
+    client.fetch(`*[_type == "projectsPage" && defined(projectList)][0].projectList[]->{
       _id, title, category, description, "slug": slug.current, projectUrl, "imageUrl": mainImage.asset->url
     }`)
   ]);
+
+  // 2. THE SAFETY NET: If 'projects' is null, give it an empty list [] so it never crashes!
+  const safeProjects = projects || [];
 
   return (
     <div className="flex w-full flex-col items-center">
@@ -39,7 +43,8 @@ export default async function ProjectsPage() {
           </p>
         </div>
 
-        <ProjectGallery projects={projects} />
+        {/* 3. Feed the gallery our safe, crash-proof list */}
+        <ProjectGallery projects={safeProjects} />
       </div>
       <Cta />
     </div>
