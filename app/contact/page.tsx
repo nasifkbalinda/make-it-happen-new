@@ -1,7 +1,8 @@
 import { createClient } from "next-sanity";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react"; 
 import type { LucideIcon } from "lucide-react";
-import ContactForm from "@/components/ContactForm";
+// 1. We import the official WhatsApp icon from the library we used in the footer
+import { FaWhatsapp } from "react-icons/fa6"; 
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -40,21 +41,20 @@ function GlassOrb({ icon: Icon }: { icon: LucideIcon }) {
 export default async function ContactPage() {
   const data = await client.fetch<ContactDoc | null>(contactQuery);
 
-  const heading = data?.heading ?? "Let’s talk";
+  const heading = data?.heading ?? "Let's Build Something Great";
   const subheading =
     data?.subheading ??
-    "Share a few details and we’ll get back to you with next steps.";
-  const email = data?.email ?? "hello@makeithappen.example";
-  const phone = data?.phone ?? "+1 (555) 000-0000";
-  const address =
-    data?.address ?? "Remote-first · Worldwide";
+    "Have a project in mind? We'd love to hear about it. Drop us a message and we'll get back to you within 24 hours.";
+  const email = data?.email ?? "hello@makeithappen.ug";
+  const phone = data?.phone ?? "+256 790 879 117";
+  const address = data?.address ?? "Kampala, Uganda";
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pb-32 pt-32 sm:px-10 lg:px-14">
       <div className="grid gap-16 md:grid-cols-2 md:items-start">
+        
+        {/* Left Side: Traditional Contact Info */}
         <section className="flex flex-col gap-10">
-          
-          {/* Synced Page Header */}
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
               Contact Us
@@ -110,15 +110,31 @@ export default async function ContactPage() {
           </ul>
         </section>
 
-        <section className="rounded-[2rem] border border-white/10 bg-[#111720] p-8">
-          <h2 className="text-lg font-semibold text-white">Send a message</h2>
-          <p className="mt-1 text-sm text-white/50">
-            We usually reply within one business day.
-          </p>
-          <div className="mt-8">
-            <ContactForm />
+ {/* Right Side: The VIP WhatsApp Card */}
+ <section className="flex flex-col items-center justify-center rounded-[2rem] border border-white/10 bg-[#111720] p-10 text-center shadow-2xl md:p-14 mt-8">
+          
+          {/* UPDATED: Official WhatsApp Green (#25D366) with a 10% opacity background */}
+          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#25D366]/10 text-[#25D366]">
+            <FaWhatsapp className="h-10 w-10" />
           </div>
+          
+          <h2 className="text-2xl font-bold text-white">Need an instant reply?</h2>
+          <p className="mt-4 text-base leading-relaxed text-white/60">
+            Chat directly with our tech team on WhatsApp to get your project moving today.
+          </p>
+          
+          {/* UPDATED: Removed the hover:shadow tags to kill the glow, keeping it clean and solid */}
+          <a 
+            href="https://wa.me/256790879117" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-8 py-4 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-1 hover:bg-white"
+          >
+            Chat on WhatsApp
+            <span aria-hidden className="text-lg leading-none">→</span>
+          </a>
         </section>
+
       </div>
     </div>
   );
