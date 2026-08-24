@@ -1,6 +1,7 @@
 import Script from 'next/script'
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google"; // <-- NEW: Imported Google Analytics
 import "./globals.css";
 
 // 1. Updated import to bring in the Server Wrapper instead of the Client Header
@@ -46,6 +47,8 @@ export default function RootLayout({
         </Script>
         <Script src="https://talk-to-me.live/embed.js" strategy="lazyOnload" />
         
+        {/* NEW: GOOGLE ANALYTICS SCRIPT */}
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-LX9GVERQF8"} />
       </body>
     </html>
   );
