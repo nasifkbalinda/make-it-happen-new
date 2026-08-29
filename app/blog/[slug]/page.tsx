@@ -36,30 +36,38 @@ type PageProps = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  // We ask Sanity specifically for the title and image of THIS exact post
+  // NEW: We updated the query to explicitly ask Sanity for the 'excerpt' field!
   const query = `*[_type == "post" && slug.current == $slug][0]{
     title,
+    excerpt, 
     "imageUrl": mainImage.asset->url
   }`;
 
-  const post = await client.fetch<{ title: string; imageUrl: string } | null>(query, { slug });
+  // NEW: We updated the TypeScript definition so it knows to expect an optional excerpt
+  const post = await client.fetch<{ title: string; excerpt?: string; imageUrl: string } | null>(query, { slug });
 
   if (!post) {
     return { title: "Post Not Found" };
   }
 
+  // NEW: THE LOGIC SWITCH
+  // If the post has a custom excerpt in Sanity, use it. 
+  // If the excerpt is blank, fall back to our generic sentence.
+  const customDescription = post.excerpt || `Read the latest insights on ${post.title} from the Make It Happen tech team in Kampala.`;
+
   return {
     title: `${post.title} | Make It Happen Journal`,
-    description: `Read the latest insights on ${post.title} from the Make It Happen tech team in Kampala.`,
+    description: customDescription,
     openGraph: {
       title: post.title,
-      description: `Read the latest insights on ${post.title} from the Make It Happen tech team in Kampala.`,
+      description: customDescription,
       images: post.imageUrl ? [{ url: post.imageUrl }] : [], // Injects the actual blog cover image!
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
+      description: customDescription,
       images: post.imageUrl ? [post.imageUrl] : [],
     },
   };
