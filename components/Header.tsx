@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import SocialLinks, { type SocialLinkItem } from "./SocialLinks";
 
 // Define the props we expect to receive from the server wrapper
 type HeaderProps = {
   logoUrl?: string | null;
   siteTitle?: string | null;
+  socialLinks?: SocialLinkItem[] | null;
 };
 
-export default function Header({ logoUrl, siteTitle }: HeaderProps) {
+export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -131,6 +133,7 @@ export default function Header({ logoUrl, siteTitle }: HeaderProps) {
                   >
                     Contact Us
                   </Link>
+                  <SocialLinks links={socialLinks} size="md" className="mt-6 justify-center" />
                 </div>
               </div>
             </div>

@@ -3,6 +3,10 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 // 1. We import the official WhatsApp icon from the library we used in the footer
 import { FaWhatsapp } from "react-icons/fa6"; 
+import SocialLinks, {
+  type SocialLinkItem,
+  socialLinksProjection,
+} from "@/components/SocialLinks";
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -11,20 +15,28 @@ const client = createClient({
   useCdn: false,
 });
 
-const contactQuery = `*[_type == "contact" && _id == "contact"][0]{
-  heading,
-  subheading,
-  email,
-  phone,
-  address
+const contactQuery = `{
+  "contact": *[_type == "contact" && _id == "contact"][0]{
+    heading,
+    subheading,
+    email,
+    phone,
+    address
+  },
+  "settings": *[_type == "siteSettings"][0]{ ${socialLinksProjection} }
 }`;
 
-type ContactDoc = {
-  heading: string | null;
-  subheading: string | null;
-  email: string | null;
-  phone: string | null;
-  address: string | null;
+type ContactData = {
+  contact: {
+    heading: string | null;
+    subheading: string | null;
+    email: string | null;
+    phone: string | null;
+    address: string | null;
+  } | null;
+  settings: {
+    socialLinks: SocialLinkItem[] | null;
+  } | null;
 };
 
 function GlassOrb({ icon: Icon }: { icon: LucideIcon }) {
@@ -39,15 +51,16 @@ function GlassOrb({ icon: Icon }: { icon: LucideIcon }) {
 }
 
 export default async function ContactPage() {
-  const data = await client.fetch<ContactDoc | null>(contactQuery);
+  const data = await client.fetch<ContactData | null>(contactQuery);
 
-  const heading = data?.heading ?? "Let's Build Something Great";
+  const heading = data?.contact?.heading ?? "Let's Build Something Great";
   const subheading =
-    data?.subheading ??
+    data?.contact?.subheading ??
     "Have a project in mind? We'd love to hear about it. Drop us a message and we'll get back to you within 24 hours.";
-  const email = data?.email ?? "hello@makeithappen.ug";
-  const phone = data?.phone ?? "+256 790 879 117";
-  const address = data?.address ?? "Kampala, Uganda";
+  const email = data?.contact?.email ?? "hello@makeithappen.ug";
+  const phone = data?.contact?.phone ?? "+256 790 879 117";
+  const address = data?.contact?.address ?? "Kampala, Uganda";
+  const socialLinks = data?.settings?.socialLinks ?? [];
 
   return (
     <div className="mx-auto w-full max-w-7xl px-6 pb-32 pt-32 sm:px-10 lg:px-14">
@@ -108,6 +121,15 @@ export default async function ContactPage() {
               </div>
             </li>
           </ul>
+
+          {socialLinks.length > 0 ? (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
+                Follow us
+              </p>
+              <SocialLinks links={socialLinks} size="lg" className="mt-4" />
+            </div>
+          ) : null}
         </section>
 
  {/* Right Side: The VIP WhatsApp Card */}
