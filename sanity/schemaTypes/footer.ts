@@ -31,33 +31,12 @@ export const footer = defineType({
     }),
     defineField({
       name: 'socialLinks',
-      title: 'Social links',
+      title: 'Social links (legacy)',
       type: 'array',
-      of: [
-        defineArrayMember({
-          type: 'object',
-          name: 'socialLink',
-          title: 'Social link',
-          fields: [
-            defineField({
-              name: 'platform',
-              title: 'Platform',
-              type: 'string',
-              description: 'e.g. LinkedIn, X, GitHub',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'url',
-              title: 'URL',
-              type: 'url',
-              validation: (Rule) => Rule.required().uri({ allowRelative: false, scheme: ['http', 'https'] }),
-            }),
-          ],
-          preview: {
-            select: { title: 'platform', subtitle: 'url' },
-          },
-        }),
-      ],
+      description:
+        'Deprecated — manage social media under Global Site Settings → Social Media. Links kept here are still shown if Global Site Settings has none.',
+      of: [defineArrayMember({ type: 'socialLink' })],
+      readOnly: true,
     }),
   ],
 })

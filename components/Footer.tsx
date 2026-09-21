@@ -1,15 +1,9 @@
 import Link from "next/link";
 import { createClient } from "next-sanity";
-import type { IconType } from "react-icons";
-import {
-  FaFacebook,
-  FaGithub,
-  FaInstagram,
-  FaLinkedin,
-  FaLink,
-  FaXTwitter,
-  FaYoutube,
-} from "react-icons/fa6";
+import SocialLinks, {
+  type SocialLinkItem,
+  socialLinksProjection,
+} from "./SocialLinks";
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -25,10 +19,11 @@ const footerQuery = `{
     email,
     phone,
     location,
-    socialLinks[]{ platform, url }
+    ${socialLinksProjection}
   },
   "settings": *[_type == "siteSettings" || _id == "siteSettings"][0]{
-    "logoUrl": coalesce(siteLogo.asset->url, logo.asset->url)
+    "logoUrl": coalesce(siteLogo.asset->url, logo.asset->url),
+    ${socialLinksProjection}
   }
 }`;
 
@@ -38,10 +33,11 @@ type FooterData = {
     email: string | null;
     phone: string | null;
     location: string | null;
-    socialLinks: { platform: string; url: string }[] | null;
+    socialLinks: SocialLinkItem[] | null;
   } | null;
   settings: {
     logoUrl: string | null;
+    socialLinks: SocialLinkItem[] | null;
   } | null;
 };
 
@@ -60,17 +56,6 @@ const serviceLinks = [
   { label: "AI Automation", href: "/services" },
 ] as const;
 
-function iconForPlatform(platform: string): IconType {
-  const p = platform.trim().toLowerCase();
-  if (p.includes("facebook")) return FaFacebook;
-  if (p.includes("instagram")) return FaInstagram;
-  if (p.includes("linkedin")) return FaLinkedin;
-  if (p.includes("youtube")) return FaYoutube;
-  if (p.includes("github")) return FaGithub;
-  if (p === "x" || p.includes("twitter")) return FaXTwitter;
-  return FaLink;
-}
-
 export default async function Footer() {
   const data = await client.fetch<FooterData | null>(footerQuery);
 
@@ -81,7 +66,10 @@ export default async function Footer() {
   const email = data?.footer?.email ?? "hello@makeithappen.example";
   const phone = data?.footer?.phone ?? "+1 (555) 000-0000";
   const location = data?.footer?.location ?? "Remote-first";
-  const socialLinks = data?.footer?.socialLinks?.filter((l) => l?.url && l?.platform) ?? [];
+  // Global Site Settings is the source of truth; the footer's legacy field is the fallback.
+  const socialLinks = data?.settings?.socialLinks?.length
+    ? data.settings.socialLinks
+    : data?.footer?.socialLinks ?? [];
   
   // Get the dynamic logo from Sanity, fallback to local icon if not found
   const logoUrl = data?.settings?.logoUrl ?? "/icon.png";
@@ -152,25 +140,7 @@ export default async function Footer() {
               </li>
               <li className="text-white/50">{location}</li>
             </ul>
-            {socialLinks.length > 0 ? (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {socialLinks.map((link, index) => {
-                  const Icon = iconForPlatform(link.platform);
-                  return (
-                    <a
-                      key={`${link.url}-${index}`}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-[#D7FF65] hover:text-[#D7FF65]"
-                      aria-label={link.platform}
-                    >
-                      <Icon className="h-4 w-4" aria-hidden />
-                    </a>
-                  );
-                })}
-              </div>
-            ) : null}
+            <SocialLinks links={socialLinks} size="md" className="mt-6" />
           </div>
         </div>
 

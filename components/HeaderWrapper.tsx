@@ -1,5 +1,6 @@
 import { createClient } from "next-sanity";
 import Header from "./Header";
+import { socialLinksProjection } from "./SocialLinks";
 
 // Connect to Sanity
 const client = createClient({
@@ -13,7 +14,8 @@ export default async function HeaderWrapper() {
   // Fetch the Site Settings document we just created
   const query = `*[_type == "siteSettings"][0]{
     siteTitle,
-    "logoUrl": logo.asset->url
+    "logoUrl": logo.asset->url,
+    ${socialLinksProjection}
   }`;
   
   const settings = await client.fetch(query);
@@ -23,6 +25,7 @@ export default async function HeaderWrapper() {
     <Header 
       logoUrl={settings?.logoUrl} 
       siteTitle={settings?.siteTitle} 
+      socialLinks={settings?.socialLinks}
     />
   );
 }
