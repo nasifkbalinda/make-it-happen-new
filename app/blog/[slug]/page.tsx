@@ -20,6 +20,32 @@ function urlForImage(source: SanityImageSource) {
   return imageUrlBuilder({ projectId, dataset: "production" }).image(source).url();
 }
 
+const SITE_URL = "https://makeithappen.ug";
+const FALLBACK_OG_IMAGE = `${SITE_URL}/og-image.png`;
+
+/**
+ * Social crawlers reject oversized preview images — WhatsApp in particular
+ * silently falls back to the site icon rather than showing anything. Our
+ * uploads are full-resolution PNGs (several megabytes each), so never hand the
+ * raw asset URL to og:image. Ask the Sanity CDN for a 1200x630 JPEG instead,
+ * which is the standard OG size and lands in the low hundreds of kilobytes.
+ *
+ * JPEG is requested explicitly rather than via auto=format: crawlers do not
+ * reliably send an Accept header advertising WebP, and a WebP preview is not
+ * universally supported by them either.
+ */
+function ogImageUrl(source: SanityImageSource | null | undefined) {
+  if (!projectId || !source) return null;
+  return imageUrlBuilder({ projectId, dataset: "production" })
+    .image(source)
+    .width(1200)
+    .height(630)
+    .fit("crop")
+    .format("jpg")
+    .quality(80)
+    .url();
+}
+
 type BlogPostDetail = {
   title: string | null;
   "imageUrl": string | null;
@@ -39,12 +65,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // NEW: We updated the query to explicitly ask Sanity for the 'excerpt' field!
   const query = `*[_type == "post" && slug.current == $slug][0]{
     title,
-    excerpt, 
-    "imageUrl": mainImage.asset->url
+    excerpt,
+    mainImage
   }`;
 
   // NEW: We updated the TypeScript definition so it knows to expect an optional excerpt
-  const post = await client.fetch<{ title: string; excerpt?: string; imageUrl: string } | null>(query, { slug });
+  const post = await client.fetch<{
+    title: string;
+    excerpt?: string;
+    mainImage?: SanityImageSource;
+  } | null>(query, { slug });
 
   if (!post) {
     return { title: "Post Not Found" };
@@ -55,20 +85,38 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // If the excerpt is blank, fall back to our generic sentence.
   const customDescription = post.excerpt || `Read the latest insights on ${post.title} from the Make It Happen tech team in Kampala.`;
 
+  // An empty images array leaves crawlers to guess, and they pick the favicon.
+  // Always give them something correctly sized.
+  const previewImage = ogImageUrl(post.mainImage) ?? FALLBACK_OG_IMAGE;
+
   return {
+    metadataBase: new URL(SITE_URL),
     title: `${post.title} | Make It Happen Journal`,
     description: customDescription,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
     openGraph: {
       title: post.title,
       description: customDescription,
-      images: post.imageUrl ? [{ url: post.imageUrl }] : [], // Injects the actual blog cover image!
+      url: `${SITE_URL}/blog/${slug}`,
+      siteName: "Make It Happen",
+      images: [
+        {
+          url: previewImage,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      locale: "en_UG",
       type: "article",
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: customDescription,
-      images: post.imageUrl ? [post.imageUrl] : [],
+      images: [previewImage],
     },
   };
 }
