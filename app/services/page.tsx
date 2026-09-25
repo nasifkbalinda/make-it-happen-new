@@ -42,7 +42,7 @@ export default async function ServicesPage() {
         
         {/* Dynamic Header Section */}
         <div className="mb-14 max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
             {pageData?.kicker || "Services"}
           </p>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
@@ -60,7 +60,7 @@ export default async function ServicesPage() {
               {service.imageUrl ? (
                 <img src={service.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" />
               ) : (
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(215,255,101,0.12),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.06),transparent_50%)]" aria-hidden />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,color-mix(in_srgb,var(--accent-primary)_12%,transparent),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.06),transparent_50%)]" aria-hidden />
               )}
               <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19] via-[#0B0F19]/90 to-[#0B0F19]/30" aria-hidden />
               
@@ -72,7 +72,7 @@ export default async function ServicesPage() {
                     <ul className="mt-6 space-y-3">
                       {service.features.filter((f) => f && f.trim().length > 0).map((feature, index) => (
                         <li key={`${service._id}-feature-${index}`} className="flex items-start gap-3 text-left text-sm text-white/85 sm:text-[15px]">
-                          <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#D7FF65]/15 text-[#D7FF65]">
+                          <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-primary/15 text-accent-primary">
                             <CheckIcon className="h-3 w-3" />
                           </span>
                           <span className="leading-snug">{feature}</span>
@@ -82,7 +82,7 @@ export default async function ServicesPage() {
                   )}
                 </div>
                 <div className="mt-8 flex justify-start">
-                  <Link href="/contact" className="inline-flex items-center justify-center rounded-full bg-[#D7FF65] px-7 py-3 text-sm font-semibold text-[#0B0F19] transition hover:bg-[#e8ff99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D7FF65]">
+                  <Link href="/contact" className="inline-flex items-center justify-center rounded-full bg-accent-primary px-7 py-3 text-sm font-semibold text-[#0B0F19] transition hover:bg-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-primary">
                     Get Started
                   </Link>
                 </div>

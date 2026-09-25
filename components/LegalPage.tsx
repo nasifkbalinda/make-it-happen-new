@@ -72,7 +72,7 @@ export default async function LegalPage({
 
   return (
     <div className="mx-auto w-full max-w-3xl px-6 pb-32 pt-32 sm:px-10">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
         Legal
       </p>
       <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
@@ -86,7 +86,7 @@ export default async function LegalPage({
       ) : null}
 
       {hasBody ? (
-        <div className="prose prose-invert prose-lg mt-12 max-w-none prose-headings:text-white prose-p:text-white/80 prose-li:text-white/80 prose-a:text-[#D7FF65] prose-strong:text-white">
+        <div className="prose prose-invert prose-lg mt-12 max-w-none prose-headings:text-white prose-p:text-white/80 prose-li:text-white/80 prose-a:text-accent-primary prose-strong:text-white">
           <PortableText value={doc!.body as PortableTextBlock[]} />
         </div>
       ) : (
@@ -97,7 +97,7 @@ export default async function LegalPage({
           </p>
           <Link
             href="/contact"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-7 py-3 text-sm font-bold text-[#111720] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[#e8ff99]"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent-primary px-7 py-3 text-sm font-bold text-[#111720] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-accent-hover"
           >
             Contact us
             <span aria-hidden className="text-lg leading-none">→</span>

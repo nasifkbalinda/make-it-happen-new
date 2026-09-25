@@ -91,13 +91,13 @@ export default async function Footer() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-[#D7FF65]">Quick Links</p>
+            <p className="text-sm font-semibold text-accent-primary">Quick Links</p>
             <ul className="mt-4 flex flex-col gap-3">
               {quickLinks.map((item) => (
                 <li key={item.href + item.label}>
                   <Link
                     href={item.href}
-                    className="text-sm text-white/70 transition-colors hover:text-[#D7FF65]"
+                    className="text-sm text-white/70 transition-colors hover:text-accent-primary"
                   >
                     {item.label}
                   </Link>
@@ -107,13 +107,13 @@ export default async function Footer() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-[#D7FF65]">Services</p>
+            <p className="text-sm font-semibold text-accent-primary">Services</p>
             <ul className="mt-4 flex flex-col gap-3">
               {serviceLinks.map((item) => (
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    className="text-sm text-white/70 transition-colors hover:text-[#D7FF65]"
+                    className="text-sm text-white/70 transition-colors hover:text-accent-primary"
                   >
                     {item.label}
                   </Link>
@@ -123,17 +123,17 @@ export default async function Footer() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-[#D7FF65]">Contact</p>
+            <p className="text-sm font-semibold text-accent-primary">Contact</p>
             <ul className="mt-4 flex flex-col gap-3 text-sm text-white/70">
               <li>
-                <a href={`mailto:${email}`} className="transition-colors hover:text-[#D7FF65]">
+                <a href={`mailto:${email}`} className="transition-colors hover:text-accent-primary">
                   {email}
                 </a>
               </li>
               <li>
                 <a
                   href={`tel:${phone.replace(/\s/g, "")}`}
-                  className="transition-colors hover:text-[#D7FF65]"
+                  className="transition-colors hover:text-accent-primary"
                 >
                   {phone}
                 </a>
@@ -147,10 +147,10 @@ export default async function Footer() {
         <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-white/50 sm:flex-row sm:items-center sm:justify-between">
           <p>Copyright {new Date().getFullYear()} Make It Happen. All rights reserved.</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <Link href="/privacy" className="transition-colors hover:text-[#D7FF65]">
+            <Link href="/privacy" className="transition-colors hover:text-accent-primary">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="transition-colors hover:text-[#D7FF65]">
+            <Link href="/terms" className="transition-colors hover:text-accent-primary">
               Terms
             </Link>
           </div>

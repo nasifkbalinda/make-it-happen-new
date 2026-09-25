@@ -54,11 +54,11 @@ export default function RootLayout({
       <body className={`${manrope.className} bg-white text-black antialiased`}>
         <div
           aria-hidden
-          className="pointer-events-none fixed right-[-5%] top-[-8%] -z-10 h-[min(520px,50vw)] w-[min(520px,50vw)] rounded-full bg-[radial-gradient(circle,rgba(79,70,229,0.14)_0%,rgba(79,70,229,0.04)_45%,transparent_70%)] blur-[100px]"
+          className="pointer-events-none fixed right-[-5%] top-[-8%] -z-10 h-[min(520px,50vw)] w-[min(520px,50vw)] rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent-primary)_5%,transparent)_0%,color-mix(in_srgb,var(--accent-primary)_1.5%,transparent)_45%,transparent_70%)] blur-[100px]"
         />
         <div
           aria-hidden
-          className="pointer-events-none fixed left-[-8%] top-[28%] -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.1)_0%,transparent_65%)] opacity-80 blur-[90px]"
+          className="pointer-events-none fixed left-[-8%] top-[28%] -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent-primary)_3.5%,transparent)_0%,transparent_65%)] opacity-80 blur-[90px]"
         />
 
         {/* 2. Render the new Server Wrapper here! */}

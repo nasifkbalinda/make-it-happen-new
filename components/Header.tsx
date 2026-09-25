@@ -62,18 +62,18 @@ export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps)
 
         {/* Desktop Links */}
         <div className="hidden lg:flex lg:gap-x-10">
-          <Link href="/services" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Services</Link>
-          <Link href="/projects" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Projects</Link>
-          <Link href="/blog" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Blog</Link>
-          <Link href="/about" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">About</Link>
-          <Link href="/contact" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Contact</Link>
+          <Link href="/services" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Services</Link>
+          <Link href="/projects" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Projects</Link>
+          <Link href="/blog" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Blog</Link>
+          <Link href="/about" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">About</Link>
+          <Link href="/contact" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Contact</Link>
         </div>
 
         {/* Desktop Contact Button */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Link 
             href="/contact" 
-            className="rounded-full bg-[#D7FF65] px-7 py-2.5 text-sm font-bold text-[#0c1016] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[#e8ff99]"
+            className="rounded-full bg-accent-primary px-7 py-2.5 text-sm font-bold text-[#0c1016] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-accent-hover"
           >
             Contact Us
           </Link>
@@ -128,7 +128,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps)
                 <div className="py-6">
                   <Link
                     href="/contact"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-[#111720] bg-[#D7FF65] text-center hover:bg-[#e8ff99]"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-[#111720] bg-accent-primary text-center hover:bg-accent-hover"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Contact Us

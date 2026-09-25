@@ -6,9 +6,21 @@
   --background: #0c1016;
   --foreground: #f4f7fb;
 
-  /* Neon Accents */
-  --accent-primary: #d7ff65;
-  --accent-secondary: #c6f04f;
+  /*
+   * Brand accent — the flat green from the logo (measured: #5DD400).
+   * This is the single source for the green across the site: components use
+   * the Tailwind classes below (bg-accent-primary, text-accent-hover, …), never
+   * a raw hex. JavaScript contexts that cannot read CSS variables, such as the
+   * Sanity Studio, use lib/brand.ts — keep the two in step.
+   *
+   * Contrast on the navy background is 10.9:1, and dark text on a green button
+   * is the same. White text on green is only ~1.9:1, so buttons keep dark text.
+   */
+  --accent-primary: #5dd400;
+  /* Primary tinted 20% toward white. Hover state on dark surfaces. */
+  --accent-hover: #7ddd33;
+  /* Primary shaded 20% toward black. Sparing, decorative use only. */
+  --accent-secondary: #4aaa00;
 
   /* Surface colors for cards and borders */
   --surface-muted: #121821;
@@ -25,6 +37,7 @@
 
   /* Mapping to Tailwind classes */
   --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
   --color-accent-secondary: var(--accent-secondary);
   --color-surface-muted: var(--surface-muted);
   --color-surface-border: var(--surface-border);
@@ -45,6 +58,6 @@ body::before {
   opacity: 0.25;
   background-image:
     radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.15) 0 0.9px, transparent 1px),
-    radial-gradient(circle at 72% 64%, rgba(215, 255, 101, 0.1) 0 0.8px, transparent 1px);
+    radial-gradient(circle at 72% 64%, color-mix(in srgb, var(--accent-primary) 10%, transparent) 0 0.8px, transparent 1px);
   background-size: 3px 3px, 4px 4px;
 }

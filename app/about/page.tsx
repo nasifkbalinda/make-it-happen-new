@@ -60,7 +60,7 @@ export default async function AboutPage() {
         {/* Hero — split layout */}
         <section className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
           <div className="max-w-xl lg:max-w-none">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
               About
             </p>
             {/* Synced headline typography */}
@@ -97,7 +97,7 @@ export default async function AboutPage() {
                   className="aspect-[4/3] h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex aspect-[4/3] items-center justify-center bg-[radial-gradient(ellipse_at_top_right,rgba(215,255,101,0.12),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.06),transparent_50%)] px-8 text-center text-sm text-white/45">
+                <div className="flex aspect-[4/3] items-center justify-center bg-[radial-gradient(ellipse_at_top_right,color-mix(in_srgb,var(--accent-primary)_12%,transparent),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.06),transparent_50%)] px-8 text-center text-sm text-white/45">
                   Upload a featured image in Sanity to display your team photo
                   here.
                 </div>
@@ -122,7 +122,7 @@ export default async function AboutPage() {
                 key={`${item.valueTitle}-${index}`}
                 className="rounded-[1.75rem] border border-white/10 bg-[#0B0F19] p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] transition-colors hover:border-white/15"
               >
-                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#D7FF65]/15 text-[#D7FF65]">
+                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full bg-accent-primary/15 text-accent-primary">
                   <BulletIcon className="h-4 w-4" />
                 </div>
                 <h3 className="text-xl font-bold tracking-tight text-white">

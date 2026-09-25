@@ -155,7 +155,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-[#D7FF65] transition hover:text-[#e8ff99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D7FF65]"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-accent-primary transition hover:text-accent-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-primary"
         >
           <span aria-hidden>←</span>
           Back to all posts
@@ -190,7 +190,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           )}
         </div>
 
-        <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-white/80 prose-a:text-[#D7FF65] prose-strong:text-white mt-10">
+        <div className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-white/80 prose-a:text-accent-primary prose-strong:text-white mt-10">
           <PortableText
             value={post.body ?? []}
             components={{
