@@ -46,10 +46,10 @@ export default async function BlogPage() {
         <div className="relative mb-16 max-w-3xl">
           {/* Subtle neon glow behind the text */}
           <div
-            className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-[#D7FF65]/5 blur-3xl"
+            className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-accent-primary/5 blur-3xl"
             aria-hidden
           />
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#D7FF65]">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-accent-primary">
             {pageData?.kicker || "Journal"}
           </p>
           {/* Matched typography scale: text-4xl sm:text-5xl lg:text-5xl */}
@@ -112,7 +112,7 @@ export default async function BlogPage() {
                     </p>
                   )}
 
-                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-[#D7FF65]">
+                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-accent-primary">
                     <span>Read more</span>
                     <span
                       className="inline-block transition-transform duration-300 group-hover:translate-x-1"
@@ -127,7 +127,7 @@ export default async function BlogPage() {
 
             // Focus states updated to neon
             const wrapClass =
-              "group block overflow-hidden rounded-[1.75rem] outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#D7FF65] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1016]";
+              "group block overflow-hidden rounded-[1.75rem] outline-none transition-all focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1016]";
 
             return post.slug?.current ? (
               <Link key={post._id} href={"/blog/" + post.slug.current} className={wrapClass}>

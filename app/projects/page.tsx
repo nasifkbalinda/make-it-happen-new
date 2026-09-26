@@ -32,7 +32,7 @@ export default async function ProjectsPage() {
         
         {/* Dynamic Page Header */}
         <div className="mb-14 max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
             {pageData?.kicker || "Portfolio"}
           </p>
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">

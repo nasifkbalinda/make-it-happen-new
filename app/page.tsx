@@ -115,7 +115,7 @@ export default async function Home() {
             <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href={homepageData?.primaryCtaLink || "/contact"}
-                className="inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-7 py-3 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#e8ff99]"
+                className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-7 py-3 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-hover"
               >
                 {homepageData?.primaryCtaText || "Get Started"}
                 <span aria-hidden className="text-base leading-none">→</span>
@@ -169,9 +169,9 @@ export default async function Home() {
             <div className="mt-4 flex items-center">
               <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-slate-300" />
               <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-slate-400" />
-              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-[#c6f04f]" />
-              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-[#a9d96d]" />
-              <div className="h-10 w-10 rounded-full border-2 border-[#121821] bg-[#D7FF65]" />
+              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-accent-secondary" />
+              <div className="-mr-3 h-10 w-10 rounded-full border-2 border-[#121821] bg-accent-hover" />
+              <div className="h-10 w-10 rounded-full border-2 border-[#121821] bg-accent-primary" />
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ export default async function Home() {
                       href={project.projectUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D7FF65] text-[#0c1016] shadow-lg transition-colors hover:bg-white"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-primary text-[#0c1016] shadow-lg transition-colors hover:bg-white"
                       title="Visit Project"
                     >
                       <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,7 +211,7 @@ export default async function Home() {
                   ) : project.slug ? (
                     <Link
                       href={`/projects/${project.slug}`}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-[#D7FF65] text-[#0c1016] shadow-lg transition-colors hover:bg-white"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-primary text-[#0c1016] shadow-lg transition-colors hover:bg-white"
                       title="Read Case Study"
                     >
                       <span aria-hidden className="text-xl leading-none">→</span>
@@ -219,7 +219,7 @@ export default async function Home() {
                   ) : null}
                 </div>
                 <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#0c1016]/95 via-[#0c1016]/50 to-transparent p-6 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7FF65]">{project.category || "Project"}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-accent-primary">{project.category || "Project"}</p>
                   <p className="mt-1 text-lg font-bold text-white">{project.title}</p>
                 </div>
               </div>
@@ -227,7 +227,7 @@ export default async function Home() {
           </div>
 
           <div className="max-w-lg lg:pl-6">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#D7FF65]">
+            <p className="text-sm font-semibold uppercase tracking-widest text-accent-primary">
               {homepageData?.featuredProjectsKicker || "Featured Case Studies"}
             </p>
             <h2 className="mt-4 whitespace-pre-line text-4xl font-bold leading-tight text-white sm:text-5xl">
@@ -239,10 +239,10 @@ export default async function Home() {
             
             <Link
               href="/projects"
-              className="group mt-10 inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
+              className="group mt-10 inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-accent-primary"
             >
               <span className="whitespace-nowrap">See all</span>
-              <span aria-hidden className="block h-px w-12 shrink-0 bg-white/30 transition-all group-hover:w-16 group-hover:bg-[#D7FF65]" />
+              <span aria-hidden className="block h-px w-12 shrink-0 bg-white/30 transition-all group-hover:w-16 group-hover:bg-accent-primary" />
               <span aria-hidden className="shrink-0 text-lg leading-none transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
@@ -254,15 +254,15 @@ export default async function Home() {
         <div className="mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#D7FF65]">Journal</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-accent-primary">Journal</p>
               <h2 className="mt-4 text-3xl font-bold text-white sm:text-4xl">Latest Insights.</h2>
             </div>
             <Link
               href="/blog"
-              className="group inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-[#D7FF65]"
+              className="group inline-flex flex-nowrap items-center gap-4 text-sm font-medium text-white transition-colors hover:text-accent-primary"
             >
               <span className="whitespace-nowrap">View all posts</span>
-              <span aria-hidden className="block h-px w-12 shrink-0 bg-white/30 transition-all group-hover:w-16 group-hover:bg-[#D7FF65]" />
+              <span aria-hidden className="block h-px w-12 shrink-0 bg-white/30 transition-all group-hover:w-16 group-hover:bg-accent-primary" />
               <span aria-hidden className="shrink-0 text-lg leading-none transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
@@ -290,7 +290,7 @@ export default async function Home() {
                     {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "Recent"}
                   </div>
                   <h3 className="mt-3 text-xl font-bold leading-snug tracking-tight text-white">{post.title}</h3>
-                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-[#D7FF65]">
+                  <div className="mt-6 flex items-center gap-2 text-xs font-bold text-accent-primary">
                     <span>Read more</span>
                     <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                   </div>

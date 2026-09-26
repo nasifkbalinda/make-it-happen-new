@@ -42,7 +42,7 @@ type ContactData = {
 function GlassOrb({ icon: Icon }: { icon: LucideIcon }) {
   return (
     <span
-      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-white/10 to-white/5 text-[#D7FF65] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] backdrop-blur-md"
+      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-white/10 to-white/5 text-accent-primary shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] backdrop-blur-md"
       aria-hidden
     >
       <Icon className="h-5 w-5" strokeWidth={1.75} />
@@ -69,7 +69,7 @@ export default async function ContactPage() {
         {/* Left Side: Traditional Contact Info */}
         <section className="flex flex-col gap-10">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#D7FF65]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
               Contact Us
             </p>
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
@@ -89,7 +89,7 @@ export default async function ContactPage() {
                 </p>
                 <a
                   href={`mailto:${email}`}
-                  className="mt-1 block text-sm font-medium text-white/90 underline-offset-4 transition-colors hover:text-[#D7FF65] hover:underline"
+                  className="mt-1 block text-sm font-medium text-white/90 underline-offset-4 transition-colors hover:text-accent-primary hover:underline"
                 >
                   {email}
                 </a>
@@ -103,7 +103,7 @@ export default async function ContactPage() {
                 </p>
                 <a
                   href={`tel:${phone.replace(/\s/g, "")}`}
-                  className="mt-1 block text-sm font-medium text-white/90 underline-offset-4 transition-colors hover:text-[#D7FF65] hover:underline"
+                  className="mt-1 block text-sm font-medium text-white/90 underline-offset-4 transition-colors hover:text-accent-primary hover:underline"
                 >
                   {phone}
                 </a>
@@ -150,7 +150,7 @@ export default async function ContactPage() {
             href="https://wa.me/256790879117" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#D7FF65] px-8 py-4 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-1 hover:bg-white"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-4 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-1 hover:bg-white"
           >
             Chat on WhatsApp
             <span aria-hidden className="text-lg leading-none">→</span>

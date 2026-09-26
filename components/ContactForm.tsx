@@ -24,7 +24,7 @@ export default function ContactForm() {
             type="text"
             autoComplete="given-name"
             required
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#D7FF65] focus:outline-none"
+            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-accent-primary focus:outline-none"
             placeholder="Jane"
           />
         </label>
@@ -35,7 +35,7 @@ export default function ContactForm() {
             type="text"
             autoComplete="family-name"
             required
-            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#D7FF65] focus:outline-none"
+            className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-accent-primary focus:outline-none"
             placeholder="Doe"
           />
         </label>
@@ -47,7 +47,7 @@ export default function ContactForm() {
           type="email"
           autoComplete="email"
           required
-          className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#D7FF65] focus:outline-none"
+          className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-accent-primary focus:outline-none"
           placeholder="you@company.com"
         />
       </label>
@@ -57,19 +57,19 @@ export default function ContactForm() {
           name="message"
           rows={4}
           required
-          className="min-h-[7.5rem] resize-y bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-[#D7FF65] focus:outline-none"
+          className="min-h-[7.5rem] resize-y bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-accent-primary focus:outline-none"
           placeholder="Tell us about your project…"
         />
       </label>
       {sent ? (
-        <p className="text-center text-sm text-[#D7FF65]" role="status">
+        <p className="text-center text-sm text-accent-primary" role="status">
           Thanks — we&apos;ll be in touch shortly.
         </p>
       ) : null}
       <button
         type="submit"
         disabled={sent}
-        className="mt-1 w-full rounded-full bg-[#D7FF65] py-3.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-1 w-full rounded-full bg-accent-primary py-3.5 text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
       >
         Send message
       </button>

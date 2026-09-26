@@ -75,7 +75,7 @@ export default function SocialLinks({
                   ? ({ "--brand": platform.color } as React.CSSProperties)
                   : undefined
               }
-              className={`group flex ${sizing.button} items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--brand,#D7FF65)] hover:text-[var(--brand,#D7FF65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D7FF65] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1016]`}
+              className={`group flex ${sizing.button} items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-all duration-200 hover:-translate-y-0.5 hover:border-[var(--brand,var(--accent-primary))] hover:text-[var(--brand,var(--accent-primary))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0c1016]`}
             >
               <Icon className={sizing.icon} aria-hidden />
             </a>

@@ -48,7 +48,7 @@ export default function ProjectGallery({ projects }: { projects: Project[] }) {
             onClick={() => setActiveCategory(category as string)}
             className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
               activeCategory === category
-                ? "bg-[#D7FF65] text-[#0c1016]"
+                ? "bg-accent-primary text-[#0c1016]"
                 : "bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white"
             }`}
           >
@@ -66,7 +66,7 @@ export default function ProjectGallery({ projects }: { projects: Project[] }) {
           return (
             <div 
               key={project._id} 
-              className="group relative flex flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#111720] transition-all hover:border-[#D7FF65]/50 hover:shadow-[0_0_30px_rgba(215,255,101,0.05)]"
+              className="group relative flex flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#111720] transition-all hover:border-accent-primary/50 hover:shadow-[0_0_30px_color-mix(in_srgb,var(--accent-primary)_5%,transparent)]"
             >
               {/* Image Section */}
               <div className="relative aspect-video w-full overflow-hidden bg-white/5">
@@ -85,7 +85,7 @@ export default function ProjectGallery({ projects }: { projects: Project[] }) {
 
               {/* Text Section */}
               <div className="flex flex-1 flex-col p-6">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-[#D7FF65]">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-accent-primary">
                   {project.category || "Uncategorized"}
                 </p>
                 <h3 className="mt-3 text-xl font-bold text-white">
@@ -102,7 +102,7 @@ export default function ProjectGallery({ projects }: { projects: Project[] }) {
                   <button
                     onClick={(e) => toggleDescription(project._id, e)}
                     // z-20 puts this button ON TOP of the invisible overlay shield!
-                    className="relative z-20 mt-2 text-xs font-semibold text-[#D7FF65] hover:text-white transition-colors focus:outline-none"
+                    className="relative z-20 mt-2 text-xs font-semibold text-accent-primary hover:text-white transition-colors focus:outline-none"
                   >
                     {isExpanded ? "Read less" : "Read more"}
                   </button>
@@ -110,7 +110,7 @@ export default function ProjectGallery({ projects }: { projects: Project[] }) {
 
                 {/* Visual "View Project" Call to Action */}
                 {(project.slug || project.projectUrl) && (
-                  <div className="mt-auto pt-6 flex items-center gap-2 text-sm font-bold text-white/50 transition-colors group-hover:text-[#D7FF65]">
+                  <div className="mt-auto pt-6 flex items-center gap-2 text-sm font-bold text-white/50 transition-colors group-hover:text-accent-primary">
                     <span>View Project</span>
                     <span aria-hidden className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                   </div>

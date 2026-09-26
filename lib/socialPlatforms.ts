@@ -25,6 +25,7 @@ import {
   FaXTwitter,
   FaYoutube,
 } from "react-icons/fa6";
+import { BRAND } from "./brand";
 
 export type SocialPlatform = {
   /** Stored in Sanity. Never change an existing value — content references it. */
@@ -66,9 +67,9 @@ export const SOCIAL_PLATFORMS: SocialPlatform[] = [
   { value: "spotify",   title: "Spotify",    icon: FaSpotify,     color: "#1DB954", placeholder: "https://open.spotify.com/show/..." },
   { value: "soundcloud",title: "SoundCloud", icon: FaSoundcloud,  color: "#FF5500", placeholder: "https://soundcloud.com/yourhandle" },
   { value: "vimeo",     title: "Vimeo",      icon: FaVimeoV,      color: "#1AB7EA", placeholder: "https://vimeo.com/yourhandle" },
-  { value: "email",     title: "Email",      icon: FaEnvelope,    color: "#D7FF65", placeholder: "mailto:hello@makeithappen.ug" },
-  { value: "website",   title: "Website",    icon: FaGlobe,       color: "#D7FF65", placeholder: "https://example.com" },
-  { value: "other",     title: "Other (custom label)", icon: FaLink, color: "#D7FF65", placeholder: "https://example.com" },
+  { value: "email",     title: "Email",      icon: FaEnvelope,    color: BRAND.green, placeholder: "mailto:hello@makeithappen.ug" },
+  { value: "website",   title: "Website",    icon: FaGlobe,       color: BRAND.green, placeholder: "https://example.com" },
+  { value: "other",     title: "Other (custom label)", icon: FaLink, color: BRAND.green, placeholder: "https://example.com" },
 ];
 
 const BY_VALUE = new Map(SOCIAL_PLATFORMS.map((p) => [p.value, p]));
