@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import SocialLinks, { type SocialLinkItem } from "./SocialLinks";
 
@@ -12,9 +12,26 @@ type HeaderProps = {
   socialLinks?: SocialLinkItem[] | null;
 };
 
+const navLinks = [
+  { label: "Services", href: "/services" },
+  { label: "Projects", href: "/projects" },
+  { label: "Blog", href: "/blog" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+] as const;
+
 export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+
+  // Transparent over the hero, solid once the page scrolls under it.
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   if (pathname?.startsWith("/admin")) {
     return null;
@@ -24,33 +41,44 @@ export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps)
   const defaultTitle = "Make It Happen";
   const displayTitle = siteTitle || defaultTitle;
 
+  const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
+
   return (
-    <header className="absolute inset-x-0 top-0 z-50">
-      {/* ADJUSTED: Changed 'p-6' to 'px-6 py-4 lg:px-14 lg:pt-2 lg:pb-6' to pull the header up tight to the top on desktop */}
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-14 lg:pt-2 lg:pb-6" aria-label="Global">
-        
-        {/* Dynamic Logo Section */}
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+        isScrolled
+          ? "border-b border-hairline bg-background/85 backdrop-blur-md"
+          : "border-b border-transparent bg-transparent"
+      }`}
+    >
+      <nav
+        className={`shell flex items-center justify-between transition-[height] duration-300 ${
+          isScrolled ? "h-20" : "h-24 lg:h-28"
+        }`}
+        aria-label="Global"
+      >
+        {/* Logo */}
         <div className="flex lg:flex-1">
-          <Link href="/" className="-m-1.5 p-1.5 flex items-center">
+          <Link href="/" className="-m-1.5 flex items-center p-1.5">
             {logoUrl ? (
-              <img 
-                src={logoUrl} 
-                alt={`${displayTitle} logo`} 
-                className="h-25 w-auto object-contain sm:h-25" 
+              <img
+                src={logoUrl}
+                alt={`${displayTitle} logo`}
+                className={`w-auto object-contain transition-[height] duration-300 ${
+                  isScrolled ? "h-12" : "h-14 lg:h-16"
+                }`}
               />
             ) : (
-              <span className="text-2xl font-extrabold text-white tracking-tight">
-                {displayTitle}
-              </span>
+              <span className="text-xl font-bold tracking-tight text-white">{displayTitle}</span>
             )}
           </Link>
         </div>
-        
+
         {/* Mobile Hamburger Button */}
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
+            className="-m-2.5 inline-flex h-11 w-11 items-center justify-center rounded-md text-white"
             onClick={() => setIsMobileMenuOpen(true)}
           >
             <span className="sr-only">Open main menu</span>
@@ -61,19 +89,29 @@ export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps)
         </div>
 
         {/* Desktop Links */}
-        <div className="hidden lg:flex lg:gap-x-10">
-          <Link href="/services" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Services</Link>
-          <Link href="/projects" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Projects</Link>
-          <Link href="/blog" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Blog</Link>
-          <Link href="/about" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">About</Link>
-          <Link href="/contact" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-accent-primary">Contact</Link>
+        <div className="hidden lg:flex lg:gap-x-12">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              className={`relative text-base font-medium leading-6 transition-colors hover:text-white ${
+                isActive(link.href) ? "text-white" : "text-white/75"
+              }`}
+            >
+              {link.label}
+              {isActive(link.href) ? (
+                <span aria-hidden className="absolute inset-x-0 -bottom-2 mx-auto h-0.5 w-4 rounded-full bg-accent-primary" />
+              ) : null}
+            </Link>
+          ))}
         </div>
 
         {/* Desktop Contact Button */}
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link 
-            href="/contact" 
-            className="rounded-full bg-accent-primary px-7 py-2.5 text-sm font-bold text-[#0c1016] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-accent-hover"
+          <Link
+            href="/contact"
+            className="rounded-md bg-accent-primary px-8 py-3.5 text-base font-semibold text-background transition-colors duration-200 hover:bg-accent-hover"
           >
             Contact Us
           </Link>
@@ -84,30 +122,22 @@ export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps)
       {isMobileMenuOpen && (
         <div className="lg:hidden" role="dialog" aria-modal="true">
           {/* Backdrop */}
-          <div className="fixed inset-0 z-50 bg-[#0c1016]/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
-          
+          <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
+
           {/* Slide-out Menu */}
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#121821] px-6 py-6 sm:max-w-sm border-l border-white/10">
+          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto border-l border-hairline bg-surface px-6 py-6 sm:max-w-sm">
             <div className="flex items-center justify-between">
-              
-              {/* Dynamic Logo Section (Mobile Slide-out) */}
-              <Link href="/" className="-m-1.5 p-1.5 flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
-                 {logoUrl ? (
-                  <img 
-                    src={logoUrl} 
-                    alt={`${displayTitle} logo`} 
-                    className="h-14 w-auto object-contain sm:h-16" 
-                  />
+              <Link href="/" className="-m-1.5 flex items-center p-1.5" onClick={() => setIsMobileMenuOpen(false)}>
+                {logoUrl ? (
+                  <img src={logoUrl} alt={`${displayTitle} logo`} className="h-12 w-auto object-contain" />
                 ) : (
-                  <span className="text-xl font-extrabold text-white">
-                    {displayTitle}
-                  </span>
+                  <span className="text-xl font-bold text-white">{displayTitle}</span>
                 )}
               </Link>
 
               <button
                 type="button"
-                className="-m-2.5 rounded-md p-2.5 text-white/70 hover:text-white"
+                className="-m-2.5 inline-flex h-11 w-11 items-center justify-center rounded-md text-white/70 hover:text-white"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <span className="sr-only">Close menu</span>
@@ -116,19 +146,27 @@ export default function Header({ logoUrl, siteTitle, socialLinks }: HeaderProps)
                 </svg>
               </button>
             </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-white/10">
-                <div className="space-y-2 py-6">
-                  <Link href="/services" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Services</Link>
-                  <Link href="/projects" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Projects</Link>
-                  <Link href="/blog" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                  <Link href="/about" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
-                  <Link href="/contact" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
+            <div className="mt-8 flow-root">
+              <div className="-my-6 divide-y divide-hairline">
+                <div className="space-y-1 py-6">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      aria-current={isActive(link.href) ? "page" : undefined}
+                      className={`-mx-3 block rounded-md px-3 py-2.5 text-base font-medium leading-7 hover:bg-white/5 ${
+                        isActive(link.href) ? "text-accent-primary" : "text-white"
+                      }`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
                 <div className="py-6">
                   <Link
                     href="/contact"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-[#111720] bg-accent-primary text-center hover:bg-accent-hover"
+                    className="block rounded-md bg-accent-primary px-3 py-3 text-center text-base font-semibold leading-7 text-background hover:bg-accent-hover"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Contact Us

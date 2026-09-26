@@ -2,9 +2,16 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  /* Premium Dark Mode Colors */
-  --background: #0c1016;
-  --foreground: #f4f7fb;
+  /*
+   * "Dark executive" palette. One near-black ground, one raised surface for
+   * cards and panels, hairline borders instead of glows or glass.
+   */
+  --background: #0a0d12;
+  --foreground: #f4f6f8;
+  --surface: #11151c;
+  --surface-raised: #161b24;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-strong: rgba(255, 255, 255, 0.16);
 
   /*
    * Brand accent — the flat green from the logo (measured: #5DD400).
@@ -13,8 +20,8 @@
    * a raw hex. JavaScript contexts that cannot read CSS variables, such as the
    * Sanity Studio, use lib/brand.ts — keep the two in step.
    *
-   * Contrast on the navy background is 10.9:1, and dark text on a green button
-   * is the same. White text on green is only ~1.9:1, so buttons keep dark text.
+   * Contrast on the background is ~11:1, and dark text on a green button is
+   * the same. White text on green is only ~1.9:1, so buttons keep dark text.
    */
   --accent-primary: #5dd400;
   /* Primary tinted 20% toward white. Hover state on dark surfaces. */
@@ -22,18 +29,21 @@
   /* Primary shaded 20% toward black. Sparing, decorative use only. */
   --accent-secondary: #4aaa00;
 
-  /* Surface colors for cards and borders */
-  --surface-muted: #121821;
-  --surface-border: rgba(255, 255, 255, 0.1);
+  /* Kept for older class names still referenced in a few places. */
+  --surface-muted: var(--surface);
+  --surface-border: var(--hairline);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+
   /* Fonts */
-  --font-sans: var(--font-manrope);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-figtree);
 
   /* Mapping to Tailwind classes */
   --color-accent-primary: var(--accent-primary);
@@ -43,21 +53,33 @@
   --color-surface-border: var(--surface-border);
 }
 
+/* Page gutter + max width shared by every section, so edges line up site-wide. */
+@utility shell {
+  width: 100%;
+  max-width: 112rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 3.5rem;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-manrope), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-family: var(--font-figtree), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-feature-settings: "ss01";
 }
 
-/* Subtle Dark Mode Dot Pattern Overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.25;
-  background-image:
-    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.15) 0 0.9px, transparent 1px),
-    radial-gradient(circle at 72% 64%, color-mix(in srgb, var(--accent-primary) 10%, transparent) 0 0.8px, transparent 1px);
-  background-size: 3px 3px, 4px 4px;
+::selection {
+  background: var(--accent-primary);
+  color: var(--background);
 }

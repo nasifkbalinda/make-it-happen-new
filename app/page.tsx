@@ -80,60 +80,85 @@ export default async function Home() {
 
   return (
     <div className="flex w-full flex-col">
-      {/* 1. Balanced Hero */}
-      <main className="relative z-20 flex min-h-[85vh] w-full items-center overflow-hidden pt-32 pb-24 lg:pt-60 lg:pb-12 bg-[#0c1016]">
+      {/* 1. Hero — full-bleed photo, headline on the dark left edge, client strip at the foot */}
+      <section className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden bg-background">
         {homepageData?.imageUrl ? (
-          <div className="absolute inset-y-0 right-0 w-full lg:w-[65%] z-0">
+          <div aria-hidden className="absolute inset-0 -z-10 lg:left-[28%]">
             <img
               src={homepageData.imageUrl}
-              alt="Hero visual for Make It Happen"
-              className="h-full w-full object-cover object-left"
+              alt=""
+              className="h-full w-full object-cover object-center"
               fetchPriority="high"
               decoding="async"
             />
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-gradient-to-r from-[#0c1016] from-30% via-[#0c1016]/80 via-70% to-[#0c1016]/40 lg:from-0% lg:via-[#0c1016]/60 lg:via-40% lg:to-transparent"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0c1016] to-transparent"
-            />
+            {/* Fade the photo into the page on the left so the headline sits on near-black. */}
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/10 lg:from-background lg:from-5% lg:via-background/30 lg:via-40% lg:to-transparent" />
+            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/80 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-background to-transparent" />
           </div>
         ) : null}
 
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-6 sm:px-10 lg:px-14">
-          <section className="max-w-4xl">
-            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[2.85rem] text-balance">
-              {homepageData?.heroHeading || "Ship enterprise software faster."}
+        <div className="shell flex flex-1 items-center pt-32 pb-16 lg:pt-36">
+          <div className="max-w-4xl">
+            <p className="flex items-center gap-4 text-base font-medium text-white/80 sm:text-lg">
+              <span aria-hidden className="h-0.5 w-8 bg-accent-primary" />
+              <span>
+                Software <span aria-hidden className="px-1.5 text-white/40">·</span> Web{" "}
+                <span aria-hidden className="px-1.5 text-white/40">·</span> AI{" "}
+                <span aria-hidden className="px-1.5 text-white/40">·</span> Marketing
+              </span>
+            </p>
+            <h1 className="mt-8 max-w-3xl text-5xl font-bold leading-[0.98] tracking-[-0.035em] text-white sm:text-7xl lg:text-[6.75rem]">
+              {homepageData?.heroHeading || "Let’s make it happen."}
             </h1>
-            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
+            <p className="mt-8 max-w-xl text-lg leading-relaxed text-white/75 sm:text-xl">
               {homepageData?.heroSubheading ||
-                "Integrate the tools you rely on. We build digital experiences that transform ideas into reality."}
+                "Enterprise software, web design, AI automation and digital marketing for ambitious businesses across East Africa."}
             </p>
 
-            <div className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="mt-11 flex flex-wrap items-center gap-4">
               <Link
                 href={homepageData?.primaryCtaLink || "/contact"}
-                className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-7 py-3 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent-hover"
+                className="inline-flex items-center gap-2.5 rounded-md bg-accent-primary px-8 py-4 text-base font-semibold text-background transition-colors duration-200 hover:bg-accent-hover"
               >
-                {homepageData?.primaryCtaText || "Get Started"}
-                <span aria-hidden className="text-base leading-none">→</span>
+                {homepageData?.primaryCtaText || "Start a project"}
+                <svg aria-hidden className="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 10h12m-5-5 5 5-5 5" />
+                </svg>
               </Link>
               <Link
-                href={homepageData?.secondaryCtaLink || "/about"}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-7 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/10"
+                href={homepageData?.secondaryCtaLink || "/projects"}
+                className="inline-flex items-center rounded-md border border-white/40 px-8 py-4 text-base font-semibold text-white transition-colors hover:border-white hover:bg-white/5"
               >
-                {homepageData?.secondaryCtaText || "Learn more"}
+                {homepageData?.secondaryCtaText || "View our work"}
               </Link>
             </div>
-            <p className="mt-8 text-sm text-white/40">Typical response: just a moment.</p>
-          </section>
+          </div>
         </div>
-      </main>
+
+        {/* Client strip — the names come straight from the latest projects in Sanity. */}
+        {projectsData.length > 0 ? (
+          <div className="shell pb-10">
+            <div className="border-t border-white/15 pt-8">
+              <ul className="grid grid-cols-2 gap-y-4 sm:flex sm:items-center sm:justify-center">
+                {projectsData.map((project: { _id: string; title: string }, index: number) => (
+                  <li
+                    key={project._id}
+                    className={`text-center text-lg font-medium tracking-tight text-white/60 sm:px-12 lg:px-20 sm:text-xl ${
+                      index > 0 ? "sm:border-l sm:border-white/15" : ""
+                    }`}
+                  >
+                    {project.title}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ) : null}
+      </section>
 
       {/* 2. Glassmorphism Dynamic Stats Bar */}
-      <section className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-24 sm:px-10 lg:px-14">
+      <section className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 sm:px-10 lg:px-14">
         <div className="flex w-full flex-col gap-10 rounded-3xl border border-white/10 bg-white/5 px-8 py-7 backdrop-blur-lg md:flex-row md:items-center md:justify-between md:px-10 md:py-8">
           <div className="grid flex-1 grid-cols-1 gap-8 sm:grid-cols-3">
             <div>
