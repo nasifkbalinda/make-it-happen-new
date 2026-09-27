@@ -13,7 +13,7 @@ type Props = {
 
 /**
  * A project brief that is delivered through the visitor's own WhatsApp or
- * email app, pre-filled and addressed to the studio — so every enquiry lands
+ * email app, pre-filled and addressed to the team — so every enquiry lands
  * somewhere a person reads, without a server-side mail service.
  */
 export default function ContactForm({ email, whatsappNumber, serviceOptions, budgetOptions, heading, note }: Props) {
@@ -102,7 +102,7 @@ export default function ContactForm({ email, whatsappNumber, serviceOptions, bud
                   type="button"
                   onClick={() => toggleService(option)}
                   aria-pressed={on}
-                  className={`rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
+                  className={`rounded-[10px] border px-4 py-2.5 text-sm font-medium transition-colors ${
                     on ? "border-ink bg-ink text-white" : "border-ink/15 bg-white hover:border-ink/40"
                   }`}
                 >
@@ -126,7 +126,7 @@ export default function ContactForm({ email, whatsappNumber, serviceOptions, bud
                   type="button"
                   onClick={() => setBudget(on ? null : option)}
                   aria-pressed={on}
-                  className={`rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
+                  className={`rounded-[10px] border px-4 py-2.5 text-sm font-medium transition-colors ${
                     on ? "border-accent-secondary bg-accent-primary text-ink" : "border-ink/15 bg-white hover:border-ink/40"
                   }`}
                 >
@@ -158,14 +158,14 @@ export default function ContactForm({ email, whatsappNumber, serviceOptions, bud
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <button
           type="submit"
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-accent-primary px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-accent-hover"
+          className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-accent-primary px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:bg-accent-hover"
         >
           Send on WhatsApp
         </button>
         <button
           type="button"
           onClick={(event) => sendEmail(event.currentTarget.form)}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-ink/15 px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:border-ink"
+          className="inline-flex items-center justify-center gap-2 rounded-[10px] border border-ink/15 px-6 py-3.5 text-[15px] font-semibold text-ink transition-colors hover:border-ink"
         >
           Send by email
         </button>

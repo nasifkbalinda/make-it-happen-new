@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 export function Tag({ children, tone = "light", className = "" }: { children: ReactNode; tone?: "light" | "dark"; className?: string }) {
   return (
     <span
-      className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em] ${
+      className={`inline-flex items-center gap-2 rounded-md px-3 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.08em] ${
         tone === "light" ? "bg-white text-ink" : "bg-white/10 text-white"
       } ${className}`}
     >
@@ -58,7 +58,7 @@ export function PillLink({
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
-      className={`group inline-flex items-center gap-1.5 rounded-full font-medium transition-colors duration-200 ${
+      className={`group inline-flex items-center gap-1.5 rounded-[10px] font-medium transition-colors duration-200 ${
         size === "lg" ? "px-6 py-3.5 text-[15px]" : "px-5 py-2.5 text-sm"
       } ${pillStyles[variant]} ${className}`}
     >
@@ -68,7 +68,7 @@ export function PillLink({
   );
 }
 
-/** "→ About the studio" style text link. */
+/** "→ About us" style text link. */
 export function ArrowLink({ href, children, className = "" }: { href: string; children: ReactNode; className?: string }) {
   return (
     <Link href={href} className={`group inline-flex items-center gap-2 text-lg font-medium ${className}`}>

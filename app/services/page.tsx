@@ -73,7 +73,7 @@ export default async function ServicesPage() {
               <article className="grid gap-8 border-t border-ink/10 py-12 sm:py-16 lg:grid-cols-12 lg:items-center lg:gap-16">
                 <div className={`lg:col-span-5 ${index % 2 === 1 ? "lg:order-2 lg:col-start-8" : ""}`}>
                   <p className="font-mono text-sm text-accent-secondary">[{String(index + 1).padStart(2, "0")}]</p>
-                  <h2 className="mt-3 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-5xl lg:text-6xl">
+                  <h2 className="mt-3 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-5xl">
                     {service.title}
                   </h2>
                   {service.description ? (
@@ -82,7 +82,7 @@ export default async function ServicesPage() {
                   {features.length ? (
                     <ul className="mt-6 flex flex-wrap gap-2">
                       {features.map((feature) => (
-                        <li key={feature} className="rounded-full border border-ink/15 bg-white px-3.5 py-1.5 text-sm">
+                        <li key={feature} className="rounded-md border border-ink/15 bg-white px-3.5 py-1.5 text-sm">
                           {feature}
                         </li>
                       ))}
@@ -117,7 +117,7 @@ export default async function ServicesPage() {
           <div className="shell">
             <Reveal>
               <Tag tone="dark">{page?.processKicker?.trim() || "How we work"}</Tag>
-              <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
+              <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-5xl">
                 {page?.processHeading?.trim() || "From first call to long after launch."}
               </h2>
             </Reveal>

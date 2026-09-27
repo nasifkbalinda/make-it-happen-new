@@ -38,7 +38,7 @@ export default async function Cta() {
         </div>
         <Reveal>
           <Tag tone="dark">{settings?.ctaKicker?.trim() || "Get started"}</Tag>
-          <h2 className="mx-auto mt-6 max-w-4xl text-[2.6rem] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-7xl lg:text-8xl">
+          <h2 className="mx-auto mt-6 max-w-4xl text-[2.6rem] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
             {settings?.ctaHeading?.trim() || "Let’s make it happen."}
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/65 sm:text-lg">

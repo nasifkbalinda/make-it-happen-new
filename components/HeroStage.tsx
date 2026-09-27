@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 /**
- * The homepage hero animation: four wordless scenes that show what the studio
+ * The homepage hero animation: four wordless scenes that show what the company
  * does — code writing itself, a website assembling, an AI agent answering a
  * customer, and a post taking off on social — joined by a sweep of the logo's
  * lime pixels, looping forever.

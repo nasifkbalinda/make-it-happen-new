@@ -20,13 +20,6 @@ export const homepage = defineType({
   fields: [
     // --- Hero ---
     defineField({
-      name: 'heroKicker',
-      title: 'Hero label',
-      type: 'string',
-      group: 'hero',
-      description: 'The small pill above the headline, e.g. "Software · Web · AI · Marketing".',
-    }),
-    defineField({
       name: 'heroHeading',
       title: 'Hero Heading',
       type: 'string',
@@ -39,22 +32,6 @@ export const homepage = defineType({
       type: 'text',
       group: 'hero',
       description: 'The smaller paragraph under the title',
-    }),
-    defineField({
-      name: 'heroAside',
-      title: 'Hero side statement',
-      type: 'string',
-      group: 'hero',
-      description: 'The short sentence above the buttons at the bottom right of the hero.',
-    }),
-    defineField({
-      name: 'heroMeta',
-      title: 'Hero details',
-      type: 'array',
-      group: 'hero',
-      description: 'Up to three short lines at the bottom left of the hero, e.g. "Based: Kampala, UG".',
-      of: [defineArrayMember({ type: 'string' })],
-      validation: (Rule) => Rule.max(3),
     }),
     defineField({
       name: 'primaryCtaText',
@@ -198,7 +175,7 @@ export const homepage = defineType({
       title: 'Services heading',
       type: 'string',
       group: 'services',
-      description: 'Put [image] where the small round photo should sit, e.g. "Everything [image] your business needs to grow online."',
+      description: 'The big heading above the services list, e.g. "Everything your business needs to grow online."',
     }),
     defineField({
       name: 'servicesDescription',

@@ -31,7 +31,7 @@ export default function ProjectGallery({ projects, allLabel }: { projects: Proje
                 type="button"
                 onClick={() => setActive(filter.value)}
                 aria-pressed={isActive}
-                className={`flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 whitespace-nowrap rounded-[10px] px-4 py-2.5 text-sm font-medium transition-colors ${
                   isActive ? "bg-ink text-white" : "bg-white text-ink hover:bg-paper-raised"
                 }`}
               >

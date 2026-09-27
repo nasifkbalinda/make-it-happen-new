@@ -52,7 +52,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, 
         aria-label="Global"
         className={`mx-auto flex items-center justify-between transition-all duration-500 ${
           isScrolled
-            ? "mt-1 max-w-6xl rounded-full bg-ink/85 py-2 pl-5 pr-2 backdrop-blur-md"
+            ? "mt-1 max-w-6xl rounded-2xl bg-ink/85 py-2 pl-5 pr-2 backdrop-blur-md"
             : "max-w-[112rem] px-3 py-4 sm:px-5 lg:px-7"
         }`}
       >
@@ -92,7 +92,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, 
         <div className="flex items-center gap-2">
           <Link
             href={buttonLink}
-            className="group hidden items-center gap-1.5 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-accent-primary sm:inline-flex"
+            className="group hidden items-center gap-1.5 rounded-[10px] bg-white px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-accent-primary sm:inline-flex"
           >
             {buttonText}
             <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -146,7 +146,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, 
           </ul>
           <Link
             href={buttonLink}
-            className="mt-5 flex items-center justify-center gap-1.5 rounded-full bg-ink px-5 py-3.5 text-[15px] font-medium text-white"
+            className="mt-5 flex items-center justify-center gap-1.5 rounded-[10px] bg-ink px-5 py-3.5 text-[15px] font-medium text-white"
           >
             {buttonText} <ArrowUpRight />
           </Link>

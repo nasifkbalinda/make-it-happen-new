@@ -69,9 +69,6 @@ const client = createClient({
 });
 
 type HomeData = {
-  heroKicker: string | null;
-  heroAside: string | null;
-  heroMeta: string[] | null;
   heroChatQuestion: string | null;
   heroChatAnswer: string | null;
   clientsLabel: string | null;
@@ -119,7 +116,7 @@ type HomeData = {
 // Fixed document ID: the Studio edits this singleton (sanity/structure.ts).
 const homeQuery = `{
   "home": *[_id == "homepage"][0]{
-    heroKicker, heroHeading, heroSubheading, heroAside, heroMeta, heroChatQuestion, heroChatAnswer,
+    heroHeading, heroSubheading, heroChatQuestion, heroChatAnswer,
     clientsLabel, introKicker, introLinkText, statsKicker, servicesKicker, servicesHeading, servicesDescription,
     workLinkText, faqKicker, faqHeading, faqDescription, faqButtonText, journalKicker, journalHeading, journalLinkText,
     "imageUrl": heroImage.asset->url, "videoUrl": heroVideo.asset->url, "posterUrl": heroVideoPoster.asset->url,
@@ -171,17 +168,12 @@ export default async function Home() {
     data?.about?.mainDescription?.split(/\n\s*\n/)[0]?.trim() ||
     "We build the software, websites and growth systems that ambitious East African businesses run on.";
 
+
   const shippedValue = home?.stat1Value?.trim();
-  // "[image]" in the services heading marks where the small round photo sits.
-  const servicesHeadingParts = (home?.servicesHeading?.trim() || "Everything [image] your business needs to grow online.").split(/\s*\[image\]\s*/i);
-  const servicesPhoto = services.find((service) => service.imageUrl)?.imageUrl ?? introImages[0]?.url ?? null;
-  const heroMeta = (home?.heroMeta ?? []).map((item) => item?.trim()).filter(Boolean).length
-    ? (home?.heroMeta ?? []).map((item) => item?.trim()).filter(Boolean)
-    : ["Based: Kampala, UG", "Focus: Software · Web · AI", shippedValue ? `Shipped: ${shippedValue} products` : "Serving: East Africa"];
 
   return (
     <div className="bg-paper text-ink">
-      {/* 1. Hero — dark card: the pitch on the left, the looping studio animation on the right */}
+      {/* 1. Hero — dark card: the pitch on the left, the looping hero animation on the right */}
       <section className="p-2 sm:p-3">
         <div className="relative isolate overflow-hidden rounded-[20px] bg-ink text-white">
           {home?.videoUrl ? (
@@ -199,8 +191,7 @@ export default async function Home() {
 
           <div className="grid min-h-[calc(100svh-1rem)] content-center gap-12 px-5 pb-10 pt-28 sm:min-h-[calc(100svh-1.5rem)] sm:px-8 lg:grid-cols-12 lg:items-center lg:gap-10 lg:px-10 lg:pb-12 lg:pt-32">
             <div className="animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_both] lg:col-span-6">
-              <Tag>{home?.heroKicker?.trim() || "Software · Web · AI · Marketing"}</Tag>
-              <h1 className="mt-6 text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-7xl xl:text-[6rem]">
+              <h1 className="text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl xl:text-[4.75rem]">
                 {home?.heroHeading || "Let\u2019s make it happen."}
               </h1>
               {home?.heroSubheading ? (
@@ -225,14 +216,6 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 border-t border-white/10 px-5 py-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
-            <ul className="flex flex-wrap gap-x-8 gap-y-2 font-mono text-[11px] uppercase tracking-[0.08em] text-white/60">
-              {heroMeta.map((item) => (
-                <li key={item}>+ {item}</li>
-              ))}
-            </ul>
-            <p className="text-sm text-white/70">{home?.heroAside?.trim() || "Websites, software and growth systems for businesses that mean it."}</p>
-          </div>
         </div>
       </section>
 
@@ -280,10 +263,10 @@ export default async function Home() {
           <div className="lg:col-span-9">
             <ScrollRevealText
               text={introStatement}
-              className="text-3xl font-medium leading-[1.12] tracking-[-0.035em] sm:text-5xl lg:text-[3.6rem]"
+              className="text-3xl font-medium leading-[1.12] tracking-[-0.035em] sm:text-4xl lg:text-[2.75rem]"
             />
             <ArrowLink href="/about" className="mt-10 text-ink">
-              {home?.introLinkText?.trim() || "About the studio"}
+              {home?.introLinkText?.trim() || "About us"}
             </ArrowLink>
           </div>
         </div>
@@ -324,7 +307,7 @@ export default async function Home() {
                 <dt className="mt-4 text-lg font-medium tracking-[-0.01em] text-ink">
                   {stat.label}
                 </dt>
-                <dd className="text-6xl font-semibold tracking-[-0.05em] text-ink sm:text-7xl lg:text-8xl">
+                <dd className="text-6xl font-semibold tracking-[-0.05em] text-ink sm:text-6xl lg:text-7xl">
                   <RollingNumber value={stat.value} />
                 </dd>
               </Reveal>
@@ -341,14 +324,8 @@ export default async function Home() {
               <Reveal className="flex flex-col gap-8 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between">
                 <div>
                   <Tag>{home?.servicesKicker?.trim() || "Services"}</Tag>
-                  <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
-                    {servicesHeadingParts[0]}
-                    {servicesHeadingParts.length > 1 && servicesPhoto ? (
-                      <span className="mx-[0.12em] inline-block h-[0.8em] w-[1.6em] translate-y-[0.08em] overflow-hidden rounded-full align-baseline">
-                        <img src={`${servicesPhoto}?w=240&auto=format`} alt="" className="h-full w-full object-cover" />
-                      </span>
-                    ) : servicesHeadingParts.length > 1 ? " " : null}
-                    {servicesHeadingParts.slice(1).join(" ")}
+                  <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-5xl">
+                    {home?.servicesHeading?.trim() || "Everything your business needs to grow online."}
                   </h2>
                 </div>
                 <p className="max-w-sm text-sm leading-relaxed text-white/60">
@@ -369,7 +346,7 @@ export default async function Home() {
         <section className="shell py-24 sm:py-32">
           <Reveal className="mx-auto max-w-2xl text-center">
             <Tag>{home?.featuredProjectsKicker?.trim() || "Selected work"}</Tag>
-            <h2 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-6xl">
+            <h2 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-5xl">
               {(home?.featuredProjectsTitle || "Featured projects").replace(
                 /\s*\n\s*/g,
                 " ",
@@ -444,7 +421,7 @@ export default async function Home() {
                     {faq.question}
                     <span
                       aria-hidden
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-paper text-xl leading-none transition-transform duration-300 group-open:rotate-45"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-paper text-xl leading-none transition-transform duration-300 group-open:rotate-45"
                     >
                       +
                     </span>

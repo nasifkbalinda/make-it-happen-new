@@ -47,7 +47,7 @@ export function ProjectCard({
     >
       <div
         className={`relative w-full overflow-hidden rounded-2xl bg-paper-raised ${
-          shape === "tall" ? "aspect-[4/3] md:aspect-[4/5]" : "aspect-[4/3]"
+          shape === "tall" ? "aspect-[4/3] md:aspect-[5/4]" : "aspect-[4/3]"
         }`}
         // A logo sits on its own dominant colour (measured by Sanity), so each project reads as a brand tile.
         style={logo && project.brandColor ? { backgroundColor: project.brandColor } : undefined}
@@ -73,7 +73,7 @@ export function ProjectCard({
         ) : (
           <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-ink/30">{project.title}</div>
         )}
-        <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink opacity-100 transition-all duration-300 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
+        <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-[10px] bg-white text-ink opacity-100 transition-all duration-300 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
           <svg aria-hidden className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 11 11 5M6 5h5v5" />
           </svg>
@@ -172,7 +172,7 @@ export function FeaturedPostCard({ post, label }: { post: PostCardData; label: s
         ) : null}
       </div>
       <div className="flex flex-col justify-center py-6 lg:py-8 lg:pr-6">
-        <span className="w-fit rounded-full bg-accent-primary px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink">
+        <span className="w-fit rounded-md bg-accent-primary px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink">
           {label}
         </span>
         <h2 className="mt-5 text-3xl font-semibold leading-[1.1] tracking-[-0.03em] text-ink sm:text-4xl">{post.title}</h2>

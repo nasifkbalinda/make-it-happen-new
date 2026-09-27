@@ -9,7 +9,7 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "About | Make It Happen",
-  description: "A Kampala studio designing and engineering software, websites, AI automation and marketing for East African businesses.",
+  description: "A Kampala team designing and engineering software, websites, AI automation and marketing for East African businesses.",
 };
 
 const client = createClient({
@@ -96,7 +96,7 @@ export default async function AboutPage() {
         </div>
         <div className="lg:col-span-7">
           {lead ? (
-            <ScrollRevealText text={lead} className="text-3xl font-medium leading-[1.15] tracking-[-0.035em] sm:text-4xl lg:text-5xl" />
+            <ScrollRevealText text={lead} className="text-3xl font-medium leading-[1.15] tracking-[-0.035em] sm:text-4xl lg:text-[2.6rem]" />
           ) : null}
           {body.map((paragraph) => (
             <Reveal key={paragraph.slice(0, 40)}>
@@ -131,7 +131,7 @@ export default async function AboutPage() {
             <div className="shell">
               <Reveal>
                 <Tag tone="dark">{about?.valuesKicker?.trim() || "What we stand for"}</Tag>
-                <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
+                <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-5xl">
                   {about?.valuesHeading?.trim() || "The principles behind every project."}
                 </h2>
               </Reveal>
@@ -165,7 +165,7 @@ export default async function AboutPage() {
                 className={`flex flex-col-reverse justify-end pr-6 ${index % 2 === 1 ? "border-l border-ink/10 pl-6" : ""} ${index > 0 ? "lg:border-l lg:border-ink/10 lg:pl-10" : ""}`}
               >
                 <dt className="mt-4 text-lg font-medium">{stat.label}</dt>
-                <dd className="text-6xl font-semibold tracking-[-0.05em] sm:text-7xl lg:text-8xl">
+                <dd className="text-6xl font-semibold tracking-[-0.05em] sm:text-6xl lg:text-7xl">
                   <RollingNumber value={stat.value} />
                 </dd>
               </Reveal>

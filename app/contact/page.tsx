@@ -75,7 +75,7 @@ export default async function ContactPage() {
           <div className="grid gap-12 px-5 pb-8 pt-32 sm:px-8 lg:grid-cols-12 lg:gap-12 lg:px-10 lg:pb-10 lg:pt-40">
             <div className="animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_both] lg:col-span-5">
               <Tag>{contact?.kicker?.trim() || "Contact"}</Tag>
-              <h1 className="mt-6 text-[2.6rem] font-semibold leading-[1] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+              <h1 className="mt-6 text-[2.6rem] font-semibold leading-[1] tracking-[-0.045em] sm:text-5xl lg:text-6xl">
                 {contact?.heading?.trim() || "Let’s build something great"}
               </h1>
               {contact?.subheading ? (
@@ -138,7 +138,7 @@ export default async function ContactPage() {
                     {faq.question}
                     <span
                       aria-hidden
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-paper text-xl leading-none transition-transform duration-300 group-open:rotate-45"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-paper text-xl leading-none transition-transform duration-300 group-open:rotate-45"
                     >
                       +
                     </span>

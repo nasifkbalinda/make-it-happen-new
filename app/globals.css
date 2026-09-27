@@ -95,6 +95,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Laptop and desktop screens: everything sized in rem (type, spacing, cards)
+   comes down slightly so a full section fits on screen. Media queries still
+   use the browser's 16px, so breakpoints are unaffected. */
+@media (min-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
+
 body {
   background-color: var(--paper);
   color: var(--ink);

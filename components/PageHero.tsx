@@ -34,10 +34,10 @@ export default function PageHero({
           ))}
         </div>
 
-        <div className="flex min-h-[26rem] flex-col justify-end px-5 pb-10 pt-32 sm:min-h-[30rem] sm:px-8 lg:min-h-[34rem] lg:px-10 lg:pb-12">
+        <div className="flex min-h-[26rem] flex-col justify-end px-5 pb-10 pt-32 sm:min-h-[26rem] sm:px-8 lg:min-h-[28rem] lg:px-10 lg:pb-12">
           <div className="max-w-5xl animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_both]">
             <Tag>{kicker}</Tag>
-            <h1 className="mt-6 text-[2.6rem] font-semibold leading-[1] tracking-[-0.045em] sm:text-6xl lg:text-[5.5rem]">
+            <h1 className="mt-6 text-[2.6rem] font-semibold leading-[1] tracking-[-0.045em] sm:text-6xl lg:text-[4.25rem]">
               {title}
             </h1>
           </div>

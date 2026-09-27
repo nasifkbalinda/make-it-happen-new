@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "./ui";
 
 export type ShowcaseService = {
@@ -12,12 +12,31 @@ export type ShowcaseService = {
 };
 
 /**
- * Large service names on the left; the one hovered, focused or tapped lights up
- * and its picture, summary and deliverables show on the right (below it on phones).
+ * Large service names on the left. As the visitor scrolls, the service crossing
+ * the middle of the screen lights up (hover, focus and tap do too) and its
+ * picture, summary and deliverables show on the right. Phones show every
+ * service's details under its name, with the current one brought forward.
  */
 export default function ServicesShowcase({ services }: { services: ShowcaseService[] }) {
   const [active, setActive] = useState(0);
   const current = services[active];
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+
+  useEffect(() => {
+    const items = itemRefs.current.filter((item): item is HTMLLIElement => Boolean(item));
+    if (!items.length) return;
+    // A thin band just above the middle of the viewport; whichever service is in it is current.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActive(Number((entry.target as HTMLElement).dataset.index));
+        }
+      },
+      { rootMargin: "-45% 0px -54% 0px" },
+    );
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, [services.length]);
 
   return (
     <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
@@ -25,7 +44,14 @@ export default function ServicesShowcase({ services }: { services: ShowcaseServi
         {services.map((service, index) => {
           const isActive = index === active;
           return (
-            <li key={service._id} className="border-t border-white/10 last:border-b">
+            <li
+              key={service._id}
+              ref={(node) => {
+                itemRefs.current[index] = node;
+              }}
+              data-index={index}
+              className="border-t border-white/10 last:border-b"
+            >
               <button
                 type="button"
                 onMouseEnter={() => setActive(index)}
@@ -40,7 +66,7 @@ export default function ServicesShowcase({ services }: { services: ShowcaseServi
                   }`}
                 />
                 <span
-                  className={`text-4xl font-semibold leading-[1.05] tracking-[-0.04em] transition-colors duration-300 sm:text-6xl lg:text-7xl ${
+                  className={`text-4xl font-semibold leading-[1.05] tracking-[-0.04em] transition-colors duration-300 sm:text-5xl lg:text-6xl ${
                     isActive ? "text-white" : "text-white/35 group-hover:text-white/60"
                   }`}
                 >
@@ -53,12 +79,10 @@ export default function ServicesShowcase({ services }: { services: ShowcaseServi
                 </span>
               </button>
 
-              {/* Phones: details open under the tapped service. */}
-              {isActive ? (
-                <div className="pb-8 lg:hidden">
-                  <ServiceDetail service={service} />
-                </div>
-              ) : null}
+              {/* Phones: details sit under each service; the current one is brought forward. */}
+              <div className={`pb-8 transition-opacity duration-500 lg:hidden ${isActive ? "opacity-100" : "opacity-40"}`}>
+                <ServiceDetail service={service} />
+              </div>
             </li>
           );
         })}
@@ -92,7 +116,7 @@ function ServiceDetail({ service }: { service: ShowcaseService }) {
       {features.length > 0 ? (
         <ul className="mt-6 flex flex-wrap gap-2">
           {features.map((feature) => (
-            <li key={feature} className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-white/80">
+            <li key={feature} className="rounded-md border border-white/15 px-3 py-1.5 text-sm text-white/80">
               {feature}
             </li>
           ))}

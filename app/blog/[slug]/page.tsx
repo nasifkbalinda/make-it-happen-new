@@ -170,7 +170,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <Link href="/blog" className="group inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-white/60 hover:text-white">
                 <span aria-hidden className="transition-transform group-hover:-translate-x-1">&larr;</span> Journal
               </Link>
-              <h1 className="mt-6 text-[2.3rem] font-semibold leading-[1.04] tracking-[-0.04em] sm:text-5xl lg:text-[4rem]">
+              <h1 className="mt-6 text-[2.3rem] font-semibold leading-[1.04] tracking-[-0.04em] sm:text-5xl lg:text-[3.25rem]">
                 {post.title ?? "Untitled"}
               </h1>
               {post.excerpt ? <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/70">{post.excerpt}</p> : null}
@@ -232,7 +232,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               href={item.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-accent-primary"
+              className="rounded-[10px] bg-white px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-accent-primary"
             >
               {item.label}
             </a>
