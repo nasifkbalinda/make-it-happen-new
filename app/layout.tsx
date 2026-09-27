@@ -1,6 +1,6 @@
 import Script from 'next/script'
 import type { Metadata } from "next";
-import { Figtree } from "next/font/google";
+import { Geist_Mono, Inter_Tight } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google"; // <-- NEW: Imported Google Analytics
 import "./globals.css";
 
@@ -8,7 +8,8 @@ import "./globals.css";
 import HeaderWrapper from "../components/HeaderWrapper";
 import Footer from "../components/Footer";
 
-const figtree = Figtree({ subsets: ["latin"], variable: "--font-figtree" });
+const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 // Site-wide defaults. Any page that declares its own `openGraph` replaces this
 // block wholesale, so pages without one (services, projects, about, contact,
@@ -51,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${figtree.variable} ${figtree.className} bg-background text-foreground antialiased`}>
+      <body className={`${interTight.variable} ${geistMono.variable} ${interTight.className} bg-background text-foreground antialiased`}>
         {/* 2. Render the new Server Wrapper here! */}
         <HeaderWrapper />
 

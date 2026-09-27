@@ -21,8 +21,21 @@ export const homepage = defineType({
       name: 'heroImage',
       title: 'Hero Image',
       type: 'image',
-      description: 'Upload the 3D hands/globe image here',
+      description: 'Shown while the hero video loads, and instead of it when there is no video.',
       options: { hotspot: true },
+    }),
+    defineField({
+      name: 'heroVideo',
+      title: 'Hero Background Video',
+      type: 'file',
+      description: 'Short, silent MP4 loop that plays behind the hero headline. Keep it calm and under ~8 MB.',
+      options: { accept: 'video/mp4' },
+    }),
+    defineField({
+      name: 'heroVideoPoster',
+      title: 'Hero Video Poster',
+      type: 'image',
+      description: 'A still from the hero video, shown for the split second before it starts playing.',
     }),
     
     // --- CTA Buttons ---
@@ -110,6 +123,40 @@ export const homepage = defineType({
       name: 'stat4Value',
       title: 'Stat 4 Value (e.g., 98%)',
       type: 'string',
+    }),
+
+    // --- "Who we are" introduction ---
+    defineField({
+      name: 'introStatement',
+      title: 'Intro Statement',
+      type: 'text',
+      rows: 3,
+      description: 'The large sentence under "Who we are". It fills in word by word as visitors scroll.',
+    }),
+    defineField({
+      name: 'introImages',
+      title: 'Intro Photo Strip',
+      type: 'array',
+      description: 'Photos of the team and the work. They scroll slowly across the page under the intro statement.',
+      of: [{ type: 'image', options: { hotspot: true }, fields: [{ name: 'alt', title: 'Alt text', type: 'string' }] }],
+    }),
+
+    // --- FAQ ---
+    defineField({
+      name: 'faqs',
+      title: 'Frequently Asked Questions',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'faq',
+          fields: [
+            { name: 'question', title: 'Question', type: 'string', validation: (rule) => rule.required() },
+            { name: 'answer', title: 'Answer', type: 'text', rows: 4, validation: (rule) => rule.required() },
+          ],
+          preview: { select: { title: 'question', subtitle: 'answer' } },
+        },
+      ],
     }),
   ],
 })

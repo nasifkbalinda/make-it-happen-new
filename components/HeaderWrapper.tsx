@@ -15,7 +15,8 @@ export default async function HeaderWrapper() {
   const query = `*[_id == "siteSettings"][0]{
     siteTitle,
     "logoUrl": logo.asset->url,
-    ${socialLinksProjection}
+    ${socialLinksProjection},
+    "projectCount": count(*[_type == "project"])
   }`;
   
   const settings = await client.fetch(query);
@@ -26,6 +27,7 @@ export default async function HeaderWrapper() {
       logoUrl={settings?.logoUrl} 
       siteTitle={settings?.siteTitle} 
       socialLinks={settings?.socialLinks}
+      projectCount={settings?.projectCount}
     />
   );
 }
