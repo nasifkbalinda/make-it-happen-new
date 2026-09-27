@@ -12,7 +12,7 @@ const client = createClient({
 
 export default async function HeaderWrapper() {
   // Fetch the Site Settings document we just created
-  const query = `*[_type == "siteSettings"][0]{
+  const query = `*[_id == "siteSettings"][0]{
     siteTitle,
     "logoUrl": logo.asset->url,
     ${socialLinksProjection}

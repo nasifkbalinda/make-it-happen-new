@@ -56,8 +56,9 @@ const client = createClient({
 });
 
 export default async function Home() {
-  // 2. Fetch Homepage Data
-  const homepageQuery = `*[_type == "homepage"][0]{
+  // 2. Fetch Homepage Data — by the fixed ID the Studio edits (sanity/structure.ts).
+  // Selecting by _type alone picked up an older, orphaned homepage document instead.
+  const homepageQuery = `*[_id == "homepage"][0]{
     heroHeading, heroSubheading, "imageUrl": heroImage.asset->url,
     primaryCtaText, primaryCtaLink, secondaryCtaText, secondaryCtaLink,
     featuredProjectsKicker, featuredProjectsTitle, featuredProjectsDescription,

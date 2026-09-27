@@ -24,7 +24,7 @@ type BlogPost = {
 export default async function BlogPage() {
   // Fetch Page Settings AND Blog Posts concurrently for maximum speed
   const [pageData, posts] = await Promise.all([
-    client.fetch(`*[_type == "blogPage"][0]`),
+    client.fetch(`*[_id == "blogPage"][0]`),
     client.fetch<BlogPost[]>(`*[_type == "post"] | order(publishedAt desc) {
       _id,
       title,

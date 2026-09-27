@@ -21,7 +21,7 @@ const footerQuery = `{
     location,
     ${socialLinksProjection}
   },
-  "settings": *[_type == "siteSettings" || _id == "siteSettings"][0]{
+  "settings": *[_id == "siteSettings"][0]{
     "logoUrl": coalesce(siteLogo.asset->url, logo.asset->url),
     ${socialLinksProjection}
   }

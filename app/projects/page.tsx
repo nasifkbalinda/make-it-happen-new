@@ -14,11 +14,8 @@ const client = createClient({
 export default async function ProjectsPage() {
   // 1. Fetch Page Settings AND Projects concurrently
   const [pageData, projects] = await Promise.all([
-    // DJ Rule 1: Find the specific document that actually has the heading text
-    client.fetch(`*[_type == "projectsPage" && defined(heading)][0]`),
-    
-    // DJ Rule 2: Find the specific document that actually has the playlist, and follow the links!
-    client.fetch(`*[_type == "projectsPage" && defined(projectList)][0].projectList[]->{
+    client.fetch(`*[_id == "projectsPage"][0]`),
+    client.fetch(`*[_id == "projectsPage"][0].projectList[]->{
       _id, title, category, description, "slug": slug.current, projectUrl, "imageUrl": mainImage.asset->url
     }`)
   ]);

@@ -23,7 +23,7 @@ const contactQuery = `{
     phone,
     address
   },
-  "settings": *[_type == "siteSettings"][0]{ ${socialLinksProjection} }
+  "settings": *[_id == "siteSettings"][0]{ ${socialLinksProjection} }
 }`;
 
 type ContactData = {

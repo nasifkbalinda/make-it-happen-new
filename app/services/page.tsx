@@ -30,7 +30,7 @@ function CheckIcon({ className }: { className?: string }) {
 export default async function ServicesPage() {
   // Fetch Page Settings AND Services concurrently for better performance
   const [pageData, services] = await Promise.all([
-    client.fetch(`*[_type == "servicesPage"][0]`),
+    client.fetch(`*[_id == "servicesPage"][0]`),
     client.fetch<ServiceCard[]>(`*[_type == "service"] | order(_createdAt asc) {
       _id, title, description, features, "imageUrl": mainImage.asset->url
     }`)
