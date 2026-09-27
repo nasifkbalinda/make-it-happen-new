@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createClient } from "next-sanity";
 import Cta from "@/components/Cta";
+import { PostCard, ProjectCard, postCardProjection, projectCardProjection, type PostCardData, type ProjectCardData } from "@/components/cards";
 import HeroStage from "@/components/HeroStage";
 import ServicesShowcase, {
   type ShowcaseService,
@@ -114,25 +114,7 @@ type HomeData = {
   faqs: { question: string; answer: string }[] | null;
 };
 
-type HomeProject = {
-  _id: string;
-  title: string;
-  category: string | null;
-  projectUrl: string | null;
-  imageUrl: string | null;
-  imageWidth: number | null;
-  brandColor: string | null;
-};
 
-type HomePost = {
-  _id: string;
-  title: string | null;
-  slug: string | null;
-  excerpt: string | null;
-  publishedAt: string | null;
-  imageUrl: string | null;
-  characters: number | null;
-};
 
 // Fixed document ID: the Studio edits this singleton (sanity/structure.ts).
 const homeQuery = `{
@@ -149,123 +131,22 @@ const homeQuery = `{
     faqs[]{ question, answer }
   },
   "about": *[_id == "about"][0]{ mainDescription },
-  "projects": *[_type == "project"] | order(_createdAt desc)[0...6]{
-    _id, title, category, projectUrl,
-    "imageUrl": mainImage.asset->url,
-    "imageWidth": mainImage.asset->metadata.dimensions.width,
-    "brandColor": mainImage.asset->metadata.palette.dominant.background
-  },
+  "projects": *[_type == "project"] | order(_createdAt desc)[0...6]{ ${projectCardProjection} },
   "projectCount": count(*[_type == "project"]),
   "services": *[_type == "service"] | order(_createdAt asc){
     _id, title, description, features, "imageUrl": mainImage.asset->url
   },
-  "posts": *[_type == "post"] | order(publishedAt desc)[0...3]{
-    _id, title, "slug": slug.current, excerpt, publishedAt,
-    "imageUrl": mainImage.asset->url,
-    "characters": length(pt::text(body))
-  }
+  "posts": *[_type == "post"] | order(publishedAt desc)[0...3]{ ${postCardProjection} }
 }`;
 
 type HomeQueryResult = {
   home: HomeData | null;
   about: { mainDescription: string | null } | null;
-  projects: HomeProject[] | null;
+  projects: ProjectCardData[] | null;
   projectCount: number | null;
   services: ShowcaseService[] | null;
-  posts: HomePost[] | null;
+  posts: PostCardData[] | null;
 };
-
-const dateFormat = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-});
-
-function readMinutes(characters: number | null) {
-  // ~5 characters a word, ~200 words a minute.
-  return Math.max(1, Math.round((characters ?? 0) / 1000));
-}
-
-/** Site logos and favicons are small; screenshots and photos are not. Logos get a framed panel. */
-function isLogo(width: number | null) {
-  return !width || width < 900;
-}
-
-function ProjectCard({
-  project,
-  tall,
-}: {
-  project: HomeProject;
-  tall?: boolean;
-}) {
-  const href = project.projectUrl || "/projects";
-  const external = Boolean(project.projectUrl);
-  const logo = isLogo(project.imageWidth);
-  return (
-    <Link
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
-      className="group block"
-    >
-      <div
-        className={`relative w-full overflow-hidden rounded-2xl bg-paper-raised ${tall ? "aspect-[4/3] md:aspect-[4/5]" : "aspect-[5/4]"}`}
-        // A logo sits on its own dominant colour (measured by Sanity), so each project reads as a brand tile.
-        style={
-          logo && project.brandColor
-            ? { backgroundColor: project.brandColor }
-            : undefined
-        }
-      >
-        {project.imageUrl ? (
-          logo ? (
-            <div className="flex h-full w-full items-center justify-center p-10">
-              <img
-                src={project.imageUrl}
-                alt={`${project.title} logo`}
-                className="max-h-[55%] max-w-[70%] object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-              />
-            </div>
-          ) : (
-            <img
-              src={project.imageUrl}
-              alt={project.title}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-            />
-          )
-        ) : (
-          <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-ink/30">
-            {project.title}
-          </div>
-        )}
-        <span className="absolute right-4 top-4 flex h-10 w-10 translate-y-2 items-center justify-center rounded-full bg-white text-ink opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-          <svg
-            aria-hidden
-            className="h-4 w-4"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 11 11 5M6 5h5v5"
-            />
-          </svg>
-        </span>
-      </div>
-      <p className="mt-5 text-2xl font-semibold tracking-[-0.02em] text-ink">
-        {project.title}
-      </p>
-      {project.category ? (
-        <p className="mt-1 font-mono text-xs uppercase tracking-[0.08em] text-muted">
-          {project.category}
-        </p>
-      ) : null}
-    </Link>
-  );
-}
 
 export default async function Home() {
   const data = await client.fetch<HomeQueryResult>(homeQuery);
@@ -438,14 +319,14 @@ export default async function Home() {
               <Reveal
                 key={stat.label}
                 delay={index * 120}
-                className={`pr-6 ${index % 2 === 1 ? "border-l border-ink/10 pl-6" : ""} ${index > 0 ? "lg:border-l lg:border-ink/10 lg:pl-10" : ""}`}
+                className={`flex flex-col-reverse justify-end pr-6 ${index % 2 === 1 ? "border-l border-ink/10 pl-6" : ""} ${index > 0 ? "lg:border-l lg:border-ink/10 lg:pl-10" : ""}`}
               >
-                <dd className="text-6xl font-semibold tracking-[-0.05em] text-ink sm:text-7xl lg:text-8xl">
-                  <RollingNumber value={stat.value} />
-                </dd>
                 <dt className="mt-4 text-lg font-medium tracking-[-0.01em] text-ink">
                   {stat.label}
                 </dt>
+                <dd className="text-6xl font-semibold tracking-[-0.05em] text-ink sm:text-7xl lg:text-8xl">
+                  <RollingNumber value={stat.value} />
+                </dd>
               </Reveal>
             ))}
           </dl>
@@ -507,7 +388,7 @@ export default async function Home() {
                 .filter((_, index) => index % 2 === 0)
                 .map((project) => (
                   <Reveal key={project._id}>
-                    <ProjectCard project={project} tall />
+                    <ProjectCard project={project} />
                   </Reveal>
                 ))}
             </div>
@@ -516,7 +397,7 @@ export default async function Home() {
                 .filter((_, index) => index % 2 === 1)
                 .map((project) => (
                   <Reveal key={project._id}>
-                    <ProjectCard project={project} tall />
+                    <ProjectCard project={project} />
                   </Reveal>
                 ))}
             </div>
@@ -595,43 +476,7 @@ export default async function Home() {
           <div className="mt-14 grid gap-6 md:grid-cols-3">
             {posts.map((post, index) => (
               <Reveal key={post._id} delay={index * 120}>
-                <Link
-                  href={post.slug ? `/blog/${post.slug}` : "/blog"}
-                  className="group flex h-full flex-col rounded-2xl bg-white p-4 transition-colors hover:bg-paper-raised sm:p-5"
-                >
-                  <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-paper-raised">
-                    {post.imageUrl ? (
-                      <img
-                        src={`${post.imageUrl}?w=900&auto=format`}
-                        alt=""
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                        loading="lazy"
-                      />
-                    ) : null}
-                  </div>
-                  <div className="mt-5 flex items-center gap-4 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
-                    {post.publishedAt ? (
-                      <time dateTime={post.publishedAt}>
-                        {dateFormat.format(new Date(post.publishedAt))}
-                      </time>
-                    ) : null}
-                    <span className="flex items-center gap-1.5">
-                      <span
-                        aria-hidden
-                        className="h-1.5 w-1.5 rounded-full bg-accent-primary"
-                      />
-                      {readMinutes(post.characters)} min read
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-xl font-semibold leading-snug tracking-[-0.02em]">
-                    {post.title}
-                  </h3>
-                  {post.excerpt ? (
-                    <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted">
-                      {post.excerpt}
-                    </p>
-                  ) : null}
-                </Link>
+                <PostCard post={post} />
               </Reveal>
             ))}
           </div>

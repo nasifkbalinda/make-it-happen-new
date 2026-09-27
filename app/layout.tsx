@@ -52,7 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${interTight.variable} ${geistMono.variable} ${interTight.className} bg-background text-foreground antialiased`}>
+      <body className={`${interTight.variable} ${geistMono.variable} ${interTight.className} bg-paper text-ink antialiased`}>
         {/* 2. Render the new Server Wrapper here! */}
         <HeaderWrapper />
 

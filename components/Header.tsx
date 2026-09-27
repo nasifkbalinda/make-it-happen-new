@@ -80,7 +80,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, 
               >
                 {link.label}
                 {link.href === "/projects" && projectCount ? (
-                  <sup className="absolute -right-4 -top-2 rounded-full bg-accent-primary px-1.5 py-px font-mono text-[9px] font-semibold text-ink">
+                  <sup className="absolute -right-4 -top-2 rounded-full bg-accent-primary px-1.5 py-0.5 font-mono text-[9px] leading-none font-semibold text-ink">
                     {String(projectCount).padStart(2, "0")}
                   </sup>
                 ) : null}
@@ -136,7 +136,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, 
                 >
                   {link.label}
                   {link.href === "/projects" && projectCount ? (
-                    <sup className="ml-1 rounded-full bg-accent-primary px-1.5 py-px font-mono text-[9px] font-semibold text-ink">
+                    <sup className="ml-1 rounded-full bg-accent-primary px-1.5 py-0.5 font-mono text-[9px] leading-none font-semibold text-ink">
                       {String(projectCount).padStart(2, "0")}
                     </sup>
                   ) : null}

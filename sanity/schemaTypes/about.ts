@@ -6,6 +6,12 @@ export const about = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'kicker',
+      title: 'Label',
+      type: 'string',
+      description: 'The small pill above the heading, e.g. "About us".',
+    }),
+    defineField({
       name: 'heading',
       title: 'Heading',
       type: 'string',
@@ -32,6 +38,22 @@ export const about = defineType({
       description: 'Team or group photo',
       options: { hotspot: true },
     }),
+    defineField({
+      name: 'gallery',
+      title: 'Photo strip',
+      type: 'array',
+      description: 'Team and work photos that drift across the page. Leave empty to reuse the homepage photo strip.',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+        }),
+      ],
+    }),
+    defineField({ name: 'valuesKicker', title: 'Values label', type: 'string', description: 'e.g. "What we stand for"' }),
+    defineField({ name: 'valuesHeading', title: 'Values heading', type: 'string' }),
+    defineField({ name: 'statsKicker', title: 'Numbers label', type: 'string', description: 'The figures come from Homepage Settings → Numbers.' }),
     defineField({
       name: 'valuesList',
       title: 'Core values',

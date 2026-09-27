@@ -1,5 +1,16 @@
+import type { Metadata } from "next";
 import { createClient } from "next-sanity";
-import Cta from "@/components/Cta"; // Imported the global CTA component
+import Cta from "@/components/Cta";
+import PageHero from "@/components/PageHero";
+import { Reveal, RollingNumber, ScrollRevealText } from "@/components/motion";
+import { Tag } from "@/components/ui";
+
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "About | Make It Happen",
+  description: "A Kampala studio designing and engineering software, websites, AI automation and marketing for East African businesses.",
+};
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -8,146 +19,161 @@ const client = createClient({
   useCdn: false,
 });
 
-type AboutValue = {
-  valueTitle: string | null;
-  valueDescription: string | null;
+type AboutData = {
+  about: {
+    kicker: string | null;
+    heading: string | null;
+    subheading: string | null;
+    mainDescription: string | null;
+    imageUrl: string | null;
+    gallery: { url: string; alt: string | null }[] | null;
+    valuesKicker: string | null;
+    valuesHeading: string | null;
+    statsKicker: string | null;
+    valuesList: { valueTitle: string | null; valueDescription: string | null }[] | null;
+  } | null;
+  home: {
+    introImages: { url: string; alt: string | null }[] | null;
+    stat1Label: string | null;
+    stat1Value: string | null;
+    stat2Label: string | null;
+    stat2Value: string | null;
+    stat3Label: string | null;
+    stat3Value: string | null;
+    stat4Label: string | null;
+    stat4Value: string | null;
+  } | null;
 };
-
-type AboutContent = {
-  heading: string | null;
-  subheading: string | null;
-  mainDescription: string | null;
-  imageUrl: string | null;
-  valuesList: AboutValue[] | null;
-};
-
-function BulletIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 20 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-    >
-      <circle cx="10" cy="10" r="3" fill="currentColor" />
-    </svg>
-  );
-}
 
 export default async function AboutPage() {
-  const query = `*[_type == "about" && _id == "about"][0]{
-    heading,
-    subheading,
-    mainDescription,
-    "imageUrl": featuredImage.asset->url,
-    valuesList[]{ valueTitle, valueDescription }
-  }`;
+  const data = await client.fetch<AboutData>(`{
+    "about": *[_id == "about"][0]{
+      kicker, heading, subheading, mainDescription,
+      "imageUrl": featuredImage.asset->url,
+      "gallery": gallery[]{ "url": asset->url, alt },
+      valuesKicker, valuesHeading, statsKicker,
+      valuesList[]{ valueTitle, valueDescription }
+    },
+    "home": *[_id == "homepage"][0]{
+      "introImages": introImages[]{ "url": asset->url, alt },
+      stat1Label, stat1Value, stat2Label, stat2Value, stat3Label, stat3Value, stat4Label, stat4Value
+    }
+  }`);
+  const about = data?.about;
+  const home = data?.home;
 
-  const aboutDoc = await client.fetch<AboutContent | null>(query);
-
-  const heading = aboutDoc?.heading ?? "About us";
-  const subheading = aboutDoc?.subheading;
-  const mainDescription = aboutDoc?.mainDescription;
-  const imageUrl = aboutDoc?.imageUrl;
-  const values = aboutDoc?.valuesList?.filter((v) => v?.valueTitle) ?? [];
+  const paragraphs = (about?.mainDescription ?? "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  const [lead, ...body] = paragraphs;
+  const gallery = (about?.gallery?.length ? about.gallery : home?.introImages ?? []).filter((image) => image?.url);
+  const values = (about?.valuesList ?? []).filter((value) => value?.valueTitle);
+  const stats = [
+    { label: home?.stat1Label, value: home?.stat1Value },
+    { label: home?.stat2Label, value: home?.stat2Value },
+    { label: home?.stat3Label, value: home?.stat3Value },
+    { label: home?.stat4Label, value: home?.stat4Value },
+  ].filter((stat): stat is { label: string; value: string } => Boolean(stat.label?.trim() && stat.value?.trim()));
 
   return (
-    <div className="flex w-full flex-col items-center">
-      {/* Adjusted padding to pt-32 pb-32 to match other pages */}
-      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14 pt-32 pb-32">
-        
-        {/* Hero — split layout */}
-        <section className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-          <div className="max-w-xl lg:max-w-none">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
-              About
-            </p>
-            {/* Synced headline typography */}
-            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
-              {heading}
-            </h1>
-            {subheading ? (
-              <p className="mt-5 text-lg leading-relaxed text-white/75">
-                {subheading}
-              </p>
-            ) : null}
-            {mainDescription ? (
-              <p className="mt-6 whitespace-pre-line text-base leading-relaxed text-white/60 sm:text-lg">
-                {mainDescription}
-              </p>
-            ) : (
-              <p className="mt-6 text-base leading-relaxed text-white/50 sm:text-lg">
-                Add your story in Sanity under{" "}
-                <span className="text-white/70">About Us</span> to show the main
-                description here.
-              </p>
-            )}
-          </div>
+    <div className="bg-paper text-ink">
+      <PageHero
+        kicker={about?.kicker?.trim() || "About us"}
+        title={about?.heading?.trim() || "Our story"}
+        description={about?.subheading}
+      />
 
-          <div className="relative">
-            <div
-              className="overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0B0F19] shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
-              aria-hidden={!imageUrl}
-            >
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt={heading}
-                  className="aspect-[4/3] h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex aspect-[4/3] items-center justify-center bg-[radial-gradient(ellipse_at_top_right,color-mix(in_srgb,var(--accent-primary)_12%,transparent),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.06),transparent_50%)] px-8 text-center text-sm text-white/45">
-                  Upload a featured image in Sanity to display your team photo
-                  here.
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Core values */}
-        <section className="mt-20 lg:mt-28">
-          <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Our core values
-          </h2>
-          <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/55">
-            Principles we bring to every engagement—clear, measurable, and built
-            to last.
-          </p>
-
-          <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {values.map((item, index) => (
-              <article
-                key={`${item.valueTitle}-${index}`}
-                className="rounded-[1.75rem] border border-white/10 bg-[#0B0F19] p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] transition-colors hover:border-white/15"
-              >
-                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-full bg-accent-primary/15 text-accent-primary">
-                  <BulletIcon className="h-4 w-4" />
-                </div>
-                <h3 className="text-xl font-bold tracking-tight text-white">
-                  {item.valueTitle}
-                </h3>
-                {item.valueDescription ? (
-                  <p className="mt-3 text-sm leading-relaxed text-white/70 sm:text-[15px]">
-                    {item.valueDescription}
-                  </p>
-                ) : null}
-              </article>
-            ))}
-          </div>
-
-          {values.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-white/15 py-16 text-center text-white/50">
-              No core values yet. Add entries under{" "}
-              <span className="text-white/70">Core values</span> in the About Us
-              document in Sanity.
-            </div>
+      {/* Story */}
+      <section className="shell grid gap-12 py-20 sm:py-28 lg:grid-cols-12 lg:gap-16">
+        <div className="lg:col-span-5">
+          {about?.imageUrl ? (
+            <Reveal className="lg:sticky lg:top-28">
+              <img
+                src={`${about.imageUrl}?w=1200&auto=format`}
+                alt="The Make It Happen team"
+                className="aspect-[4/5] w-full rounded-2xl object-cover"
+              />
+            </Reveal>
           ) : null}
-        </section>
-      </div>
+        </div>
+        <div className="lg:col-span-7">
+          {lead ? (
+            <ScrollRevealText text={lead} className="text-3xl font-medium leading-[1.15] tracking-[-0.035em] sm:text-4xl lg:text-5xl" />
+          ) : null}
+          {body.map((paragraph) => (
+            <Reveal key={paragraph.slice(0, 40)}>
+              <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted">{paragraph}</p>
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
-      {/* Global CTA Section */}
+      {/* Photo strip */}
+      {gallery.length ? (
+        <div className="overflow-hidden pb-20 sm:pb-28">
+          <ul className="flex w-max animate-[marquee_60s_linear_infinite] gap-4 pr-4 hover:[animation-play-state:paused]">
+            {[...gallery, ...gallery].map((image, index) => (
+              <li key={`${image.url}-${index}`} aria-hidden={index >= gallery.length} className="w-56 shrink-0 sm:w-72">
+                <img
+                  src={`${image.url}?w=720&auto=format`}
+                  alt={index < gallery.length ? image.alt ?? "" : ""}
+                  className="aspect-[4/5] w-full rounded-2xl object-cover"
+                  loading="lazy"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {/* Values — dark */}
+      {values.length ? (
+        <section className="px-2 sm:px-3">
+          <div className="rounded-[20px] bg-ink py-20 text-white sm:py-28">
+            <div className="shell">
+              <Reveal>
+                <Tag tone="dark">{about?.valuesKicker?.trim() || "What we stand for"}</Tag>
+                <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
+                  {about?.valuesHeading?.trim() || "The principles behind every project."}
+                </h2>
+              </Reveal>
+              <ul className="mt-14 grid gap-px overflow-hidden rounded-2xl bg-white/10 md:grid-cols-3">
+                {values.map((value, index) => (
+                  <li key={value.valueTitle} className="bg-ink">
+                    <Reveal delay={index * 120} className="flex h-full flex-col py-8 sm:p-9">
+                      <span className="font-mono text-sm text-accent-primary">[{String(index + 1).padStart(2, "0")}]</span>
+                      <h3 className="mt-10 text-3xl font-semibold tracking-[-0.03em]">{value.valueTitle}</h3>
+                      {value.valueDescription ? (
+                        <p className="mt-4 text-[15px] leading-relaxed text-white/60">{value.valueDescription}</p>
+                      ) : null}
+                    </Reveal>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* Numbers */}
+      {stats.length ? (
+        <section className="shell py-20 sm:py-28">
+          <Tag>{about?.statsKicker?.trim() || "By the numbers"}</Tag>
+          <dl className="mt-12 grid grid-cols-2 gap-y-12 lg:grid-cols-4">
+            {stats.map((stat, index) => (
+              <Reveal
+                key={stat.label}
+                delay={index * 120}
+                className={`flex flex-col-reverse justify-end pr-6 ${index % 2 === 1 ? "border-l border-ink/10 pl-6" : ""} ${index > 0 ? "lg:border-l lg:border-ink/10 lg:pl-10" : ""}`}
+              >
+                <dt className="mt-4 text-lg font-medium">{stat.label}</dt>
+                <dd className="text-6xl font-semibold tracking-[-0.05em] sm:text-7xl lg:text-8xl">
+                  <RollingNumber value={stat.value} />
+                </dd>
+              </Reveal>
+            ))}
+          </dl>
+        </section>
+      ) : null}
+
       <Cta />
     </div>
   );
