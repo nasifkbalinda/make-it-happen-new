@@ -16,6 +16,8 @@ export default async function HeaderWrapper() {
     siteTitle,
     "logoUrl": logo.asset->url,
     ${socialLinksProjection},
+    headerCtaText,
+    headerCtaLink,
     "projectCount": count(*[_type == "project"])
   }`;
   
@@ -28,6 +30,8 @@ export default async function HeaderWrapper() {
       siteTitle={settings?.siteTitle} 
       socialLinks={settings?.socialLinks}
       projectCount={settings?.projectCount}
+      ctaText={settings?.headerCtaText}
+      ctaLink={settings?.headerCtaLink}
     />
   );
 }

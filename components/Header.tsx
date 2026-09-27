@@ -12,6 +12,8 @@ type HeaderProps = {
   siteTitle?: string | null;
   socialLinks?: SocialLinkItem[] | null;
   projectCount?: number | null;
+  ctaText?: string | null;
+  ctaLink?: string | null;
 };
 
 const navLinks = [
@@ -22,7 +24,7 @@ const navLinks = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
-export default function Header({ logoUrl, siteTitle, socialLinks, projectCount }: HeaderProps) {
+export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, ctaText, ctaLink }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -40,6 +42,8 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount }
   }
 
   const displayTitle = siteTitle || "Make It Happen";
+  const buttonText = ctaText?.trim() || "Start a project";
+  const buttonLink = ctaLink?.trim() || "/contact";
   const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
 
   return (
@@ -87,10 +91,10 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount }
 
         <div className="flex items-center gap-2">
           <Link
-            href="/contact"
+            href={buttonLink}
             className="group hidden items-center gap-1.5 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-accent-primary sm:inline-flex"
           >
-            Start a project
+            {buttonText}
             <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
           <button
@@ -141,10 +145,10 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount }
             ))}
           </ul>
           <Link
-            href="/contact"
+            href={buttonLink}
             className="mt-5 flex items-center justify-center gap-1.5 rounded-full bg-ink px-5 py-3.5 text-[15px] font-medium text-white"
           >
-            Start a project <ArrowUpRight />
+            {buttonText} <ArrowUpRight />
           </Link>
           <div className="mt-5 flex justify-center [&_a]:border-ink/10 [&_a]:bg-paper [&_a]:text-ink/70">
             <SocialLinks links={socialLinks} size="md" />

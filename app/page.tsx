@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "next-sanity";
 import Cta from "@/components/Cta";
+import HeroStage from "@/components/HeroStage";
 import ServicesShowcase, {
   type ShowcaseService,
 } from "@/components/ServicesShowcase";
@@ -68,6 +69,26 @@ const client = createClient({
 });
 
 type HomeData = {
+  heroKicker: string | null;
+  heroAside: string | null;
+  heroMeta: string[] | null;
+  heroChatQuestion: string | null;
+  heroChatAnswer: string | null;
+  clientsLabel: string | null;
+  introKicker: string | null;
+  introLinkText: string | null;
+  statsKicker: string | null;
+  servicesKicker: string | null;
+  servicesHeading: string | null;
+  servicesDescription: string | null;
+  workLinkText: string | null;
+  faqKicker: string | null;
+  faqHeading: string | null;
+  faqDescription: string | null;
+  faqButtonText: string | null;
+  journalKicker: string | null;
+  journalHeading: string | null;
+  journalLinkText: string | null;
   heroHeading: string | null;
   heroSubheading: string | null;
   imageUrl: string | null;
@@ -116,7 +137,10 @@ type HomePost = {
 // Fixed document ID: the Studio edits this singleton (sanity/structure.ts).
 const homeQuery = `{
   "home": *[_id == "homepage"][0]{
-    heroHeading, heroSubheading, "imageUrl": heroImage.asset->url, "videoUrl": heroVideo.asset->url, "posterUrl": heroVideoPoster.asset->url,
+    heroKicker, heroHeading, heroSubheading, heroAside, heroMeta, heroChatQuestion, heroChatAnswer,
+    clientsLabel, introKicker, introLinkText, statsKicker, servicesKicker, servicesHeading, servicesDescription,
+    workLinkText, faqKicker, faqHeading, faqDescription, faqButtonText, journalKicker, journalHeading, journalLinkText,
+    "imageUrl": heroImage.asset->url, "videoUrl": heroVideo.asset->url, "posterUrl": heroVideoPoster.asset->url,
     primaryCtaText, primaryCtaLink, secondaryCtaText, secondaryCtaLink,
     featuredProjectsKicker, featuredProjectsTitle, featuredProjectsDescription,
     stat1Label, stat1Value, stat2Label, stat2Value, stat3Label, stat3Value, stat4Label, stat4Value,
@@ -185,7 +209,7 @@ function ProjectCard({
       className="group block"
     >
       <div
-        className={`relative w-full overflow-hidden rounded-2xl bg-paper-raised ${tall ? "aspect-[4/5]" : "aspect-[5/4]"}`}
+        className={`relative w-full overflow-hidden rounded-2xl bg-paper-raised ${tall ? "aspect-[4/3] md:aspect-[4/5]" : "aspect-[5/4]"}`}
         // A logo sits on its own dominant colour (measured by Sanity), so each project reads as a brand tile.
         style={
           logo && project.brandColor
@@ -267,76 +291,66 @@ export default async function Home() {
     "We build the software, websites and growth systems that ambitious East African businesses run on.";
 
   const shippedValue = home?.stat1Value?.trim();
+  // "[image]" in the services heading marks where the small round photo sits.
+  const servicesHeadingParts = (home?.servicesHeading?.trim() || "Everything [image] your business needs to grow online.").split(/\s*\[image\]\s*/i);
+  const servicesPhoto = services.find((service) => service.imageUrl)?.imageUrl ?? introImages[0]?.url ?? null;
+  const heroMeta = (home?.heroMeta ?? []).map((item) => item?.trim()).filter(Boolean).length
+    ? (home?.heroMeta ?? []).map((item) => item?.trim()).filter(Boolean)
+    : ["Based: Kampala, UG", "Focus: Software · Web · AI", shippedValue ? `Shipped: ${shippedValue} products` : "Serving: East Africa"];
 
   return (
     <div className="bg-paper text-ink">
-      {/* 1. Hero — a dark card inset from the page edge, with the black-and-white Kampala film behind it */}
+      {/* 1. Hero — dark card: the pitch on the left, the looping studio animation on the right */}
       <section className="p-2 sm:p-3">
-        <div className="relative isolate flex min-h-[calc(100svh-1rem)] flex-col overflow-hidden rounded-[20px] bg-ink text-white sm:min-h-[calc(100svh-1.5rem)]">
+        <div className="relative isolate overflow-hidden rounded-[20px] bg-ink text-white">
           {home?.videoUrl ? (
             <BackgroundVideo
               src={home.videoUrl}
-              poster={home.posterUrl ?? home.imageUrl}
-              className="absolute inset-0 -z-10 h-full w-full object-cover grayscale"
-            />
-          ) : home?.imageUrl ? (
-            <img
-              src={home.imageUrl}
-              alt=""
-              className="absolute inset-0 -z-10 h-full w-full object-cover grayscale"
-              fetchPriority="high"
+              poster={home.posterUrl}
+              className="absolute inset-0 -z-10 h-full w-full object-cover opacity-25"
             />
           ) : null}
-          <div aria-hidden className="absolute inset-0 -z-10 bg-ink/45" />
+          {/* A faint dot grid, like graph paper under the work. */}
           <div
             aria-hidden
-            className="absolute inset-y-0 left-0 -z-10 w-3/4 bg-gradient-to-r from-ink/70 to-transparent"
+            className="absolute inset-0 -z-10 opacity-[0.08] [background-image:radial-gradient(circle,white_1px,transparent_1.6px)] [background-size:28px_28px]"
           />
 
-          <div className="flex flex-1 flex-col justify-end px-5 pb-8 pt-32 sm:px-8 lg:px-10 lg:pb-10">
-            <div className="max-w-4xl animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_both]">
-              <Tag>Software · Web · AI · Marketing</Tag>
-              <h1 className="mt-6 text-[2.75rem] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-7xl lg:text-[6.25rem]">
-                {home?.heroHeading || "Let’s make it happen."}
+          <div className="grid min-h-[calc(100svh-1rem)] content-center gap-12 px-5 pb-10 pt-28 sm:min-h-[calc(100svh-1.5rem)] sm:px-8 lg:grid-cols-12 lg:items-center lg:gap-10 lg:px-10 lg:pb-12 lg:pt-32">
+            <div className="animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_both] lg:col-span-6">
+              <Tag>{home?.heroKicker?.trim() || "Software · Web · AI · Marketing"}</Tag>
+              <h1 className="mt-6 text-[2.9rem] font-semibold leading-[0.98] tracking-[-0.045em] sm:text-7xl xl:text-[6rem]">
+                {home?.heroHeading || "Let\u2019s make it happen."}
               </h1>
               {home?.heroSubheading ? (
-                <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
-                  {home.heroSubheading}
-                </p>
+                <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">{home.heroSubheading}</p>
               ) : null}
-            </div>
-
-            <div className="mt-14 flex flex-col gap-8 lg:mt-24 lg:flex-row lg:items-end lg:justify-between animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_250ms_both]">
-              <ul className="grid gap-2 font-mono text-xs uppercase tracking-[0.08em] text-white/70 sm:grid-cols-3 sm:gap-10">
-                <li>+ Based: Kampala, UG</li>
-                <li>+ Focus: Software · Web · AI</li>
-                {shippedValue ? (
-                  <li>+ Shipped: {shippedValue} products</li>
-                ) : (
-                  <li>+ Serving: East Africa</li>
-                )}
-              </ul>
-              <div className="max-w-sm">
-                <p className="text-xl font-medium leading-snug tracking-[-0.02em] sm:text-2xl">
-                  Websites, software and growth systems for businesses that mean
-                  it.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <PillLink
-                    href={home?.secondaryCtaLink || "/projects"}
-                    variant="accent"
-                  >
-                    {home?.secondaryCtaText || "View our work"}
-                  </PillLink>
-                  <PillLink
-                    href={home?.primaryCtaLink || "/contact"}
-                    variant="light"
-                  >
-                    {home?.primaryCtaText || "Start a project"}
-                  </PillLink>
-                </div>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <PillLink href={home?.primaryCtaLink || "/contact"} variant="accent" size="lg">
+                  {home?.primaryCtaText || "Start a project"}
+                </PillLink>
+                <PillLink href={home?.secondaryCtaLink || "/projects"} variant="light" size="lg">
+                  {home?.secondaryCtaText || "View our work"}
+                </PillLink>
               </div>
             </div>
+
+            <div className="animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_200ms_both] lg:col-span-6">
+              <HeroStage
+                chatQuestion={home?.heroChatQuestion}
+                chatAnswer={home?.heroChatAnswer}
+                photoUrl={introImages[0]?.url}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 border-t border-white/10 px-5 py-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
+            <ul className="flex flex-wrap gap-x-8 gap-y-2 font-mono text-[11px] uppercase tracking-[0.08em] text-white/60">
+              {heroMeta.map((item) => (
+                <li key={item}>+ {item}</li>
+              ))}
+            </ul>
+            <p className="text-sm text-white/70">{home?.heroAside?.trim() || "Websites, software and growth systems for businesses that mean it."}</p>
           </div>
         </div>
       </section>
@@ -349,9 +363,10 @@ export default async function Home() {
               aria-hidden
               className="mt-0.5 h-2.5 w-2.5 shrink-0 rounded-[2px] bg-accent-primary"
             />
-            {shippedValue
-              ? `${shippedValue} products shipped for businesses across East Africa.`
-              : "Trusted by businesses across East Africa."}
+            {home?.clientsLabel?.trim() ||
+              (shippedValue
+                ? `${shippedValue} products shipped for businesses across East Africa.`
+                : "Trusted by businesses across East Africa.")}
           </p>
           <div className="relative min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
             <ul className="flex w-max animate-marquee items-center gap-16 pr-16">
@@ -379,7 +394,7 @@ export default async function Home() {
       <section className="border-t border-ink/10 pt-24 sm:pt-32">
         <div className="shell grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-3">
-            <Tag>Who we are</Tag>
+            <Tag>{home?.introKicker?.trim() || "Who we are"}</Tag>
           </div>
           <div className="lg:col-span-9">
             <ScrollRevealText
@@ -387,7 +402,7 @@ export default async function Home() {
               className="text-3xl font-medium leading-[1.12] tracking-[-0.035em] sm:text-5xl lg:text-[3.6rem]"
             />
             <ArrowLink href="/about" className="mt-10 text-ink">
-              About the studio
+              {home?.introLinkText?.trim() || "About the studio"}
             </ArrowLink>
           </div>
         </div>
@@ -417,7 +432,7 @@ export default async function Home() {
       {/* 4. By the numbers */}
       {stats.length > 0 ? (
         <section className="shell py-24 sm:py-32">
-          <Tag>By the numbers</Tag>
+          <Tag>{home?.statsKicker?.trim() || "By the numbers"}</Tag>
           <dl className="mt-12 grid grid-cols-2 gap-y-12 lg:grid-cols-4">
             {stats.map((stat, index) => (
               <Reveal
@@ -444,24 +459,20 @@ export default async function Home() {
             <div className="shell">
               <Reveal className="flex flex-col gap-8 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between">
                 <div>
-                  <Tag>Services</Tag>
+                  <Tag>{home?.servicesKicker?.trim() || "Services"}</Tag>
                   <h2 className="mt-6 max-w-3xl text-4xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-6xl">
-                    Everything{" "}
-                    {services.find((service) => service.imageUrl)?.imageUrl ? (
-                      <span className="inline-block h-[0.8em] w-[1.6em] translate-y-[0.08em] overflow-hidden rounded-full align-baseline">
-                        <img
-                          src={`${services.find((service) => service.imageUrl)?.imageUrl}?w=240&auto=format`}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
+                    {servicesHeadingParts[0]}
+                    {servicesHeadingParts.length > 1 && servicesPhoto ? (
+                      <span className="mx-[0.12em] inline-block h-[0.8em] w-[1.6em] translate-y-[0.08em] overflow-hidden rounded-full align-baseline">
+                        <img src={`${servicesPhoto}?w=240&auto=format`} alt="" className="h-full w-full object-cover" />
                       </span>
-                    ) : null}{" "}
-                    your business needs to grow online.
+                    ) : servicesHeadingParts.length > 1 ? " " : null}
+                    {servicesHeadingParts.slice(1).join(" ")}
                   </h2>
                 </div>
                 <p className="max-w-sm text-sm leading-relaxed text-white/60">
-                  One accountable team for design, engineering, automation and
-                  growth, from the first workshop to long after launch.
+                  {home?.servicesDescription?.trim() ||
+                    "One accountable team for design, engineering, automation and growth, from the first workshop to long after launch."}
                 </p>
               </Reveal>
               <div className="mt-6">
@@ -490,8 +501,8 @@ export default async function Home() {
             ) : null}
           </Reveal>
 
-          <div className="mt-16 grid gap-x-8 gap-y-16 md:grid-cols-2 lg:gap-x-16">
-            <div className="flex flex-col gap-16">
+          <div className="mt-12 grid gap-x-8 gap-y-10 sm:mt-16 md:grid-cols-2 md:gap-y-16 lg:gap-x-16">
+            <div className="flex flex-col gap-10 md:gap-16">
               {projects
                 .filter((_, index) => index % 2 === 0)
                 .map((project) => (
@@ -500,7 +511,7 @@ export default async function Home() {
                   </Reveal>
                 ))}
             </div>
-            <div className="flex flex-col gap-16 md:pt-40">
+            <div className="flex flex-col gap-10 md:gap-16 md:pt-40">
               {projects
                 .filter((_, index) => index % 2 === 1)
                 .map((project) => (
@@ -514,7 +525,7 @@ export default async function Home() {
           <div className="mt-16 flex justify-center">
             <ArrowLink href="/projects" className="text-2xl text-ink">
               <>
-                All cases
+                {home?.workLinkText?.trim() || "All cases"}
                 {data?.projectCount ? (
                   <sup className="ml-1 font-mono text-xs text-accent-secondary">
                     ({String(data.projectCount).padStart(2, "0")})
@@ -530,17 +541,17 @@ export default async function Home() {
       {faqs.length > 0 ? (
         <section className="shell grid gap-12 border-t border-ink/10 py-24 sm:py-32 lg:grid-cols-12">
           <Reveal className="lg:col-span-5">
-            <Tag>FAQ</Tag>
+            <Tag>{home?.faqKicker?.trim() || "FAQ"}</Tag>
             <h2 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-5xl">
-              Questions, answered.
+              {home?.faqHeading?.trim() || "Questions, answered."}
             </h2>
             <p className="mt-6 max-w-sm text-base leading-relaxed text-muted">
-              Anything else? Ask us directly and a senior member of the team
-              will reply within one working day.
+              {home?.faqDescription?.trim() ||
+                "Anything else? Ask us directly and a senior member of the team will reply within one working day."}
             </p>
             <div className="mt-8">
               <PillLink href="/contact" variant="dark">
-                Ask a question
+                {home?.faqButtonText?.trim() || "Ask a question"}
               </PillLink>
             </div>
           </Reveal>
@@ -572,13 +583,13 @@ export default async function Home() {
         <section className="shell border-t border-ink/10 py-24 sm:py-32">
           <Reveal className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <Tag>Insights</Tag>
+              <Tag>{home?.journalKicker?.trim() || "Insights"}</Tag>
               <h2 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-5xl">
-                From the journal.
+                {home?.journalHeading?.trim() || "From the journal."}
               </h2>
             </div>
             <ArrowLink href="/blog" className="text-ink">
-              View all posts
+              {home?.journalLinkText?.trim() || "View all posts"}
             </ArrowLink>
           </Reveal>
           <div className="mt-14 grid gap-6 md:grid-cols-3">

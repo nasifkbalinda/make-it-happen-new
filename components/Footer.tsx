@@ -23,6 +23,7 @@ const footerQuery = `{
   },
   "settings": *[_id == "siteSettings"][0]{
     "logoUrl": coalesce(siteLogo.asset->url, logo.asset->url),
+    whatsappNumber,
     ${socialLinksProjection}
   }
 }`;
@@ -37,6 +38,7 @@ type FooterData = {
   } | null;
   settings: {
     logoUrl: string | null;
+    whatsappNumber: string | null;
     socialLinks: SocialLinkItem[] | null;
   } | null;
 };
@@ -63,9 +65,9 @@ export default async function Footer() {
   const companyText =
     data?.footer?.companyText ??
     "We design and ship digital products that help ambitious teams move faster.";
-  const email = data?.footer?.email ?? "hello@makeithappen.example";
-  const phone = data?.footer?.phone ?? "+1 (555) 000-0000";
-  const location = data?.footer?.location ?? "Remote-first";
+  const email = data?.footer?.email ?? "hello@makeithappen.ug";
+  const phone = data?.footer?.phone ?? "+256790879117";
+  const location = data?.footer?.location ?? "Kampala, Uganda";
   // Global Site Settings is the source of truth; the footer's legacy field is the fallback.
   const socialLinks = data?.settings?.socialLinks?.length
     ? data.settings.socialLinks
@@ -75,6 +77,7 @@ export default async function Footer() {
   const logoUrl = data?.settings?.logoUrl ?? "/icon.png";
 
   const phoneDigits = phone.replace(/[^\d+]/g, "");
+  const whatsappDigits = (data?.settings?.whatsappNumber || phone).replace(/\D/g, "");
 
   return (
     <footer className="relative z-20 w-full bg-paper px-2 pb-2 sm:px-3 sm:pb-3">
@@ -126,7 +129,7 @@ export default async function Footer() {
                     <a href={`tel:${phoneDigits}`} className="transition-colors hover:text-accent-primary">{phone}</a>
                   </li>
                   <li>
-                    <a href={`https://wa.me/${phoneDigits.replace("+", "")}`} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-accent-primary">
+                    <a href={`https://wa.me/${whatsappDigits}`} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-accent-primary">
                       WhatsApp
                     </a>
                   </li>

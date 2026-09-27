@@ -141,3 +141,67 @@ body {
     filter: blur(0);
   }
 }
+
+/* ---- Hero animation (components/HeroStage.tsx) ---- */
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes pixel-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes typing-dot {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-30px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-300px) translateX(12px) scale(1.1);
+  }
+}
+@keyframes cursor-move {
+  from {
+    opacity: 0;
+    transform: translate(260px, 120px);
+  }
+  30% {
+    opacity: 1;
+  }
+  85% {
+    transform: translate(0, 0) scale(1);
+  }
+  92% {
+    transform: translate(0, 0) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
