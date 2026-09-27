@@ -86,7 +86,7 @@ export default async function Footer() {
           <div className="grid gap-12 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <Link href="/" className="inline-block" aria-label="Make It Happen home">
-                <img src={logoUrl} alt="Make It Happen logo" className="h-12 w-auto object-contain" />
+                <img src={logoUrl} alt="Make It Happen logo" className="h-16 w-auto object-contain sm:h-20" />
               </Link>
               <p className="mt-6 max-w-sm text-base leading-relaxed text-white/60">{companyText}</p>
               <a

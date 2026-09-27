@@ -130,17 +130,49 @@ const homeQuery = `{
   "about": *[_id == "about"][0]{ mainDescription },
   "projects": *[_type == "project"] | order(_createdAt desc)[0...6]{ ${projectCardProjection} },
   "projectCount": count(*[_type == "project"]),
+  "clients": *[_type == "project" && (defined(clientLogo.asset) || defined(mainImage.asset))] | order(_createdAt asc){
+    _id, title,
+    "logo": coalesce(clientLogo, mainImage).asset->{
+      url, "width": metadata.dimensions.width, "height": metadata.dimensions.height,
+      "hasAlpha": metadata.hasAlpha, "color": metadata.palette.dominant.background
+    }
+  },
   "services": *[_type == "service"] | order(_createdAt asc){
     _id, title, description, features, "imageUrl": mainImage.asset->url
   },
   "posts": *[_type == "post"] | order(publishedAt desc)[0...3]{ ${postCardProjection} }
 }`;
 
+type ClientLogo = {
+  _id: string;
+  title: string | null;
+  logo: { url: string; width: number; height: number; hasAlpha: boolean | null; color: string | null } | null;
+};
+
+/** Relative luminance of a #rrggbb colour, 0 (black) to 1 (white). */
+function luminance(hex: string | null | undefined) {
+  const match = /^#?([0-9a-f]{6})$/i.exec(hex ?? "");
+  if (!match) return 1;
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(match[1].slice(i, i + 2), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * The tile behind a client logo. Solid images (a logo on its own colour) sit on
+ * that colour so the edges disappear; transparent logos get a white or dark tile,
+ * whichever contrasts with the logo itself.
+ */
+function logoTile(logo: NonNullable<ClientLogo["logo"]>) {
+  if (!logo.hasAlpha) return { background: logo.color ?? "#ffffff", padded: false };
+  return { background: luminance(logo.color) > 0.6 ? "#151515" : "#ffffff", padded: true };
+}
+
 type HomeQueryResult = {
   home: HomeData | null;
   about: { mainDescription: string | null } | null;
   projects: ProjectCardData[] | null;
   projectCount: number | null;
+  clients: ClientLogo[] | null;
   services: ShowcaseService[] | null;
   posts: PostCardData[] | null;
 };
@@ -151,6 +183,7 @@ export default async function Home() {
   const projects = data?.projects ?? [];
   const services = data?.services ?? [];
   const posts = data?.posts ?? [];
+  const clients = (data?.clients ?? []).filter((client) => client.logo?.url);
   const faqs = (home?.faqs ?? []).filter((faq) => faq?.question && faq?.answer);
   const introImages = (home?.introImages ?? []).filter((image) => image?.url);
 
@@ -219,9 +252,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 2. Client strip — the project names from Sanity scroll past */}
-      {projects.length > 0 ? (
-        <section className="shell flex flex-col gap-6 py-8 sm:flex-row sm:items-center sm:gap-10">
+      {/* 2. Client strip — client logos from the Projects in Sanity scroll past */}
+      {clients.length > 0 ? (
+        <section className="shell flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:gap-10">
           <p className="flex max-w-[16rem] shrink-0 items-start gap-3 font-mono text-[11px] uppercase leading-relaxed tracking-[0.08em] text-muted">
             <span
               aria-hidden
@@ -232,29 +265,33 @@ export default async function Home() {
                 ? `${shippedValue} products shipped for businesses across East Africa.`
                 : "Trusted by businesses across East Africa.")}
           </p>
-          <div className="relative min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-            <ul className="flex w-max animate-marquee items-center gap-16 pr-16">
-              {[...projects, ...projects].map((project, index) => (
-                <li
-                  key={`${project._id}-${index}`}
-                  aria-hidden={index >= projects.length}
-                  className="flex items-center gap-3 whitespace-nowrap text-xl font-semibold tracking-[-0.02em] text-ink/80"
-                >
-                  <span aria-hidden className="grid grid-cols-2 gap-0.5">
-                    <span className="h-1.5 w-1.5 bg-ink/70" />
-                    <span className="h-1.5 w-1.5 bg-accent-primary" />
-                    <span className="h-1.5 w-1.5 bg-accent-primary" />
-                    <span className="h-1.5 w-1.5 bg-ink/70" />
-                  </span>
-                  {project.title}
-                </li>
-              ))}
+          <div className="relative min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+            <ul className="flex w-max animate-marquee items-center gap-4 pr-4 hover:[animation-play-state:paused]">
+              {[...clients, ...clients].map((client, index) => {
+                const tile = logoTile(client.logo!);
+                return (
+                  <li
+                    key={`${client._id}-${index}`}
+                    aria-hidden={index >= clients.length}
+                    title={client.title ?? undefined}
+                    className="flex h-20 w-44 shrink-0 items-center justify-center overflow-hidden rounded-xl sm:h-24 sm:w-52"
+                    style={{ backgroundColor: tile.background }}
+                  >
+                    <img
+                      src={`${client.logo!.url}?w=480&auto=format`}
+                      alt={index < clients.length ? `${client.title ?? "Client"} logo` : ""}
+                      className={`h-full w-full object-contain ${tile.padded ? "p-4" : ""}`}
+                      loading="lazy"
+                    />
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </section>
       ) : null}
 
-      {/* 3. Who we are — the statement fills in as it scrolls, then the team strip */}
+      {/* 3. Who we are — the statement fills in as it scrolls */}
       <section className="border-t border-ink/10 pt-24 sm:pt-32">
         <div className="shell grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-3">
@@ -271,26 +308,6 @@ export default async function Home() {
           </div>
         </div>
 
-        {introImages.length > 0 ? (
-          <div className="mt-20 overflow-hidden">
-            <ul className="flex w-max animate-[marquee_60s_linear_infinite] gap-4 pr-4 hover:[animation-play-state:paused]">
-              {[...introImages, ...introImages].map((image, index) => (
-                <li
-                  key={`${image.url}-${index}`}
-                  aria-hidden={index >= introImages.length}
-                  className="w-60 shrink-0 sm:w-72"
-                >
-                  <img
-                    src={`${image.url}?w=720&auto=format`}
-                    alt={index < introImages.length ? (image.alt ?? "") : ""}
-                    className="aspect-[4/5] w-full rounded-2xl object-cover"
-                    loading="lazy"
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
       </section>
 
       {/* 4. By the numbers */}

@@ -53,5 +53,11 @@ export const project = defineType({
       type: 'image',
       options: { hotspot: true },
     }),
+    defineField({
+      name: 'clientLogo',
+      title: 'Client logo',
+      type: 'image',
+      description: 'Optional. The client\'s logo for the scrolling logo strip on the homepage — a transparent PNG or SVG works best. If empty, the Project Image is used.',
+    }),
   ],
 })

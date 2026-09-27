@@ -52,7 +52,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, 
         aria-label="Global"
         className={`mx-auto flex items-center justify-between transition-all duration-500 ${
           isScrolled
-            ? "mt-1 max-w-6xl rounded-2xl bg-ink/85 py-2 pl-5 pr-2 backdrop-blur-md"
+            ? "mt-1 max-w-6xl rounded-2xl bg-ink/85 py-2 pl-3 pr-2 backdrop-blur-md"
             : "max-w-[112rem] px-3 py-4 sm:px-5 lg:px-7"
         }`}
       >
@@ -61,7 +61,7 @@ export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, 
             <img
               src={logoUrl}
               alt={`${displayTitle} logo`}
-              className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-9" : "h-11 sm:h-12"}`}
+              className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-11" : "h-14 sm:h-16 lg:h-[4.5rem]"}`}
             />
           ) : (
             <span className="text-lg font-semibold tracking-tight text-white">{displayTitle}</span>

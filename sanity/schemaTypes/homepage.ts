@@ -132,10 +132,10 @@ export const homepage = defineType({
     }),
     defineField({
       name: 'introImages',
-      title: 'Intro Photo Strip',
+      title: 'Team photos',
       type: 'array',
       group: 'intro',
-      description: 'Photos of the team and the work. They drift slowly across the page under the intro statement.',
+      description: 'Photos of the team and the work. The first one appears in the social post of the hero animation; the About page uses them too when it has no gallery of its own.',
       of: [
         defineArrayMember({
           type: 'image',
