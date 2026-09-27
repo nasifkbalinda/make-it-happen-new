@@ -8,6 +8,7 @@ export const projectsPage = defineType({
     defineField({ name: 'kicker', title: 'Kicker Text', type: 'string', description: 'e.g., PORTFOLIO' }),
     defineField({ name: 'heading', title: 'Page Heading', type: 'string' }),
     defineField({ name: 'description', title: 'Page Description', type: 'text' }),
+    defineField({ name: 'allFilterLabel', title: '"All" filter label', type: 'string', description: 'e.g. "All work"' }),
     
     // --- NEW "PLAYLIST" FIELD ---
     defineField({

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import PageHero from "./PageHero";
+import { PillLink } from "./ui";
 import { PortableText, type PortableTextBlock } from "@portabletext/react";
 import { createClient } from "next-sanity";
 
@@ -71,39 +72,31 @@ export default async function LegalPage({
   const hasBody = Boolean(doc?.body?.length);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 pb-32 pt-32 sm:px-10">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
-        Legal
-      </p>
-      <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
-        {title}
-      </h1>
-      {lastUpdated ? (
-        <p className="mt-4 text-sm text-white/40">Last updated {lastUpdated}</p>
-      ) : null}
-      {doc?.intro ? (
-        <p className="mt-6 text-lg leading-relaxed text-white/60">{doc.intro}</p>
-      ) : null}
+    <div className="bg-paper text-ink">
+      <PageHero
+        kicker="Legal"
+        title={title}
+        description={doc?.intro}
+        aside={lastUpdated ? `Last updated ${lastUpdated}` : null}
+      />
 
-      {hasBody ? (
-        <div className="prose prose-invert prose-lg mt-12 max-w-none prose-headings:text-white prose-p:text-white/80 prose-li:text-white/80 prose-a:text-accent-primary prose-strong:text-white">
-          <PortableText value={doc!.body as PortableTextBlock[]} />
-        </div>
-      ) : (
-        <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-8">
-          <p className="text-base leading-relaxed text-white/70">
-            This page is being finalised. In the meantime, reach out and we will answer any
-            question about how we handle your data or engage on projects.
-          </p>
-          <Link
-            href="/contact"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-accent-primary px-7 py-3 text-sm font-bold text-[#111720] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-accent-hover"
-          >
-            Contact us
-            <span aria-hidden className="text-lg leading-none">→</span>
-          </Link>
-        </div>
-      )}
+      <div className="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
+        {hasBody ? (
+          <div className="prose prose-lg max-w-none prose-neutral prose-headings:font-semibold prose-headings:tracking-[-0.03em] prose-headings:text-ink prose-p:text-ink/80 prose-li:text-ink/80 prose-a:text-ink prose-a:decoration-accent-primary prose-a:decoration-2 prose-a:underline-offset-4 prose-strong:text-ink">
+            <PortableText value={doc!.body as PortableTextBlock[]} />
+          </div>
+        ) : (
+          <div className="rounded-2xl bg-white p-8">
+            <p className="text-base leading-relaxed text-muted">
+              This page is being finalised. In the meantime, reach out and we will answer any question about how we
+              handle your data or engage on projects.
+            </p>
+            <div className="mt-6">
+              <PillLink href="/contact" variant="dark">Contact us</PillLink>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

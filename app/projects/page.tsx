@@ -1,51 +1,66 @@
+import type { Metadata } from "next";
 import { createClient } from "next-sanity";
-import ProjectGallery from "@/components/ProjectGallery";
 import Cta from "@/components/Cta";
+import PageHero from "@/components/PageHero";
+import ProjectGallery from "@/components/ProjectGallery";
+import { projectCardProjection, type ProjectCardData } from "@/components/cards";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Work | Make It Happen",
+  description: "Websites, platforms and products we have designed, built and launched for businesses across East Africa.",
+};
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: false, 
+  useCdn: false,
 });
 
-export default async function ProjectsPage() {
-  // 1. Fetch Page Settings AND Projects concurrently
-  const [pageData, projects] = await Promise.all([
-    // DJ Rule 1: Find the specific document that actually has the heading text
-    client.fetch(`*[_type == "projectsPage" && defined(heading)][0]`),
-    
-    // DJ Rule 2: Find the specific document that actually has the playlist, and follow the links!
-    client.fetch(`*[_type == "projectsPage" && defined(projectList)][0].projectList[]->{
-      _id, title, category, description, "slug": slug.current, projectUrl, "imageUrl": mainImage.asset->url
-    }`)
-  ]);
+type ProjectsPageData = {
+  kicker: string | null;
+  heading: string | null;
+  description: string | null;
+  allFilterLabel: string | null;
+  playlist: ProjectCardData[] | null;
+  all: ProjectCardData[] | null;
+};
 
-  // 2. THE SAFETY NET: If 'projects' is null, give it an empty list [] so it never crashes!
-  const safeProjects = projects || [];
+export default async function ProjectsPage() {
+  // The playlist on the Projects Page singleton sets the order; any projects not in it follow, newest first.
+  const data = await client.fetch<ProjectsPageData>(`{
+    ...*[_id == "projectsPage"][0]{
+      kicker, heading, description, allFilterLabel,
+      "playlist": projectList[]->{ ${projectCardProjection} }
+    },
+    "all": *[_type == "project"] | order(_createdAt desc){ ${projectCardProjection} }
+  }`);
+
+  const playlist = (data?.playlist ?? []).filter(Boolean);
+  const listed = new Set(playlist.map((project) => project._id));
+  const projects = [...playlist, ...(data?.all ?? []).filter((project) => !listed.has(project._id))];
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <div className="w-full max-w-7xl px-6 sm:px-10 lg:px-14 pt-32 pb-32">
-        
-        {/* Dynamic Page Header */}
-        <div className="mb-14 max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
-            {pageData?.kicker || "Portfolio"}
-          </p>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
-            {pageData?.heading || "Selected Works."}
-          </h1>
-          <p className="mt-5 text-lg leading-relaxed text-white/60">
-            {pageData?.description || "A showcase of our recent digital transformations, stripped down to the raw results and architecture."}
-          </p>
-        </div>
+    <div className="bg-paper text-ink">
+      <PageHero
+        kicker={data?.kicker?.trim() || "Portfolio"}
+        title={data?.heading?.trim() || "Work that speaks"}
+        description={data?.description}
+        aside={projects.length ? `${String(projects.length).padStart(2, "0")} projects live` : null}
+      />
 
-        {/* 3. Feed the gallery our safe, crash-proof list */}
-        <ProjectGallery projects={safeProjects} />
-      </div>
+      <section className="shell py-16 sm:py-24">
+        {projects.length ? (
+          <ProjectGallery projects={projects} allLabel={data?.allFilterLabel?.trim() || "All work"} />
+        ) : (
+          <p className="rounded-2xl border border-dashed border-ink/20 py-20 text-center text-muted">
+            No projects yet. Add them in the Studio under Project.
+          </p>
+        )}
+      </section>
+
       <Cta />
     </div>
   );

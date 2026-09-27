@@ -1,6 +1,6 @@
 import Script from 'next/script'
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
+import { Geist_Mono, Inter_Tight } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google"; // <-- NEW: Imported Google Analytics
 import "./globals.css";
 
@@ -8,7 +8,8 @@ import "./globals.css";
 import HeaderWrapper from "../components/HeaderWrapper";
 import Footer from "../components/Footer";
 
-const manrope = Manrope({ subsets: ["latin"] });
+const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 // Site-wide defaults. Any page that declares its own `openGraph` replaces this
 // block wholesale, so pages without one (services, projects, about, contact,
@@ -51,16 +52,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.className} bg-white text-black antialiased`}>
-        <div
-          aria-hidden
-          className="pointer-events-none fixed right-[-5%] top-[-8%] -z-10 h-[min(520px,50vw)] w-[min(520px,50vw)] rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent-primary)_5%,transparent)_0%,color-mix(in_srgb,var(--accent-primary)_1.5%,transparent)_45%,transparent_70%)] blur-[100px]"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none fixed left-[-8%] top-[28%] -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(circle,color-mix(in_srgb,var(--accent-primary)_3.5%,transparent)_0%,transparent_65%)] opacity-80 blur-[90px]"
-        />
-
+      <body className={`${interTight.variable} ${geistMono.variable} ${interTight.className} bg-paper text-ink antialiased`}>
         {/* 2. Render the new Server Wrapper here! */}
         <HeaderWrapper />
 

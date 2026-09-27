@@ -2,9 +2,24 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  /* Premium Dark Mode Colors */
-  --background: #0c1016;
-  --foreground: #f4f7fb;
+  /*
+   * Two grounds: a warm paper for most sections and a near-black "ink" for the
+   * hero, services, call-to-action and footer cards. No glows, no gradients
+   * used as decoration — contrast comes from the ground switching.
+   */
+  --paper: #f3f3f1;
+  --paper-raised: #e9e9e6;
+  --ink: #0b0b0b;
+  --ink-raised: #151515;
+  --muted: #6b6b68;
+
+  /* Kept for pages not yet moved onto the paper/ink system. */
+  --background: #0b0b0b;
+  --foreground: #f4f4f2;
+  --surface: #151515;
+  --surface-raised: #1c1c1c;
+  --hairline: rgba(255, 255, 255, 0.1);
+  --hairline-strong: rgba(255, 255, 255, 0.18);
 
   /*
    * Brand accent — the flat green from the logo (measured: #5DD400).
@@ -13,51 +28,189 @@
    * a raw hex. JavaScript contexts that cannot read CSS variables, such as the
    * Sanity Studio, use lib/brand.ts — keep the two in step.
    *
-   * Contrast on the navy background is 10.9:1, and dark text on a green button
-   * is the same. White text on green is only ~1.9:1, so buttons keep dark text.
+   * Dark text on the green is ~11:1; white text on it is only ~1.9:1, so the
+   * green carries dark text, and on paper it is used for marks, not for text.
    */
   --accent-primary: #5dd400;
-  /* Primary tinted 20% toward white. Hover state on dark surfaces. */
+  /* Primary tinted 20% toward white. Hover state. */
   --accent-hover: #7ddd33;
   /* Primary shaded 20% toward black. Sparing, decorative use only. */
   --accent-secondary: #4aaa00;
 
-  /* Surface colors for cards and borders */
-  --surface-muted: #121821;
-  --surface-border: rgba(255, 255, 255, 0.1);
+  --surface-muted: var(--surface);
+  --surface-border: var(--hairline);
 }
 
 @theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-raised: var(--ink-raised);
+  --color-muted: var(--muted);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  
-  /* Fonts */
-  --font-sans: var(--font-manrope);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
+
+  --font-sans: var(--font-inter-tight);
   --font-mono: var(--font-geist-mono);
 
-  /* Mapping to Tailwind classes */
   --color-accent-primary: var(--accent-primary);
   --color-accent-hover: var(--accent-hover);
   --color-accent-secondary: var(--accent-secondary);
   --color-surface-muted: var(--surface-muted);
   --color-surface-border: var(--surface-border);
+
+  --animate-marquee: marquee 40s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Page gutter + max width shared by every section, so edges line up site-wide. */
+@utility shell {
+  width: 100%;
+  max-width: 112rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 3.5rem;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Laptop and desktop screens: everything sized in rem (type, spacing, cards)
+   comes down slightly so a full section fits on screen. Media queries still
+   use the browser's 16px, so breakpoints are unaffected. */
+@media (min-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-manrope), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter-tight), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-/* Subtle Dark Mode Dot Pattern Overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.25;
-  background-image:
-    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.15) 0 0.9px, transparent 1px),
-    radial-gradient(circle at 72% 64%, color-mix(in srgb, var(--accent-primary) 10%, transparent) 0 0.8px, transparent 1px);
-  background-size: 3px 3px, 4px 4px;
+::selection {
+  background: var(--accent-primary);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hero copy on first paint — CSS only, so it never waits on JavaScript. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* ---- Hero animation (components/HeroStage.tsx) ---- */
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes pixel-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes typing-dot {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-30px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-300px) translateX(12px) scale(1.1);
+  }
+}
+@keyframes cursor-move {
+  from {
+    opacity: 0;
+    transform: translate(260px, 120px);
+  }
+  30% {
+    opacity: 1;
+  }
+  85% {
+    transform: translate(0, 0) scale(1);
+  }
+  92% {
+    transform: translate(0, 0) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
 }

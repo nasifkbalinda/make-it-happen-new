@@ -1,12 +1,16 @@
+import type { Metadata } from "next";
 import { createClient } from "next-sanity";
-import { Mail, MapPin, Phone } from "lucide-react"; 
-import type { LucideIcon } from "lucide-react";
-// 1. We import the official WhatsApp icon from the library we used in the footer
-import { FaWhatsapp } from "react-icons/fa6"; 
-import SocialLinks, {
-  type SocialLinkItem,
-  socialLinksProjection,
-} from "@/components/SocialLinks";
+import ContactForm from "@/components/ContactForm";
+import SocialLinks, { type SocialLinkItem, socialLinksProjection } from "@/components/SocialLinks";
+import { Reveal } from "@/components/motion";
+import { Tag } from "@/components/ui";
+
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: "Contact | Make It Happen",
+  description: "Tell us what you are building. A senior member of the Make It Happen team replies within one working day.",
+};
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -15,149 +19,137 @@ const client = createClient({
   useCdn: false,
 });
 
-const contactQuery = `{
-  "contact": *[_type == "contact" && _id == "contact"][0]{
-    heading,
-    subheading,
-    email,
-    phone,
-    address
-  },
-  "settings": *[_type == "siteSettings"][0]{ ${socialLinksProjection} }
-}`;
-
 type ContactData = {
   contact: {
+    kicker: string | null;
     heading: string | null;
     subheading: string | null;
     email: string | null;
     phone: string | null;
     address: string | null;
+    officeHours: string | null;
+    formHeading: string | null;
+    formNote: string | null;
+    serviceOptions: string[] | null;
+    budgetOptions: string[] | null;
   } | null;
-  settings: {
-    socialLinks: SocialLinkItem[] | null;
-  } | null;
+  settings: { whatsappNumber: string | null; socialLinks: SocialLinkItem[] | null } | null;
+  faqs: { question: string; answer: string }[] | null;
 };
 
-function GlassOrb({ icon: Icon }: { icon: LucideIcon }) {
-  return (
-    <span
-      className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-white/10 to-white/5 text-accent-primary shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)] backdrop-blur-md"
-      aria-hidden
-    >
-      <Icon className="h-5 w-5" strokeWidth={1.75} />
-    </span>
-  );
-}
+const DEFAULT_SERVICES = ["Website", "Software", "AI & Automation", "Digital Marketing"];
 
 export default async function ContactPage() {
-  const data = await client.fetch<ContactData | null>(contactQuery);
+  const data = await client.fetch<ContactData>(`{
+    "contact": *[_id == "contact"][0]{
+      kicker, heading, subheading, email, phone, address, officeHours, formHeading, formNote, serviceOptions, budgetOptions
+    },
+    "settings": *[_id == "siteSettings"][0]{ whatsappNumber, ${socialLinksProjection} },
+    "faqs": *[_id == "homepage"][0].faqs[]{ question, answer }
+  }`);
 
-  const heading = data?.contact?.heading ?? "Let's Build Something Great";
-  const subheading =
-    data?.contact?.subheading ??
-    "Have a project in mind? We'd love to hear about it. Drop us a message and we'll get back to you within 24 hours.";
-  const email = data?.contact?.email ?? "hello@makeithappen.ug";
-  const phone = data?.contact?.phone ?? "+256 790 879 117";
-  const address = data?.contact?.address ?? "Kampala, Uganda";
-  const socialLinks = data?.settings?.socialLinks ?? [];
+  const contact = data?.contact;
+  const email = contact?.email?.trim() || "hello@makeithappen.ug";
+  const phone = contact?.phone?.trim() || "+256790879117";
+  const whatsapp = data?.settings?.whatsappNumber?.trim() || phone;
+  const address = contact?.address?.trim() || "Kampala, Uganda";
+  const serviceOptions = (contact?.serviceOptions ?? []).map((option) => option?.trim()).filter(Boolean) as string[];
+  const budgetOptions = (contact?.budgetOptions ?? []).map((option) => option?.trim()).filter(Boolean) as string[];
+  const faqs = (data?.faqs ?? []).filter((faq) => faq?.question && faq?.answer);
+
+  const rows = [
+    { label: "Email", value: email, href: `mailto:${email}` },
+    { label: "Phone & WhatsApp", value: phone, href: `https://wa.me/${whatsapp.replace(/\D/g, "")}` },
+    { label: "Office", value: address, href: null },
+    contact?.officeHours?.trim() ? { label: "Hours", value: contact.officeHours.trim(), href: null } : null,
+  ].filter(Boolean) as { label: string; value: string; href: string | null }[];
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-6 pb-32 pt-32 sm:px-10 lg:px-14">
-      <div className="grid gap-16 md:grid-cols-2 md:items-start">
-        
-        {/* Left Side: Traditional Contact Info */}
-        <section className="flex flex-col gap-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-primary">
-              Contact Us
-            </p>
-            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-5xl">
-              {heading}
-            </h1>
-            <p className="mt-5 max-w-md text-lg leading-relaxed text-white/60">
-              {subheading}
-            </p>
-          </div>
+    <div className="bg-paper text-ink">
+      <section className="p-2 sm:p-3">
+        <div className="relative isolate overflow-hidden rounded-[20px] bg-ink text-white">
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 opacity-[0.08] [background-image:radial-gradient(circle,white_1px,transparent_1.6px)] [background-size:28px_28px]"
+          />
+          <div className="grid gap-12 px-5 pb-8 pt-32 sm:px-8 lg:grid-cols-12 lg:gap-12 lg:px-10 lg:pb-10 lg:pt-40">
+            <div className="animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_both] lg:col-span-5">
+              <Tag>{contact?.kicker?.trim() || "Contact"}</Tag>
+              <h1 className="mt-6 text-[2.6rem] font-semibold leading-[1] tracking-[-0.045em] sm:text-5xl lg:text-6xl">
+                {contact?.heading?.trim() || "Let’s build something great"}
+              </h1>
+              {contact?.subheading ? (
+                <p className="mt-6 max-w-md text-base leading-relaxed text-white/70 sm:text-lg">{contact.subheading}</p>
+              ) : null}
 
-          <ul className="flex flex-col gap-8">
-            <li className="flex gap-4">
-              <GlassOrb icon={Mail} />
-              <div className="min-w-0 pt-0.5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
-                  Email
-                </p>
-                <a
-                  href={`mailto:${email}`}
-                  className="mt-1 block text-sm font-medium text-white/90 underline-offset-4 transition-colors hover:text-accent-primary hover:underline"
-                >
-                  {email}
-                </a>
-              </div>
-            </li>
-            <li className="flex gap-4">
-              <GlassOrb icon={Phone} />
-              <div className="min-w-0 pt-0.5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
-                  Phone
-                </p>
-                <a
-                  href={`tel:${phone.replace(/\s/g, "")}`}
-                  className="mt-1 block text-sm font-medium text-white/90 underline-offset-4 transition-colors hover:text-accent-primary hover:underline"
-                >
-                  {phone}
-                </a>
-              </div>
-            </li>
-            <li className="flex gap-4">
-              <GlassOrb icon={MapPin} />
-              <div className="min-w-0 pt-0.5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
-                  Address
-                </p>
-                <p className="mt-1 whitespace-pre-line text-sm font-medium text-white/90">
-                  {address}
-                </p>
-              </div>
-            </li>
-          </ul>
+              <dl className="mt-10 divide-y divide-white/10 border-y border-white/10">
+                {rows.map((row) => (
+                  <div key={row.label} className="flex flex-col gap-1 py-4 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+                    <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-white/50">{row.label}</dt>
+                    <dd className="text-lg font-medium">
+                      {row.href ? (
+                        <a
+                          href={row.href}
+                          target={row.href.startsWith("http") ? "_blank" : undefined}
+                          rel={row.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="underline decoration-white/20 underline-offset-4 transition-colors hover:decoration-accent-primary"
+                        >
+                          {row.value}
+                        </a>
+                      ) : (
+                        <span className="whitespace-pre-line">{row.value}</span>
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
 
-          {socialLinks.length > 0 ? (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-white/40">
-                Follow us
-              </p>
-              <SocialLinks links={socialLinks} size="lg" className="mt-4" />
+              <SocialLinks links={data?.settings?.socialLinks} size="md" className="mt-8" />
             </div>
-          ) : null}
-        </section>
 
- {/* Right Side: The VIP WhatsApp Card */}
- <section className="flex flex-col items-center justify-center rounded-[2rem] border border-white/10 bg-[#111720] p-10 text-center shadow-2xl md:p-14 mt-8">
-          
-          {/* UPDATED: Official WhatsApp Green (#25D366) with a 10% opacity background */}
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#25D366]/10 text-[#25D366]">
-            <FaWhatsapp className="h-10 w-10" />
+            <div className="animate-[rise_1.1s_cubic-bezier(0.16,1,0.3,1)_150ms_both] lg:col-span-7">
+              <ContactForm
+                email={email}
+                whatsappNumber={whatsapp}
+                serviceOptions={serviceOptions.length ? serviceOptions : DEFAULT_SERVICES}
+                budgetOptions={budgetOptions}
+                heading={contact?.formHeading?.trim() || "Tell us about your project"}
+                note={
+                  contact?.formNote?.trim() ||
+                  "Your brief opens in WhatsApp or your email app, ready to send. A senior member of the team replies within one working day."
+                }
+              />
+            </div>
           </div>
-          
-          <h2 className="text-2xl font-bold text-white">Need an instant reply?</h2>
-          <p className="mt-4 text-base leading-relaxed text-white/60">
-            Chat directly with our tech team on WhatsApp to get your project moving today.
-          </p>
-          
-          {/* UPDATED: Removed the hover:shadow tags to kill the glow, keeping it clean and solid */}
-          <a 
-            href="https://wa.me/256790879117" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="mt-10 inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-4 text-sm font-bold text-[#111720] transition-all duration-200 hover:-translate-y-1 hover:bg-white"
-          >
-            Chat on WhatsApp
-            <span aria-hidden className="text-lg leading-none">→</span>
-          </a>
-        </section>
+        </div>
+      </section>
 
-      </div>
+      {faqs.length ? (
+        <section className="shell grid gap-12 py-20 sm:py-28 lg:grid-cols-12">
+          <Reveal className="lg:col-span-5">
+            <Tag>FAQ</Tag>
+            <h2 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-[-0.04em] sm:text-5xl">Before you ask.</h2>
+          </Reveal>
+          <div className="flex flex-col gap-3 lg:col-span-7">
+            {faqs.map((faq, index) => (
+              <Reveal key={faq.question} delay={index * 90}>
+                <details className="group rounded-2xl bg-white px-6 py-5 open:pb-6 [&_summary::-webkit-details-marker]:hidden">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-medium tracking-[-0.01em]">
+                    {faq.question}
+                    <span
+                      aria-hidden
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-paper text-xl leading-none transition-transform duration-300 group-open:rotate-45"
+                    >
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-4 max-w-2xl whitespace-pre-line text-base leading-relaxed text-muted">{faq.answer}</p>
+                </details>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

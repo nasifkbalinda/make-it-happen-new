@@ -1,0 +1,71 @@
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3100
+- Network:       http://192.0.2.2:3100
+✓ Ready in 1808ms
+
+○ Compiling / ...
+⨯ Error: GET-request to https://x.api.sanity.io/v2024-01-01/data/query/production?query=%7B%0A++%22home%22%3A+*%5B_id+%3D%3D+%22homepage%22%5D%5B0%5D%7B%0A++++heroHeading%2C+heroSubheading%2C+%22imageUrl%22%3A+heroImage.asset-%3Eurl%2C+%22videoUrl%22%3A+heroVideo.asset-%3Eurl%2C+%22posterUrl%22%3A+heroVideoPoster.asset-%3Eurl%2C%0A++++primaryCtaText%2C+primaryCtaLink%2C+secondaryCtaText%2C+secondaryCtaLink%2C%0A++++featuredProjectsKicker%2C+featuredProjectsTitle%2C+featuredProjectsDescription%2C%0A++++stat1Label%2C+stat1Value%2C+stat2Label%2C+stat2Value%2C+stat3Label%2C+stat3Value%2C+stat4Label%2C+stat4Value%2C%0A++++introStatement%2C%0A++++%22introImages%22%3A+introImages%5B%5D%7B+%22url%22%3A+asset-%3Eurl%2C+alt+%7D%2C%0A++++faqs%5B%5D%7B+question%2C+answer+%7D%0A++%7D%2C%0A++%22about%22%3A+*%5B_id+%3D%3D+%22about%22%5D%5B0%5D%7B+mainDescription+%7D%2C%0A++%22projects%22%3A+*%5B_type+%3D%3D+%22project%22%5D+%7C+order%28_createdAt+desc%29%5B0...6%5D%7B%0A++++_id%2C+title%2C+category%2C+projectUrl%2C%0A++++%22imageUrl%22%3A+mainImage.asset-%3Eurl%2C%0A++++%22imageWidth%22%3A+mainImage.asset-%3Emetadata.dimensions.width%0A++%7D%2C%0A++%22projectCount%22%3A+count%28*%5B_type+%3D%3D+%22project%22%5D%29%2C%0A++%22services%22%3A+*%5B_type+%3D%3D+%22service%22%5D+%7C+order%28_createdAt+asc%29%7B%0A++++_id%2C+title%2C+description%2C+features%2C+%22imageUrl%22%3A+mainImage.asset-%3Eurl%0A++%7D%2C%0A++%22posts%22%3A+*%5B_type+%3D%3D+%22post%22%5D+%7C+order%28publishedAt+desc%29%5B0...3%5D%7B%0A++++_id%2C+title%2C+%22slug%22%3A+slug.current%2C+excerpt%2C+publishedAt%2C%0A++++%22imageUrl%22%3A+mainImage.asset-%3Eurl%2C%0A++++%22characters%22%3A+length%28pt%3A%3Atext%28body%29%29%0A++%7D%0A%7D&returnQuery=false resulted in HTTP 403 Forbidden (Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow acces…)
+    at ignore-listed frames {
+  response: {
+    body: 'Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow access.',
+    url: 'https://x.api.sanity.io/v2024-01-01/data/query/production?query=%7B%0A++%22home%22%3A+*%5B_id+%3D%3D+%22homepage%22%5D%5B0%5D%7B%0A++++heroHeading%2C+heroSubheading%2C+%22imageUrl%22%3A+heroImage.asset-%3Eurl%2C+%22videoUrl%22%3A+heroVideo.asset-%3Eurl%2C+%22posterUrl%22%3A+heroVideoPoster.asset-%3Eurl%2C%0A++++primaryCtaText%2C+primaryCtaLink%2C+secondaryCtaText%2C+secondaryCtaLink%2C%0A++++featuredProjectsKicker%2C+featuredProjectsTitle%2C+featuredProjectsDescription%2C%0A++++stat1Label%2C+stat1Value%2C+stat2Label%2C+stat2Value%2C+stat3Label%2C+stat3Value%2C+stat4Label%2C+stat4Value%2C%0A++++introStatement%2C%0A++++%22introImages%22%3A+introImages%5B%5D%7B+%22url%22%3A+asset-%3Eurl%2C+alt+%7D%2C%0A++++faqs%5B%5D%7B+question%2C+answer+%7D%0A++%7D%2C%0A++%22about%22%3A+*%5B_id+%3D%3D+%22about%22%5D%5B0%5D%7B+mainDescription+%7D%2C%0A++%22projects%22%3A+*%5B_type+%3D%3D+%22project%22%5D+%7C+order%28_createdAt+desc%29%5B0...6%5D%7B%0A++++_id%2C+title%2C+category%2C+projectUrl%2C%0A++++%22imageUrl%22%3A+mainImage.asset-%3Eurl%2C%0A++++%22imageWidth%22%3A+mainImage.asset-%3Emetadata.dimensions.width%0A++%7D%2C%0A++%22projectCount%22%3A+count%28*%5B_type+%3D%3D+%22project%22%5D%29%2C%0A++%22services%22%3A+*%5B_type+%3D%3D+%22service%22%5D+%7C+order%28_createdAt+asc%29%7B%0A++++_id%2C+title%2C+description%2C+features%2C+%22imageUrl%22%3A+mainImage.asset-%3Eurl%0A++%7D%2C%0A++%22posts%22%3A+*%5B_type+%3D%3D+%22post%22%5D+%7C+order%28publishedAt+desc%29%5B0...3%5D%7B%0A++++_id%2C+title%2C+%22slug%22%3A+slug.current%2C+excerpt%2C+publishedAt%2C%0A++++%22imageUrl%22%3A+mainImage.asset-%3Eurl%2C%0A++++%22characters%22%3A+length%28pt%3A%3Atext%28body%29%29%0A++%7D%0A%7D&returnQuery=false',
+    method: 'GET',
+    headers: [Object: null prototype] {
+      'content-length': '102',
+      'content-type': 'text/plain',
+      date: 'Sun, 27 Sep 2026 09:40:25 GMT',
+      'x-deny-reason': 'host_not_allowed'
+    },
+    statusCode: 403,
+    statusMessage: 'Forbidden'
+  },
+  statusCode: 403,
+  responseBody: 'Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow access.',
+  traceId: undefined,
+  details: undefined,
+  digest: '4266987790'
+}
+⨯ Error: GET-request to https://x.api.sanity.io/v2024-01-01/data/query/production?query=*%5B_id+%3D%3D+%22siteSettings%22%5D%5B0%5D%7B%0A++++siteTitle%2C%0A++++%22logoUrl%22%3A+logo.asset-%3Eurl%2C%0A++++socialLinks%5B%5D%7B+platform%2C+label%2C+url+%7D%2C%0A++++%22projectCount%22%3A+count%28*%5B_type+%3D%3D+%22project%22%5D%29%0A++%7D&returnQuery=false resulted in HTTP 403 Forbidden (Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow acces…)
+    at ignore-listed frames {
+  response: {
+    body: 'Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow access.',
+    url: 'https://x.api.sanity.io/v2024-01-01/data/query/production?query=*%5B_id+%3D%3D+%22siteSettings%22%5D%5B0%5D%7B%0A++++siteTitle%2C%0A++++%22logoUrl%22%3A+logo.asset-%3Eurl%2C%0A++++socialLinks%5B%5D%7B+platform%2C+label%2C+url+%7D%2C%0A++++%22projectCount%22%3A+count%28*%5B_type+%3D%3D+%22project%22%5D%29%0A++%7D&returnQuery=false',
+    method: 'GET',
+    headers: [Object: null prototype] {
+      'content-length': '102',
+      'content-type': 'text/plain',
+      date: 'Sun, 27 Sep 2026 09:40:25 GMT',
+      'x-deny-reason': 'host_not_allowed'
+    },
+    statusCode: 403,
+    statusMessage: 'Forbidden'
+  },
+  statusCode: 403,
+  responseBody: 'Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow access.',
+  traceId: undefined,
+  details: undefined,
+  digest: '2903773102'
+}
+⨯ Error: GET-request to https://x.api.sanity.io/v2024-01-01/data/query/production?query=%7B%0A++%22footer%22%3A+*%5B_type+%3D%3D+%22footer%22+%26%26+_id+%3D%3D+%22footer%22%5D%5B0%5D%7B%0A++++companyText%2C%0A++++email%2C%0A++++phone%2C%0A++++location%2C%0A++++socialLinks%5B%5D%7B+platform%2C+label%2C+url+%7D%0A++%7D%2C%0A++%22settings%22%3A+*%5B_id+%3D%3D+%22siteSettings%22%5D%5B0%5D%7B%0A++++%22logoUrl%22%3A+coalesce%28siteLogo.asset-%3Eurl%2C+logo.asset-%3Eurl%29%2C%0A++++socialLinks%5B%5D%7B+platform%2C+label%2C+url+%7D%0A++%7D%0A%7D&returnQuery=false resulted in HTTP 403 Forbidden (Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow acces…)
+    at ignore-listed frames {
+  response: {
+    body: 'Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow access.',
+    url: 'https://x.api.sanity.io/v2024-01-01/data/query/production?query=%7B%0A++%22footer%22%3A+*%5B_type+%3D%3D+%22footer%22+%26%26+_id+%3D%3D+%22footer%22%5D%5B0%5D%7B%0A++++companyText%2C%0A++++email%2C%0A++++phone%2C%0A++++location%2C%0A++++socialLinks%5B%5D%7B+platform%2C+label%2C+url+%7D%0A++%7D%2C%0A++%22settings%22%3A+*%5B_id+%3D%3D+%22siteSettings%22%5D%5B0%5D%7B%0A++++%22logoUrl%22%3A+coalesce%28siteLogo.asset-%3Eurl%2C+logo.asset-%3Eurl%29%2C%0A++++socialLinks%5B%5D%7B+platform%2C+label%2C+url+%7D%0A++%7D%0A%7D&returnQuery=false',
+    method: 'GET',
+    headers: [Object: null prototype] {
+      'content-length': '102',
+      'content-type': 'text/plain',
+      date: 'Sun, 27 Sep 2026 09:40:25 GMT',
+      'x-deny-reason': 'host_not_allowed'
+    },
+    statusCode: 403,
+    statusMessage: 'Forbidden'
+  },
+  statusCode: 403,
+  responseBody: 'Host not in allowlist: x.api.sanity.io. Add this host to your network egress settings to allow access.',
+  traceId: undefined,
+  details: undefined,
+  digest: '1002250926'
+}
+ GET / 500 in 9.8s (next.js: 8.8s, application-code: 994ms)
+[?25h
