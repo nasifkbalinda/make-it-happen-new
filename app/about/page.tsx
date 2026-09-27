@@ -26,14 +26,12 @@ type AboutData = {
     subheading: string | null;
     mainDescription: string | null;
     imageUrl: string | null;
-    gallery: { url: string; alt: string | null }[] | null;
     valuesKicker: string | null;
     valuesHeading: string | null;
     statsKicker: string | null;
     valuesList: { valueTitle: string | null; valueDescription: string | null }[] | null;
   } | null;
   home: {
-    introImages: { url: string; alt: string | null }[] | null;
     stat1Label: string | null;
     stat1Value: string | null;
     stat2Label: string | null;
@@ -50,12 +48,10 @@ export default async function AboutPage() {
     "about": *[_id == "about"][0]{
       kicker, heading, subheading, mainDescription,
       "imageUrl": featuredImage.asset->url,
-      "gallery": gallery[]{ "url": asset->url, alt },
       valuesKicker, valuesHeading, statsKicker,
       valuesList[]{ valueTitle, valueDescription }
     },
     "home": *[_id == "homepage"][0]{
-      "introImages": introImages[]{ "url": asset->url, alt },
       stat1Label, stat1Value, stat2Label, stat2Value, stat3Label, stat3Value, stat4Label, stat4Value
     }
   }`);
@@ -64,7 +60,6 @@ export default async function AboutPage() {
 
   const paragraphs = (about?.mainDescription ?? "").split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
   const [lead, ...body] = paragraphs;
-  const gallery = (about?.gallery?.length ? about.gallery : home?.introImages ?? []).filter((image) => image?.url);
   const values = (about?.valuesList ?? []).filter((value) => value?.valueTitle);
   const stats = [
     { label: home?.stat1Label, value: home?.stat1Value },
@@ -106,23 +101,6 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {/* Photo strip */}
-      {gallery.length ? (
-        <div className="overflow-hidden pb-20 sm:pb-28">
-          <ul className="flex w-max animate-[marquee_60s_linear_infinite] gap-4 pr-4 hover:[animation-play-state:paused]">
-            {[...gallery, ...gallery].map((image, index) => (
-              <li key={`${image.url}-${index}`} aria-hidden={index >= gallery.length} className="w-56 shrink-0 sm:w-72">
-                <img
-                  src={`${image.url}?w=720&auto=format`}
-                  alt={index < gallery.length ? image.alt ?? "" : ""}
-                  className="aspect-[4/5] w-full rounded-2xl object-cover"
-                  loading="lazy"
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
 
       {/* Values — dark */}
       {values.length ? (
