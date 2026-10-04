@@ -3,7 +3,7 @@ import { createClient } from "next-sanity";
 import Cta from "@/components/Cta";
 import PageHero from "@/components/PageHero";
 import ProjectGallery from "@/components/ProjectGallery";
-import { projectCardProjection, type ProjectCardData } from "@/components/cards";
+import { arrangeProjects, projectCardProjection, type ProjectCardData } from "@/components/cards";
 
 export const revalidate = 60;
 
@@ -24,7 +24,7 @@ type ProjectsPageData = {
   heading: string | null;
   description: string | null;
   allFilterLabel: string | null;
-  playlist: ProjectCardData[] | null;
+  playlist: (ProjectCardData | null)[] | null;
   all: ProjectCardData[] | null;
 };
 
@@ -38,9 +38,7 @@ export default async function ProjectsPage() {
     "all": *[_type == "project"] | order(_createdAt desc){ ${projectCardProjection} }
   }`);
 
-  const playlist = (data?.playlist ?? []).filter(Boolean);
-  const listed = new Set(playlist.map((project) => project._id));
-  const projects = [...playlist, ...(data?.all ?? []).filter((project) => !listed.has(project._id))];
+  const projects = arrangeProjects(data?.playlist, data?.all);
 
   return (
     <div className="bg-paper text-ink">

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BackgroundVideo } from "./motion";
+import { BackgroundVideo, Reveal } from "./motion";
 import ProjectVideoPlayer from "./ProjectVideoPlayer";
 
 /* ------------------------------------------------------------------ */
@@ -24,6 +24,19 @@ export const projectCardProjection = `_id, title, category, description, project
   "imageWidth": mainImage.asset->metadata.dimensions.width,
   "brandColor": mainImage.asset->metadata.palette.dominant.background,
   "videoUrl": video.asset->url`;
+
+/**
+ * Projects in the order set by the playlist on Projects Page Settings; any not in it follow in the order given
+ * (newest first). Drops unpublished references and repeats.
+ */
+export function arrangeProjects<T extends { _id: string }>(playlist: (T | null)[] | null | undefined, all: T[] | null | undefined) {
+  const seen = new Set<string>();
+  return [...(playlist ?? []), ...(all ?? [])].filter((project): project is T => {
+    if (!project || seen.has(project._id)) return false;
+    seen.add(project._id);
+    return true;
+  });
+}
 
 /** Site logos and favicons are small; screenshots and photos are not. Logos get a brand-colour panel. */
 function isLogo(width: number | null) {
@@ -123,6 +136,36 @@ export function ProjectCard({
       {media}
       {details}
     </Link>
+  );
+}
+
+/**
+ * Projects in two staggered columns on wider screens. The cards stay in reading order (left, right, left…)
+ * and the right-hand ones are shifted down, so the playlist order holds on phones too, where it's one column.
+ */
+export function ProjectGrid({
+  projects,
+  showDescription = false,
+  className = "",
+}: {
+  projects: ProjectCardData[];
+  showDescription?: boolean;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`grid gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-16 lg:gap-x-16 ${
+        projects.length % 2 === 0 ? "md:pb-40" : ""
+      } ${className}`}
+    >
+      {projects.map((project, index) => (
+        <div key={project._id} className={index % 2 === 1 ? "md:translate-y-40" : undefined}>
+          <Reveal>
+            <ProjectCard project={project} showDescription={showDescription} />
+          </Reveal>
+        </div>
+      ))}
+    </div>
   );
 }
 
