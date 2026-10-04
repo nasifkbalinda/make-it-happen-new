@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BackgroundVideo } from "./motion";
+import ProjectVideoPlayer from "./ProjectVideoPlayer";
 
 /* ------------------------------------------------------------------ */
 /* Projects                                                             */
@@ -38,64 +39,60 @@ export function ProjectCard({
   shape?: "tall" | "wide";
   showDescription?: boolean;
 }) {
-  // A video project with no live site opens the video itself, with sound and controls.
-  const opensVideo = !project.projectUrl && Boolean(project.videoUrl);
-  const href = project.projectUrl || project.videoUrl || "/projects";
-  const external = Boolean(project.projectUrl || project.videoUrl);
+  // A video project with no live site isn't a link: its video plays and pauses right in the card.
+  const playsInline = !project.projectUrl && Boolean(project.videoUrl);
+  const href = project.projectUrl || "/projects";
+  const external = Boolean(project.projectUrl);
   const logo = isLogo(project.imageWidth);
-  return (
-    <Link
-      href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
-      className="group block"
+  const poster = project.imageUrl && !logo ? `${project.imageUrl}?w=1400&auto=format` : null;
+  const media = (
+    <div
+      className={`relative w-full overflow-hidden rounded-2xl bg-paper-raised ${
+        shape === "tall" ? "aspect-[4/3] md:aspect-[5/4]" : "aspect-[4/3]"
+      }`}
+      // A logo sits on its own dominant colour (measured by Sanity), so each project reads as a brand tile.
+      style={logo && project.brandColor ? { backgroundColor: project.brandColor } : undefined}
     >
-      <div
-        className={`relative w-full overflow-hidden rounded-2xl bg-paper-raised ${
-          shape === "tall" ? "aspect-[4/3] md:aspect-[5/4]" : "aspect-[4/3]"
-        }`}
-        // A logo sits on its own dominant colour (measured by Sanity), so each project reads as a brand tile.
-        style={logo && project.brandColor ? { backgroundColor: project.brandColor } : undefined}
-      >
-        {project.videoUrl ? (
-          <BackgroundVideo
-            src={project.videoUrl}
-            poster={project.imageUrl && !logo ? `${project.imageUrl}?w=1400&auto=format` : null}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
-        ) : project.imageUrl ? (
-          logo ? (
-            <div className="flex h-full w-full items-center justify-center p-10">
-              <img
-                src={project.imageUrl}
-                alt={`${project.title} logo`}
-                className="max-h-[55%] max-w-[70%] object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                loading="lazy"
-              />
-            </div>
-          ) : (
+      {playsInline && project.videoUrl ? (
+        <ProjectVideoPlayer src={project.videoUrl} poster={poster} title={project.title} />
+      ) : project.videoUrl ? (
+        <BackgroundVideo
+          src={project.videoUrl}
+          poster={poster}
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+        />
+      ) : project.imageUrl ? (
+        logo ? (
+          <div className="flex h-full w-full items-center justify-center p-10">
             <img
-              src={`${project.imageUrl}?w=1400&auto=format`}
-              alt={project.title}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              src={project.imageUrl}
+              alt={`${project.title} logo`}
+              className="max-h-[55%] max-w-[70%] object-contain transition-transform duration-700 ease-out group-hover:scale-[1.04]"
               loading="lazy"
             />
-          )
+          </div>
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-ink/30">{project.title}</div>
-        )}
+          <img
+            src={`${project.imageUrl}?w=1400&auto=format`}
+            alt={project.title}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            loading="lazy"
+          />
+        )
+      ) : (
+        <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-ink/30">{project.title}</div>
+      )}
+      {playsInline ? null : (
         <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-[10px] bg-white text-ink opacity-100 transition-all duration-300 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
-          {opensVideo ? (
-            <svg aria-hidden className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M5 3.5v9l7.5-4.5z" />
-            </svg>
-          ) : (
-            <svg aria-hidden className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 11 11 5M6 5h5v5" />
-            </svg>
-          )}
+          <svg aria-hidden className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 11 11 5M6 5h5v5" />
+          </svg>
         </span>
-      </div>
+      )}
+    </div>
+  );
+  const details = (
+    <>
       <div className="mt-5 flex items-baseline justify-between gap-4">
         <p className="text-2xl font-semibold tracking-[-0.02em] text-ink">{project.title}</p>
         {project.category ? (
@@ -105,6 +102,26 @@ export function ProjectCard({
       {showDescription && project.description ? (
         <p className="mt-2 line-clamp-3 max-w-xl text-[15px] leading-relaxed text-muted">{project.description}</p>
       ) : null}
+    </>
+  );
+
+  if (playsInline) {
+    return (
+      <div className="group block">
+        {media}
+        {details}
+      </div>
+    );
+  }
+  return (
+    <Link
+      href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
+      className="group block"
+    >
+      {media}
+      {details}
     </Link>
   );
 }
