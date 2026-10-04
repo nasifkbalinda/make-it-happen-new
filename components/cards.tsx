@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BackgroundVideo } from "./motion";
 
 /* ------------------------------------------------------------------ */
 /* Projects                                                             */
@@ -13,13 +14,15 @@ export type ProjectCardData = {
   imageUrl: string | null;
   imageWidth: number | null;
   brandColor: string | null;
+  videoUrl?: string | null;
 };
 
 /** GROQ projection for ProjectCardData — keep every project query in step with it. */
 export const projectCardProjection = `_id, title, category, description, projectUrl,
   "imageUrl": mainImage.asset->url,
   "imageWidth": mainImage.asset->metadata.dimensions.width,
-  "brandColor": mainImage.asset->metadata.palette.dominant.background`;
+  "brandColor": mainImage.asset->metadata.palette.dominant.background,
+  "videoUrl": video.asset->url`;
 
 /** Site logos and favicons are small; screenshots and photos are not. Logos get a brand-colour panel. */
 function isLogo(width: number | null) {
@@ -35,8 +38,10 @@ export function ProjectCard({
   shape?: "tall" | "wide";
   showDescription?: boolean;
 }) {
-  const href = project.projectUrl || "/projects";
-  const external = Boolean(project.projectUrl);
+  // A video project with no live site opens the video itself, with sound and controls.
+  const opensVideo = !project.projectUrl && Boolean(project.videoUrl);
+  const href = project.projectUrl || project.videoUrl || "/projects";
+  const external = Boolean(project.projectUrl || project.videoUrl);
   const logo = isLogo(project.imageWidth);
   return (
     <Link
@@ -52,7 +57,13 @@ export function ProjectCard({
         // A logo sits on its own dominant colour (measured by Sanity), so each project reads as a brand tile.
         style={logo && project.brandColor ? { backgroundColor: project.brandColor } : undefined}
       >
-        {project.imageUrl ? (
+        {project.videoUrl ? (
+          <BackgroundVideo
+            src={project.videoUrl}
+            poster={project.imageUrl && !logo ? `${project.imageUrl}?w=1400&auto=format` : null}
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+        ) : project.imageUrl ? (
           logo ? (
             <div className="flex h-full w-full items-center justify-center p-10">
               <img
@@ -74,9 +85,15 @@ export function ProjectCard({
           <div className="flex h-full w-full items-center justify-center text-2xl font-semibold text-ink/30">{project.title}</div>
         )}
         <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-[10px] bg-white text-ink opacity-100 transition-all duration-300 md:translate-y-2 md:opacity-0 md:group-hover:translate-y-0 md:group-hover:opacity-100">
-          <svg aria-hidden className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 11 11 5M6 5h5v5" />
-          </svg>
+          {opensVideo ? (
+            <svg aria-hidden className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M5 3.5v9l7.5-4.5z" />
+            </svg>
+          ) : (
+            <svg aria-hidden className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 11 11 5M6 5h5v5" />
+            </svg>
+          )}
         </span>
       </div>
       <div className="mt-5 flex items-baseline justify-between gap-4">
