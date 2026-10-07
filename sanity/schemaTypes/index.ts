@@ -9,6 +9,8 @@ import { service } from './service'
 import { servicesPage } from './servicesPage'
 import { projectsPage } from './projectsPage'
 import { blogPage } from './blogPage'
+import { socialLink } from './socialLink'
+import { legalPage } from './legalPage'
 
 // 1. IMPORT IT HERE
 import { siteSettings } from './siteSettings'
@@ -25,6 +27,9 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     servicesPage,
     projectsPage,
     blogPage,
+    // Reusable object: a single social media profile + link
+    socialLink,
+    legalPage,
     // 2. ADD IT HERE
     siteSettings 
   ],

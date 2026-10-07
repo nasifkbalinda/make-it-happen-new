@@ -1,115 +1,245 @@
-import { defineField, defineType } from 'sanity'
+import { defineArrayMember, defineField, defineType } from 'sanity'
 
+/**
+ * Every piece of homepage copy lives here. Fields left empty fall back to the
+ * default wording in app/page.tsx, so a half-filled document never breaks the page.
+ */
 export const homepage = defineType({
   name: 'homepage',
   title: 'Homepage Settings',
   type: 'document',
+  groups: [
+    { name: 'hero', title: 'Hero', default: true },
+    { name: 'intro', title: 'Intro & clients' },
+    { name: 'stats', title: 'Numbers' },
+    { name: 'services', title: 'Services' },
+    { name: 'work', title: 'Work' },
+    { name: 'faq', title: 'FAQ' },
+    { name: 'journal', title: 'Journal' },
+  ],
   fields: [
+    // --- Hero ---
     defineField({
       name: 'heroHeading',
       title: 'Hero Heading',
       type: 'string',
+      group: 'hero',
       description: 'The big main title on the homepage',
     }),
     defineField({
       name: 'heroSubheading',
       title: 'Hero Subheading',
       type: 'text',
+      group: 'hero',
       description: 'The smaller paragraph under the title',
     }),
-    defineField({
-      name: 'heroImage',
-      title: 'Hero Image',
-      type: 'image',
-      description: 'Upload the 3D hands/globe image here',
-      options: { hotspot: true },
-    }),
-    
-    // --- CTA Buttons ---
     defineField({
       name: 'primaryCtaText',
       title: 'Primary Button Text',
       type: 'string',
-      description: 'e.g., Get Started',
+      group: 'hero',
+      description: 'e.g., Start a project',
     }),
     defineField({
       name: 'primaryCtaLink',
       title: 'Primary Button Link',
       type: 'string',
+      group: 'hero',
       description: 'e.g., /contact',
     }),
     defineField({
       name: 'secondaryCtaText',
       title: 'Secondary Button Text',
       type: 'string',
-      description: 'e.g., Learn more',
+      group: 'hero',
+      description: 'e.g., View our work',
     }),
     defineField({
       name: 'secondaryCtaLink',
       title: 'Secondary Button Link',
       type: 'string',
-      description: 'e.g., /about',
+      group: 'hero',
+      description: 'e.g., /projects',
+    }),
+    defineField({
+      name: 'heroChatQuestion',
+      title: 'Animation: customer question',
+      type: 'string',
+      group: 'hero',
+      description: 'The question a customer asks in the animated chat scene.',
+    }),
+    defineField({
+      name: 'heroChatAnswer',
+      title: 'Animation: AI answer',
+      type: 'text',
+      rows: 2,
+      group: 'hero',
+      description: 'The reply the AI agent types back. Keep it to one or two short sentences.',
+    }),
+    defineField({
+      name: 'heroImage',
+      title: 'Hero Image',
+      type: 'image',
+      group: 'hero',
+      description: 'Used when a link to the homepage is shared on social media or WhatsApp.',
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'heroVideo',
+      title: 'Hero Background Video (optional)',
+      type: 'file',
+      group: 'hero',
+      description: 'A short, silent MP4 loop played faintly behind the hero. Leave empty to show only the animation.',
+      options: { accept: 'video/mp4' },
+    }),
+    defineField({
+      name: 'heroVideoPoster',
+      title: 'Hero Video Poster',
+      type: 'image',
+      group: 'hero',
+      description: 'A still from the hero video, shown for the split second before it starts playing.',
     }),
 
-    // --- Featured Case Studies Section ---
+    // --- Intro & clients ---
+    defineField({
+      name: 'clientsLabel',
+      title: 'Client strip label',
+      type: 'string',
+      group: 'intro',
+      description: 'Text beside the scrolling project names. Leave empty to build it from Stat 1.',
+    }),
+    defineField({
+      name: 'introKicker',
+      title: 'Intro label',
+      type: 'string',
+      group: 'intro',
+      description: 'e.g. "Who we are"',
+    }),
+    defineField({
+      name: 'introStatement',
+      title: 'Intro Statement',
+      type: 'text',
+      rows: 3,
+      group: 'intro',
+      description: 'The large sentence under "Who we are". It fills in word by word as visitors scroll.',
+    }),
+    defineField({
+      name: 'introLinkText',
+      title: 'Intro link text',
+      type: 'string',
+      group: 'intro',
+      description: 'e.g. "About the studio" — links to the About page.',
+    }),
+    defineField({
+      name: 'introImages',
+      title: 'Team photos',
+      type: 'array',
+      group: 'intro',
+      description: 'Photos of the team and the work. The first one appears in the social post of the hero animation.',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
+        }),
+      ],
+    }),
+
+    // --- Numbers ---
+    defineField({
+      name: 'statsKicker',
+      title: 'Numbers label',
+      type: 'string',
+      group: 'stats',
+      description: 'e.g. "By the numbers"',
+    }),
+    defineField({ name: 'stat1Value', title: 'Stat 1 Value (e.g., 50+)', type: 'string', group: 'stats' }),
+    defineField({ name: 'stat1Label', title: 'Stat 1 Label (e.g., Projects delivered)', type: 'string', group: 'stats' }),
+    defineField({ name: 'stat2Value', title: 'Stat 2 Value', type: 'string', group: 'stats' }),
+    defineField({ name: 'stat2Label', title: 'Stat 2 Label', type: 'string', group: 'stats' }),
+    defineField({ name: 'stat3Value', title: 'Stat 3 Value', type: 'string', group: 'stats' }),
+    defineField({ name: 'stat3Label', title: 'Stat 3 Label', type: 'string', group: 'stats' }),
+    defineField({ name: 'stat4Value', title: 'Stat 4 Value', type: 'string', group: 'stats' }),
+    defineField({ name: 'stat4Label', title: 'Stat 4 Label', type: 'string', group: 'stats' }),
+
+    // --- Services ---
+    defineField({
+      name: 'servicesKicker',
+      title: 'Services label',
+      type: 'string',
+      group: 'services',
+      description: 'e.g. "Services"',
+    }),
+    defineField({
+      name: 'servicesHeading',
+      title: 'Services heading',
+      type: 'string',
+      group: 'services',
+      description: 'The big heading above the services list, e.g. "Everything your business needs to grow online."',
+    }),
+    defineField({
+      name: 'servicesDescription',
+      title: 'Services description',
+      type: 'text',
+      rows: 3,
+      group: 'services',
+    }),
+
+    // --- Work ---
     defineField({
       name: 'featuredProjectsKicker',
       title: 'Featured Projects Kicker',
       type: 'string',
-      description: 'e.g., Featured Case Studies',
+      group: 'work',
+      description: 'e.g., Featured projects',
     }),
     defineField({
       name: 'featuredProjectsTitle',
       title: 'Featured Projects Title',
       type: 'text',
-      description: 'The main heading. Press Enter to create new lines just like the design!',
+      rows: 2,
+      group: 'work',
     }),
     defineField({
       name: 'featuredProjectsDescription',
       title: 'Featured Projects Description',
       type: 'text',
+      group: 'work',
+    }),
+    defineField({
+      name: 'workLinkText',
+      title: 'Work link text',
+      type: 'string',
+      group: 'work',
+      description: 'e.g. "All cases" — links to the Projects page.',
     }),
 
-    // --- Dynamic Stats ---
+    // --- FAQ ---
+    defineField({ name: 'faqKicker', title: 'FAQ label', type: 'string', group: 'faq' }),
+    defineField({ name: 'faqHeading', title: 'FAQ heading', type: 'string', group: 'faq' }),
+    defineField({ name: 'faqDescription', title: 'FAQ description', type: 'text', rows: 3, group: 'faq' }),
+    defineField({ name: 'faqButtonText', title: 'FAQ button text', type: 'string', group: 'faq', description: 'Links to the Contact page.' }),
     defineField({
-      name: 'stat1Label',
-      title: 'Stat 1 Label (e.g., Projects Delivered)',
-      type: 'string',
+      name: 'faqs',
+      title: 'Frequently Asked Questions',
+      type: 'array',
+      group: 'faq',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'faq',
+          fields: [
+            defineField({ name: 'question', title: 'Question', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'answer', title: 'Answer', type: 'text', rows: 4, validation: (rule) => rule.required() }),
+          ],
+          preview: { select: { title: 'question', subtitle: 'answer' } },
+        }),
+      ],
     }),
-    defineField({
-      name: 'stat1Value',
-      title: 'Stat 1 Value (e.g., 150+)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'stat2Label',
-      title: 'Stat 2 Label (e.g., Global Partners)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'stat2Value',
-      title: 'Stat 2 Value (e.g., 40+)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'stat3Label',
-      title: 'Stat 3 Label (e.g., Team Experts)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'stat3Value',
-      title: 'Stat 3 Value (e.g., 25+)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'stat4Label',
-      title: 'Stat 4 Label (e.g., Client Retention)',
-      type: 'string',
-    }),
-    defineField({
-      name: 'stat4Value',
-      title: 'Stat 4 Value (e.g., 98%)',
-      type: 'string',
-    }),
+
+    // --- Journal ---
+    defineField({ name: 'journalKicker', title: 'Journal label', type: 'string', group: 'journal' }),
+    defineField({ name: 'journalHeading', title: 'Journal heading', type: 'string', group: 'journal' }),
+    defineField({ name: 'journalLinkText', title: 'Journal link text', type: 'string', group: 'journal', description: 'Links to the Blog page.' }),
   ],
 })

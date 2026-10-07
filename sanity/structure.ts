@@ -68,6 +68,22 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
+      // --- LEGAL ---
+      S.listItem()
+        .title('Privacy Policy')
+        .id('privacySingleton')
+        .child(
+          S.document().schemaType('legalPage').documentId('privacy').title('Privacy Policy')
+        ),
+      S.listItem()
+        .title('Terms of Service')
+        .id('termsSingleton')
+        .child(
+          S.document().schemaType('legalPage').documentId('terms').title('Terms of Service')
+        ),
+
+      S.divider(),
+
       // --- DYNAMIC LISTS (Services, Posts, Projects) ---
       // This automatically lists everything else while hiding the singletons we defined above
       ...S.documentTypeListItems().filter(
@@ -79,7 +95,8 @@ export const structure: StructureResolver = (S) =>
           'blogPage', 
           'about', 
           'contact', 
-          'footer'
+          'footer',
+          'legalPage'
         ].includes(item.getId() ?? ''),
       ),
     ])

@@ -1,15 +1,9 @@
 import Link from "next/link";
 import { createClient } from "next-sanity";
-import type { IconType } from "react-icons";
-import {
-  FaFacebook,
-  FaGithub,
-  FaInstagram,
-  FaLinkedin,
-  FaLink,
-  FaXTwitter,
-  FaYoutube,
-} from "react-icons/fa6";
+import SocialLinks, {
+  type SocialLinkItem,
+  socialLinksProjection,
+} from "./SocialLinks";
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -25,10 +19,12 @@ const footerQuery = `{
     email,
     phone,
     location,
-    socialLinks[]{ platform, url }
+    ${socialLinksProjection}
   },
-  "settings": *[_type == "siteSettings" || _id == "siteSettings"][0]{
-    "logoUrl": coalesce(siteLogo.asset->url, logo.asset->url)
+  "settings": *[_id == "siteSettings"][0]{
+    "logoUrl": coalesce(siteLogo.asset->url, logo.asset->url),
+    whatsappNumber,
+    ${socialLinksProjection}
   }
 }`;
 
@@ -38,10 +34,12 @@ type FooterData = {
     email: string | null;
     phone: string | null;
     location: string | null;
-    socialLinks: { platform: string; url: string }[] | null;
+    socialLinks: SocialLinkItem[] | null;
   } | null;
   settings: {
     logoUrl: string | null;
+    whatsappNumber: string | null;
+    socialLinks: SocialLinkItem[] | null;
   } | null;
 };
 
@@ -55,21 +53,10 @@ const quickLinks = [
 
 const serviceLinks = [
   { label: "Web Design", href: "/services" },
-  { label: "Software Dev", href: "/services" },
-  { label: "Marketing", href: "/services" },
-  { label: "AI Automation", href: "/services" },
+  { label: "Software Development", href: "/services" },
+  { label: "AI & Automation", href: "/services" },
+  { label: "Digital Marketing", href: "/services" },
 ] as const;
-
-function iconForPlatform(platform: string): IconType {
-  const p = platform.trim().toLowerCase();
-  if (p.includes("facebook")) return FaFacebook;
-  if (p.includes("instagram")) return FaInstagram;
-  if (p.includes("linkedin")) return FaLinkedin;
-  if (p.includes("youtube")) return FaYoutube;
-  if (p.includes("github")) return FaGithub;
-  if (p === "x" || p.includes("twitter")) return FaXTwitter;
-  return FaLink;
-}
 
 export default async function Footer() {
   const data = await client.fetch<FooterData | null>(footerQuery);
@@ -78,113 +65,97 @@ export default async function Footer() {
   const companyText =
     data?.footer?.companyText ??
     "We design and ship digital products that help ambitious teams move faster.";
-  const email = data?.footer?.email ?? "hello@makeithappen.example";
-  const phone = data?.footer?.phone ?? "+1 (555) 000-0000";
-  const location = data?.footer?.location ?? "Remote-first";
-  const socialLinks = data?.footer?.socialLinks?.filter((l) => l?.url && l?.platform) ?? [];
+  const email = data?.footer?.email ?? "hello@makeithappen.ug";
+  const phone = data?.footer?.phone ?? "+256790879117";
+  const location = data?.footer?.location ?? "Kampala, Uganda";
+  // Global Site Settings is the source of truth; the footer's legacy field is the fallback.
+  const socialLinks = data?.settings?.socialLinks?.length
+    ? data.settings.socialLinks
+    : data?.footer?.socialLinks ?? [];
   
   // Get the dynamic logo from Sanity, fallback to local icon if not found
   const logoUrl = data?.settings?.logoUrl ?? "/icon.png";
 
+  const phoneDigits = phone.replace(/[^\d+]/g, "");
+  const whatsappDigits = (data?.settings?.whatsappNumber || phone).replace(/\D/g, "");
+
   return (
-    <footer className="relative z-20 w-full border-t border-white/10">
-      <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:px-10 lg:px-14">
-        <div className="grid gap-10 md:grid-cols-4 md:gap-8">
-          <div className="flex flex-col gap-4">
-            <Link href="/" className="inline-block">
-              {/* DYNAMIC LOGO INJECTED HERE */}
-              <img 
-                src={logoUrl} 
-                alt="Make It Happen Logo" 
-                className="h-12 w-auto object-contain"
-              />
-            </Link>
-            <p className="max-w-xs text-sm leading-relaxed text-white/60">{companyText}</p>
-          </div>
+    <footer className="relative z-20 w-full bg-paper px-2 pb-2 sm:px-3 sm:pb-3">
+      <div className="overflow-hidden rounded-[20px] bg-ink text-white">
+        <div className="shell pt-16 sm:pt-20">
+          <div className="grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-5">
+              <Link href="/" className="inline-block" aria-label="Make It Happen home">
+                <img src={logoUrl} alt="Make It Happen logo" className="h-16 w-auto object-contain sm:h-20" />
+              </Link>
+              <p className="mt-6 max-w-sm text-base leading-relaxed text-white/60">{companyText}</p>
+              <a
+                href={`mailto:${email}`}
+                className="mt-8 inline-block text-2xl font-medium tracking-[-0.02em] text-white underline decoration-white/20 underline-offset-8 transition-colors hover:decoration-accent-primary sm:text-3xl"
+              >
+                {email}
+              </a>
+            </div>
 
-          <div>
-            <p className="text-sm font-semibold text-[#D7FF65]">Quick Links</p>
-            <ul className="mt-4 flex flex-col gap-3">
-              {quickLinks.map((item) => (
-                <li key={item.href + item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-white/70 transition-colors hover:text-[#D7FF65]"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-sm font-semibold text-[#D7FF65]">Services</p>
-            <ul className="mt-4 flex flex-col gap-3">
-              {serviceLinks.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-white/70 transition-colors hover:text-[#D7FF65]"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-sm font-semibold text-[#D7FF65]">Contact</p>
-            <ul className="mt-4 flex flex-col gap-3 text-sm text-white/70">
-              <li>
-                <a href={`mailto:${email}`} className="transition-colors hover:text-[#D7FF65]">
-                  {email}
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`tel:${phone.replace(/\s/g, "")}`}
-                  className="transition-colors hover:text-[#D7FF65]"
-                >
-                  {phone}
-                </a>
-              </li>
-              <li className="text-white/50">{location}</li>
-            </ul>
-            {socialLinks.length > 0 ? (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {socialLinks.map((link, index) => {
-                  const Icon = iconForPlatform(link.platform);
-                  return (
-                    <a
-                      key={`${link.url}-${index}`}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-[#D7FF65] hover:text-[#D7FF65]"
-                      aria-label={link.platform}
-                    >
-                      <Icon className="h-4 w-4" aria-hidden />
-                    </a>
-                  );
-                })}
+            <nav aria-label="Footer" className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-7">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-white/45">Company</p>
+                <ul className="mt-5 flex flex-col gap-3">
+                  {quickLinks.map((item) => (
+                    <li key={item.href + item.label}>
+                      <Link href={item.href} className="text-[15px] text-white/80 transition-colors hover:text-accent-primary">
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ) : null}
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-white/45">Services</p>
+                <ul className="mt-5 flex flex-col gap-3">
+                  {serviceLinks.map((item) => (
+                    <li key={item.label}>
+                      <Link href={item.href} className="text-[15px] text-white/80 transition-colors hover:text-accent-primary">
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-white/45">Contact</p>
+                <ul className="mt-5 flex flex-col gap-3 text-[15px] text-white/80">
+                  <li>
+                    <a href={`tel:${phoneDigits}`} className="transition-colors hover:text-accent-primary">{phone}</a>
+                  </li>
+                  <li>
+                    <a href={`https://wa.me/${whatsappDigits}`} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-accent-primary">
+                      WhatsApp
+                    </a>
+                  </li>
+                  <li className="text-white/50">{location}</li>
+                </ul>
+                <SocialLinks links={socialLinks} size="sm" className="mt-6" />
+              </div>
+            </nav>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-white/50 sm:flex-row sm:items-center sm:justify-between">
-          <p>Copyright {new Date().getFullYear()} Make It Happen. All rights reserved.</p>
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <Link href="/privacy" className="transition-colors hover:text-[#D7FF65]">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="transition-colors hover:text-[#D7FF65]">
-              Terms
-            </Link>
+        <div className="shell flex flex-col gap-4 mt-16 border-t border-white/10 py-6 sm:mt-20 font-mono text-[11px] uppercase tracking-[0.08em] text-white/45 sm:flex-row sm:items-center sm:justify-between">
+          <p>&copy; {new Date().getFullYear()} Make It Happen &middot; Kampala, Uganda</p>
+          <div className="flex gap-6">
+            <Link href="/privacy" className="transition-colors hover:text-white">Privacy</Link>
+            <Link href="/terms" className="transition-colors hover:text-white">Terms</Link>
           </div>
         </div>
+        {/* Oversized wordmark, cropped by the bottom edge of the card. */}
+        <p
+          aria-hidden
+          className="-mb-[3.2vw] mt-6 select-none whitespace-nowrap text-center text-[15.5vw] font-semibold leading-none tracking-[-0.06em] text-white/[0.08]"
+        >
+          Make It Happen
+        </p>
+
       </div>
     </footer>
   );

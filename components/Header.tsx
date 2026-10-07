@@ -1,142 +1,160 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import SocialLinks, { type SocialLinkItem } from "./SocialLinks";
+import { ArrowUpRight } from "./ui";
 
 // Define the props we expect to receive from the server wrapper
 type HeaderProps = {
   logoUrl?: string | null;
   siteTitle?: string | null;
+  socialLinks?: SocialLinkItem[] | null;
+  projectCount?: number | null;
+  ctaText?: string | null;
+  ctaLink?: string | null;
 };
 
-export default function Header({ logoUrl, siteTitle }: HeaderProps) {
+const navLinks = [
+  { label: "Services", href: "/services" },
+  { label: "Work", href: "/projects" },
+  { label: "Blog", href: "/blog" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+] as const;
+
+export default function Header({ logoUrl, siteTitle, socialLinks, projectCount, ctaText, ctaLink }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+
+  // Sits inside the hero card at the top; becomes a floating bar once the page scrolls.
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   if (pathname?.startsWith("/admin")) {
     return null;
   }
 
-  // Fallback text if Sanity is empty
-  const defaultTitle = "Make It Happen";
-  const displayTitle = siteTitle || defaultTitle;
+  const displayTitle = siteTitle || "Make It Happen";
+  const buttonText = ctaText?.trim() || "Start a project";
+  const buttonLink = ctaLink?.trim() || "/contact";
+  const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
 
   return (
-    <header className="absolute inset-x-0 top-0 z-50">
-      {/* ADJUSTED: Changed 'p-6' to 'px-6 py-4 lg:px-14 lg:pt-2 lg:pb-6' to pull the header up tight to the top on desktop */}
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-14 lg:pt-2 lg:pb-6" aria-label="Global">
-        
-        {/* Dynamic Logo Section */}
-        <div className="flex lg:flex-1">
-          <Link href="/" className="-m-1.5 p-1.5 flex items-center">
-            {logoUrl ? (
-              <img 
-                src={logoUrl} 
-                alt={`${displayTitle} logo`} 
-                className="h-25 w-auto object-contain sm:h-25" 
-              />
-            ) : (
-              <span className="text-2xl font-extrabold text-white tracking-tight">
-                {displayTitle}
-              </span>
-            )}
+    <header className="fixed inset-x-0 top-0 z-50 px-2 pt-2 sm:px-3 sm:pt-3">
+      <nav
+        aria-label="Global"
+        className={`mx-auto flex items-center justify-between transition-all duration-500 ${
+          isScrolled
+            ? "mt-1 max-w-6xl rounded-2xl bg-ink/85 py-2 pl-3 pr-2 backdrop-blur-md"
+            : "max-w-[112rem] px-3 py-4 sm:px-5 lg:px-7"
+        }`}
+      >
+        <Link href="/" className="flex shrink-0 items-center" aria-label={`${displayTitle} home`}>
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={`${displayTitle} logo`}
+              className={`w-auto object-contain transition-all duration-500 ${isScrolled ? "h-11" : "h-14 sm:h-16 lg:h-[4.5rem]"}`}
+            />
+          ) : (
+            <span className="text-lg font-semibold tracking-tight text-white">{displayTitle}</span>
+          )}
+        </Link>
+
+        <ul className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`relative text-[15px] font-medium transition-colors ${
+                  isActive(link.href) ? "text-accent-primary" : "text-white hover:text-white/70"
+                }`}
+              >
+                {link.label}
+                {link.href === "/projects" && projectCount ? (
+                  <sup className="absolute -right-4 -top-2 rounded-full bg-accent-primary px-1.5 py-0.5 font-mono text-[9px] leading-none font-semibold text-ink">
+                    {String(projectCount).padStart(2, "0")}
+                  </sup>
+                ) : null}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex items-center gap-2">
+          <Link
+            href={buttonLink}
+            className="group hidden items-center gap-1.5 rounded-[10px] bg-white px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-accent-primary sm:inline-flex"
+          >
+            {buttonText}
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </Link>
-        </div>
-        
-        {/* Mobile Hamburger Button */}
-        <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-white"
-            onClick={() => setIsMobileMenuOpen(true)}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-white lg:hidden"
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-menu"
           >
-            <span className="sr-only">Open main menu</span>
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
+            <span className="sr-only">{isMobileMenuOpen ? "Close menu" : "Open menu"}</span>
+            {isMobileMenuOpen ? (
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h16M4 16h16" />
+              </svg>
+            )}
           </button>
-        </div>
-
-        {/* Desktop Links */}
-        <div className="hidden lg:flex lg:gap-x-10">
-          <Link href="/services" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Services</Link>
-          <Link href="/projects" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Projects</Link>
-          <Link href="/blog" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Blog</Link>
-          <Link href="/about" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">About</Link>
-          <Link href="/contact" className="text-sm font-medium leading-6 text-white/80 transition-colors hover:text-[#D7FF65]">Contact</Link>
-        </div>
-
-        {/* Desktop Contact Button */}
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link 
-            href="/contact" 
-            className="rounded-full bg-[#D7FF65] px-7 py-2.5 text-sm font-bold text-[#0c1016] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[#e8ff99]"
-          >
-            Contact Us
-          </Link>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden" role="dialog" aria-modal="true">
-          {/* Backdrop */}
-          <div className="fixed inset-0 z-50 bg-[#0c1016]/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
-          
-          {/* Slide-out Menu */}
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#121821] px-6 py-6 sm:max-w-sm border-l border-white/10">
-            <div className="flex items-center justify-between">
-              
-              {/* Dynamic Logo Section (Mobile Slide-out) */}
-              <Link href="/" className="-m-1.5 p-1.5 flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
-                 {logoUrl ? (
-                  <img 
-                    src={logoUrl} 
-                    alt={`${displayTitle} logo`} 
-                    className="h-14 w-auto object-contain sm:h-16" 
-                  />
-                ) : (
-                  <span className="text-xl font-extrabold text-white">
-                    {displayTitle}
-                  </span>
-                )}
+      {/* Phones: a light card drops down under the bar. */}
+      {isMobileMenuOpen ? (
+        <div id="mobile-menu" onClick={(event) => { if ((event.target as HTMLElement).closest("a")) setIsMobileMenuOpen(false); }} className="mx-auto mt-2 max-w-md rounded-2xl bg-white p-6 text-ink shadow-[0_20px_60px_-20px_rgba(0,0,0,0.35)] lg:hidden">
+          <ul className="flex flex-col items-center gap-1">
+            <li>
+              <Link href="/" className={`block px-4 py-2 text-lg font-medium ${pathname === "/" ? "text-accent-secondary" : ""}`}>
+                Home
               </Link>
-
-              <button
-                type="button"
-                className="-m-2.5 rounded-md p-2.5 text-white/70 hover:text-white"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <span className="sr-only">Close menu</span>
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-white/10">
-                <div className="space-y-2 py-6">
-                  <Link href="/services" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Services</Link>
-                  <Link href="/projects" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Projects</Link>
-                  <Link href="/blog" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                  <Link href="/about" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
-                  <Link href="/contact" className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-white hover:bg-white/5" onClick={() => setIsMobileMenuOpen(false)}>Contact</Link>
-                </div>
-                <div className="py-6">
-                  <Link
-                    href="/contact"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-[#111720] bg-[#D7FF65] text-center hover:bg-[#e8ff99]"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Contact Us
-                  </Link>
-                </div>
-              </div>
-            </div>
+            </li>
+            {navLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={isActive(link.href) ? "page" : undefined}
+                  className={`relative block px-4 py-2 text-lg font-medium ${isActive(link.href) ? "text-accent-secondary" : ""}`}
+                >
+                  {link.label}
+                  {link.href === "/projects" && projectCount ? (
+                    <sup className="ml-1 rounded-full bg-accent-primary px-1.5 py-0.5 font-mono text-[9px] leading-none font-semibold text-ink">
+                      {String(projectCount).padStart(2, "0")}
+                    </sup>
+                  ) : null}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href={buttonLink}
+            className="mt-5 flex items-center justify-center gap-1.5 rounded-[10px] bg-ink px-5 py-3.5 text-[15px] font-medium text-white"
+          >
+            {buttonText} <ArrowUpRight />
+          </Link>
+          <div className="mt-5 flex justify-center [&_a]:border-ink/10 [&_a]:bg-paper [&_a]:text-ink/70">
+            <SocialLinks links={socialLinks} size="md" />
           </div>
         </div>
-      )}
+      ) : null}
     </header>
   );
 }
