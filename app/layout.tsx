@@ -60,7 +60,7 @@ export default function RootLayout({
         </div>
 
         <Footer />
-        
+
         {/* NEW: GOOGLE ANALYTICS SCRIPT */}
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-LX9GVERQF8"} />
       </body>

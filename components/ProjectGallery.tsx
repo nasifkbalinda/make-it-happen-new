@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ProjectCard, type ProjectCardData } from "./cards";
-import { Reveal } from "./motion";
+import { ProjectGrid, type ProjectCardData } from "./cards";
 
 /** Category filter over the project grid. Categories come from the projects themselves. */
 export default function ProjectGallery({ projects, allLabel }: { projects: ProjectCardData[]; allLabel: string }) {
@@ -45,22 +44,7 @@ export default function ProjectGallery({ projects, allLabel }: { projects: Proje
         </div>
       </div>
 
-      <div key={active ?? "all"} className="mt-12 grid gap-x-8 gap-y-12 md:grid-cols-2 md:gap-y-16 lg:gap-x-16">
-        <div className="flex flex-col gap-12 md:gap-16">
-          {visible.filter((_, index) => index % 2 === 0).map((project) => (
-            <Reveal key={project._id}>
-              <ProjectCard project={project} showDescription />
-            </Reveal>
-          ))}
-        </div>
-        <div className="flex flex-col gap-12 md:gap-16 md:pt-40">
-          {visible.filter((_, index) => index % 2 === 1).map((project) => (
-            <Reveal key={project._id}>
-              <ProjectCard project={project} showDescription />
-            </Reveal>
-          ))}
-        </div>
-      </div>
+      <ProjectGrid key={active ?? "all"} projects={visible} showDescription className="mt-12" />
 
       {visible.length === 0 ? (
         <p className="mt-12 rounded-2xl border border-dashed border-ink/20 py-20 text-center text-muted">No projects in this category yet.</p>

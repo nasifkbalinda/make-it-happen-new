@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "next-sanity";
 import Cta from "@/components/Cta";
-import { PostCard, ProjectCard, postCardProjection, projectCardProjection, type PostCardData, type ProjectCardData } from "@/components/cards";
+import { PostCard, ProjectGrid, arrangeProjects, postCardProjection, projectCardProjection, type PostCardData, type ProjectCardData } from "@/components/cards";
 import HeroStage from "@/components/HeroStage";
 import ServicesShowcase, {
   type ShowcaseService,
@@ -128,7 +128,10 @@ const homeQuery = `{
     faqs[]{ question, answer }
   },
   "about": *[_id == "about"][0]{ mainDescription },
-  "projects": *[_type == "project"] | order(_createdAt desc)[0...6]{ ${projectCardProjection} },
+  // Featured projects and the logo strip follow the playlist on Projects Page Settings, like the Work page.
+  "playlist": *[_id == "projectsPage"][0].projectList[]->{ ${projectCardProjection} },
+  "projects": *[_type == "project"] | order(_createdAt desc){ ${projectCardProjection} },
+  "clientOrder": *[_id == "projectsPage"][0].projectList[]._ref,
   "projectCount": count(*[_type == "project"]),
   "clients": *[_type == "project" && (defined(clientLogo.asset) || defined(mainImage.asset))] | order(_createdAt asc){
     _id, title,
@@ -170,7 +173,9 @@ function logoTile(logo: NonNullable<ClientLogo["logo"]>) {
 type HomeQueryResult = {
   home: HomeData | null;
   about: { mainDescription: string | null } | null;
+  playlist: (ProjectCardData | null)[] | null;
   projects: ProjectCardData[] | null;
+  clientOrder: string[] | null;
   projectCount: number | null;
   clients: ClientLogo[] | null;
   services: ShowcaseService[] | null;
@@ -180,10 +185,16 @@ type HomeQueryResult = {
 export default async function Home() {
   const data = await client.fetch<HomeQueryResult>(homeQuery);
   const home = data?.home;
-  const projects = data?.projects ?? [];
+  const projects = arrangeProjects(data?.playlist, data?.projects).slice(0, 6);
   const services = data?.services ?? [];
   const posts = data?.posts ?? [];
-  const clients = (data?.clients ?? []).filter((client) => client.logo?.url);
+  const position = (id: string) => {
+    const index = (data?.clientOrder ?? []).indexOf(id);
+    return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+  };
+  const clients = (data?.clients ?? [])
+    .filter((client) => client.logo?.url)
+    .sort((a, b) => position(a._id) - position(b._id));
   const faqs = (home?.faqs ?? []).filter((faq) => faq?.question && faq?.answer);
   const introImages = (home?.introImages ?? []).filter((image) => image?.url);
 
@@ -376,26 +387,7 @@ export default async function Home() {
             ) : null}
           </Reveal>
 
-          <div className="mt-12 grid gap-x-8 gap-y-10 sm:mt-16 md:grid-cols-2 md:gap-y-16 lg:gap-x-16">
-            <div className="flex flex-col gap-10 md:gap-16">
-              {projects
-                .filter((_, index) => index % 2 === 0)
-                .map((project) => (
-                  <Reveal key={project._id}>
-                    <ProjectCard project={project} />
-                  </Reveal>
-                ))}
-            </div>
-            <div className="flex flex-col gap-10 md:gap-16 md:pt-40">
-              {projects
-                .filter((_, index) => index % 2 === 1)
-                .map((project) => (
-                  <Reveal key={project._id}>
-                    <ProjectCard project={project} />
-                  </Reveal>
-                ))}
-            </div>
-          </div>
+          <ProjectGrid projects={projects} className="mt-12 sm:mt-16" />
 
           <div className="mt-16 flex justify-center">
             <ArrowLink href="/projects" className="text-2xl text-ink">
