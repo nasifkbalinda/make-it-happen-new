@@ -43,6 +43,10 @@ type FooterData = {
   } | null;
 };
 
+// Legal details exactly as on the certificate of incorporation (Registrar of Companies, Uganda).
+const legalName = "Rahmah Tech Systems Ltd";
+const registrationNumber = "80044046637390";
+
 const quickLinks = [
   { label: "Home", href: "/" },
   { label: "Services", href: "/services" },
@@ -141,9 +145,12 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="shell flex flex-col gap-4 mt-16 border-t border-white/10 py-6 sm:mt-20 font-mono text-[11px] uppercase tracking-[0.08em] text-white/45 sm:flex-row sm:items-center sm:justify-between">
-          <p>&copy; {new Date().getFullYear()} Make It Happen &middot; Kampala, Uganda</p>
-          <div className="flex gap-6">
+        <div className="shell flex flex-col gap-4 mt-16 border-t border-white/10 py-6 sm:mt-20 font-mono text-[11px] uppercase tracking-[0.08em] text-white/60 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-2xl normal-case leading-relaxed tracking-normal">
+            &copy; {new Date().getFullYear()} {legalName}. Make It Happen is a trading name of {legalName} (Reg. No.{" "}
+            {registrationNumber}), registered in Uganda.
+          </p>
+          <div className="flex shrink-0 gap-6">
             <Link href="/privacy" className="transition-colors hover:text-white">Privacy</Link>
             <Link href="/terms" className="transition-colors hover:text-white">Terms</Link>
           </div>
