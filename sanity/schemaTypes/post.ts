@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { SLUG_PATTERN, slugify } from '../../lib/slug'
 
 export const blogPage = defineType({
   name: 'blogPage',
@@ -25,11 +26,25 @@ export const post = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      description:
+        'The end of the article URL: makeithappen.ug/blog/<slug>. Click Generate rather than typing it. Lowercase letters, numbers and hyphens only — no slashes.',
       options: {
         source: 'title',
         maxLength: 96,
+        // Sanity's default keeps "/" — a title like "Now/Never" would produce
+        // a slug whose URL can never be reached.
+        slugify: (input: string) => slugify(input, 96),
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.required().custom((value) => {
+          const current = (value as { current?: string } | undefined)?.current
+          if (!current) return true // `required` reports the empty case
+          if (current.includes('/'))
+            return 'Remove the slashes — the slug is only the last part of the URL. Click Generate to rebuild it.'
+          if (!SLUG_PATTERN.test(current))
+            return 'Use lowercase letters, numbers and single hyphens only (e.g. my-article-title). Click Generate to rebuild it.'
+          return true
+        }),
     }),
     defineField({
       name: 'author',

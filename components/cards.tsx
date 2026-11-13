@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cleanSlug } from "@/lib/slug";
 import { BackgroundVideo, Reveal } from "./motion";
 import ProjectVideoPlayer from "./ProjectVideoPlayer";
 
@@ -212,7 +213,7 @@ export function PostMeta({ post, className = "" }: { post: PostCardData; classNa
 export function PostCard({ post }: { post: PostCardData }) {
   return (
     <Link
-      href={post.slug ? `/blog/${post.slug}` : "/blog"}
+      href={post.slug ? `/blog/${cleanSlug(post.slug)}` : "/blog"}
       className="group flex h-full flex-col rounded-2xl bg-white p-4 transition-colors hover:bg-paper-raised sm:p-5"
     >
       <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-paper-raised">
@@ -236,7 +237,7 @@ export function PostCard({ post }: { post: PostCardData }) {
 export function FeaturedPostCard({ post, label }: { post: PostCardData; label: string }) {
   return (
     <Link
-      href={post.slug ? `/blog/${post.slug}` : "/blog"}
+      href={post.slug ? `/blog/${cleanSlug(post.slug)}` : "/blog"}
       className="group grid overflow-hidden rounded-2xl bg-white p-4 transition-colors hover:bg-paper-raised sm:p-5 lg:grid-cols-2 lg:gap-10"
     >
       <div className="aspect-[16/10] w-full overflow-hidden rounded-xl bg-paper-raised">
