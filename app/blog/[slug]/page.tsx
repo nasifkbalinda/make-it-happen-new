@@ -1,4 +1,5 @@
 import { PortableText } from "@portabletext/react";
+import { slugCandidates } from "@/lib/slug";
 import type { TypedObject } from "@portabletext/types";
 import imageUrlBuilder, { type SanityImageSource } from "@sanity/image-url";
 import { createClient } from "next-sanity";
@@ -68,7 +69,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
 
   // NEW: We updated the query to explicitly ask Sanity for the 'excerpt' field!
-  const query = `*[_type == "post" && slug.current == $slug][0]{
+  const query = `*[_type == "post" && slug.current in $slugs][0]{
     title,
     excerpt,
     mainImage
@@ -79,7 +80,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: string;
     excerpt?: string;
     mainImage?: SanityImageSource;
-  } | null>(query, { slug });
+  } | null>(query, { slug, slugs: slugCandidates(slug) });
 
   if (!post) {
     return { title: "Post Not Found" };
@@ -132,7 +133,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
 
   const query = `{
-    "post": *[_type == "post" && slug.current == $slug][0]{
+    "post": *[_type == "post" && slug.current in $slugs][0]{
       title,
       excerpt,
       "imageUrl": mainImage.asset->url,
@@ -141,11 +142,11 @@ export default async function BlogPostPage({ params }: PageProps) {
       body,
       "characters": length(pt::text(body))
     },
-    "more": *[_type == "post" && defined(slug.current) && slug.current != $slug] | order(publishedAt desc)[0...3]{ ${postCardProjection} },
+    "more": *[_type == "post" && defined(slug.current) && !(slug.current in $slugs)] | order(publishedAt desc)[0...3]{ ${postCardProjection} },
     "moreHeading": *[_id == "blogPage"][0].moreHeading
   }`;
 
-  const data = await client.fetch<{ post: BlogPostDetail | null; more: MorePosts | null; moreHeading: string | null }>(query, { slug });
+  const data = await client.fetch<{ post: BlogPostDetail | null; more: MorePosts | null; moreHeading: string | null }>(query, { slug, slugs: slugCandidates(slug) });
   const post = data?.post;
 
   if (!post) {
