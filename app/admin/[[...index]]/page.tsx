@@ -1,10 +1,14 @@
-"use client";
+import Studio from './Studio'
 
-import { NextStudio } from 'next-sanity/studio'
-import config from '../../../sanity.config'
+// The Studio is a client-side app: export one HTML shell at /admin and let
+// the Studio handle its own routing. Deep links (/admin/...) are rewritten to
+// this shell by public/_redirects.
+export const dynamic = 'force-static'
 
-export const dynamic = "force-dynamic";
+export function generateStaticParams() {
+  return [{ index: [] }]
+}
 
 export default function StudioPage() {
-  return <NextStudio config={config} />
+  return <Studio />
 }

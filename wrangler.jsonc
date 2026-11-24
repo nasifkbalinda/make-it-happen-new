@@ -1,0 +1,16 @@
+{
+  // Cloudflare Workers static-asset hosting for the exported Next.js site.
+  // Static asset requests are free and unlimited on the Workers Free plan.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "make-it-happen",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [
+    { "pattern": "makeithappen.ug", "custom_domain": true },
+    { "pattern": "www.makeithappen.ug", "custom_domain": true }
+  ]
+}
