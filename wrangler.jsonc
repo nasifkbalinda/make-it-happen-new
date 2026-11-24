@@ -1,0 +1,17 @@
+{
+  // Cloudflare Workers static-asset hosting for the exported Next.js site.
+  // Requests for static assets are free and unlimited on the Workers Free plan.
+  // `wrangler deploy` runs the build first, so the Cloudflare Git build works
+  // whatever build command is set in the dashboard.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "make-it-happen-new",
+  "compatibility_date": "2026-11-01",
+  "build": {
+    "command": "npm run build"
+  },
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

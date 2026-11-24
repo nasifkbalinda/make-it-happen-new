@@ -1,5 +1,5 @@
 import { PortableText } from "@portabletext/react";
-import { slugCandidates } from "@/lib/slug";
+import { cleanSlug, slugCandidates } from "@/lib/slug";
 import type { TypedObject } from "@portabletext/types";
 import imageUrlBuilder, { type SanityImageSource } from "@sanity/image-url";
 import { createClient } from "next-sanity";
@@ -64,12 +64,16 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-// Cache each post once rendered (ISR) instead of hitting a serverless function
-// on every request. Returning [] from generateStaticParams opts the dynamic
-// route into on-demand static caching; posts are refreshed hourly.
-export const revalidate = 3600;
+// Every post is pre-rendered to static HTML at build time, so serving a post
+// costs no server work. New or edited posts appear after the next build.
+export const dynamicParams = false;
 export async function generateStaticParams() {
-  return [];
+  const slugs = await client.fetch<string[]>(
+    `*[_type == "post" && defined(slug.current)].slug.current`
+  );
+  const unique = [...new Set(slugs.map(cleanSlug).filter(Boolean))];
+  // Static export needs at least one path; fall back to a placeholder that 404s.
+  return unique.length ? unique.map((slug) => ({ slug })) : [{ slug: "_" }];
 }
 
 // 2. THE NEW INVISIBLE LAYER: This generates the custom WhatsApp/Twitter preview
