@@ -14,7 +14,7 @@ const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: false,
+  useCdn: true,
 });
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
@@ -63,6 +63,14 @@ type BlogPostDetail = {
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+// Cache each post once rendered (ISR) instead of hitting a serverless function
+// on every request. Returning [] from generateStaticParams opts the dynamic
+// route into on-demand static caching; posts are refreshed hourly.
+export const revalidate = 3600;
+export async function generateStaticParams() {
+  return [];
+}
 
 // 2. THE NEW INVISIBLE LAYER: This generates the custom WhatsApp/Twitter preview
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
