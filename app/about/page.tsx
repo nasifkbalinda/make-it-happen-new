@@ -5,7 +5,7 @@ import PageHero from "@/components/PageHero";
 import { Reveal, RollingNumber, ScrollRevealText } from "@/components/motion";
 import { Tag } from "@/components/ui";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "About | Make It Happen",
@@ -16,7 +16,7 @@ const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: false,
+  useCdn: true,
 });
 
 type AboutData = {
