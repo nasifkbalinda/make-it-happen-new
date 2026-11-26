@@ -6,6 +6,7 @@ import "./globals.css";
 // 1. Updated import to bring in the Server Wrapper instead of the Client Header
 import HeaderWrapper from "../components/HeaderWrapper";
 import Footer from "../components/Footer";
+import Tracking from "../components/Tracking";
 
 const interTight = Inter_Tight({ subsets: ["latin"], variable: "--font-inter-tight" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
@@ -63,6 +64,9 @@ export default function RootLayout({
 
         {/* NEW: GOOGLE ANALYTICS SCRIPT */}
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-LX9GVERQF8"} />
+
+        {/* META PIXEL (production only, skipped on /admin) + contact-link tracking */}
+        <Tracking />
       </body>
     </html>
   );

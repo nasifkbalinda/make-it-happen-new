@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { trackLead } from "../lib/analytics";
 
 type Props = {
   email: string;
@@ -54,6 +55,8 @@ export default function ContactForm({ email, whatsappNumber, serviceOptions, bud
     if (!brief) return;
     const digits = whatsappNumber.replace(/\D/g, "");
     window.open(`https://wa.me/${digits}?text=${encodeURIComponent(brief.text)}`, "_blank", "noopener,noreferrer");
+    // Only reached once the brief passed validation and was handed off (never on a bare click).
+    trackLead();
   }
 
   function sendEmail(form: HTMLFormElement | null) {
@@ -61,6 +64,7 @@ export default function ContactForm({ email, whatsappNumber, serviceOptions, bud
     const brief = compose(form);
     if (!brief) return;
     const subject = `Project enquiry from ${brief.name}`;
+    trackLead();
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(brief.text)}`;
   }
 
